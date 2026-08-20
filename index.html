@@ -1,0 +1,2207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SHRUTI Care — Medical Management Suite</title>
+<style>
+:root{
+  --primary:#0d9488; --primary-d:#0f766e; --primary-l:#ccfbf1;
+  --accent:#2563eb; --accent-l:#dbeafe;
+  --rose:#e11d48; --rose-l:#ffe4e6;
+  --violet:#7c3aed; --violet-l:#ede9fe;
+  --bg:#f4f7f9; --card:#ffffff; --text:#0f172a; --muted:#64748b;
+  --border:#e2e8f0; --success:#16a34a; --success-l:#dcfce7;
+  --warning:#d97706; --warning-l:#fef3c7; --danger:#dc2626; --danger-l:#fee2e2;
+  --shadow:0 1px 2px rgba(15,23,42,.05),0 4px 14px rgba(15,23,42,.05);
+  --radius:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Segoe UI','Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+a{text-decoration:none;color:inherit}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+input,select,textarea{font-family:inherit;font-size:13px;color:var(--text)}
+
+.app{display:flex;min-height:100vh}
+.sidebar{width:264px;background:#fff;border-right:1px solid var(--border);position:fixed;inset:0 auto 0 0;display:flex;flex-direction:column;z-index:50;transition:transform .25s}
+.brand{display:flex;align-items:center;gap:12px;padding:20px 20px 16px}
+.brand-logo{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 6px 16px rgba(13,148,136,.35)}
+.brand b{font-size:17px;letter-spacing:.3px}
+.brand small{display:block;color:var(--muted);font-size:11px;font-weight:400}
+.nav{flex:1;overflow-y:auto;padding:8px 12px}
+.nav-group{color:#94a3b8;font-size:10.5px;text-transform:uppercase;letter-spacing:1px;padding:14px 12px 6px;font-weight:700}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;color:#475569;font-weight:500;margin-bottom:2px;transition:.15s}
+.nav-item:hover{background:#f1f5f9;color:var(--text)}
+.nav-item.active{background:linear-gradient(135deg,var(--primary-l),#f0fdfa);color:var(--primary-d);font-weight:600}
+.nav-item svg{flex-shrink:0}
+.nav-item .pill{margin-left:auto;background:var(--rose);color:#fff;font-size:10px;font-weight:700;border-radius:20px;padding:2px 7px}
+.sidebar-foot{padding:14px 20px;border-top:1px solid var(--border);font-size:11px;color:var(--muted)}
+
+.main{flex:1;margin-left:264px;min-width:0}
+.topbar{background:#fff;border-bottom:1px solid var(--border);padding:0 28px;height:64px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:40}
+.topbar .menu-btn{display:none}
+.search{flex:1;max-width:480px;position:relative}
+.search input{width:100%;background:#f1f5f9;border:1px solid transparent;border-radius:10px;padding:9px 14px 9px 38px;outline:none;transition:.15s}
+.search input:focus{background:#fff;border-color:var(--primary)}
+.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#94a3b8}
+.top-actions{margin-left:auto;display:flex;align-items:center;gap:10px}
+.icon-btn{width:40px;height:40px;border-radius:10px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;color:#475569;position:relative;transition:.15s}
+.icon-btn:hover{background:#e2e8f0}
+.icon-btn .dot{position:absolute;top:8px;right:9px;width:8px;height:8px;background:var(--rose);border-radius:50%;border:2px solid #fff}
+.bell-pop{position:absolute;right:0;top:50px;background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:0 10px 40px rgba(15,23,42,.15);width:340px;display:none;overflow:hidden}
+.bell-pop.open{display:block}
+.bell-pop h4{padding:14px 16px;border-bottom:1px solid var(--border);font-size:13px}
+.bell-pop .item{padding:11px 16px;border-bottom:1px solid #f1f5f9;font-size:12.5px;display:flex;gap:10px}
+.bell-pop .item:last-child{border:none}
+.bell-pop .item b{display:block;font-size:12.5px}
+.bell-pop .item span{color:var(--muted);font-size:11.5px}
+.bell-pop .item .dotc{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0}
+.profile{display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:10px;cursor:pointer}
+.profile:hover{background:#f1f5f9}
+.avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+.profile .nm{font-weight:600;font-size:13px;line-height:1.2}
+.profile .rl{font-size:11px;color:var(--muted)}
+
+.content{padding:26px 28px 60px;max-width:1400px}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:22px;flex-wrap:wrap}
+.page-head h1{font-size:23px;font-weight:700;letter-spacing:-.3px}
+.page-head p{color:var(--muted);font-size:13px;margin-top:3px}
+.head-actions{display:flex;gap:10px;flex-wrap:wrap}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+.card-pad{padding:20px}
+.card-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #f1f5f9;gap:12px;flex-wrap:wrap}
+.card-head h3{font-size:15px;font-weight:600}
+.card-head .sub{color:var(--muted);font-size:12px}
+.grid{display:grid;gap:16px}
+.g4{grid-template-columns:repeat(4,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g2{grid-template-columns:repeat(2,1fr)}
+@media(max-width:1200px){.g4{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:820px){.g4,.g3,.g2{grid-template-columns:1fr}}
+
+.stat{display:flex;gap:14px;align-items:center;padding:18px 20px}
+.stat .ic{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.stat .ic.teal{background:var(--primary-l);color:var(--primary-d)}
+.stat .ic.blue{background:var(--accent-l);color:var(--accent)}
+.stat .ic.rose{background:var(--rose-l);color:var(--rose)}
+.stat .ic.violet{background:var(--violet-l);color:var(--violet)}
+.stat .ic.amber{background:var(--warning-l);color:var(--warning)}
+.stat .v{font-size:23px;font-weight:700;line-height:1.1}
+.stat .l{color:var(--muted);font-size:12.5px;font-weight:500}
+.stat .t{font-size:11px;color:var(--muted);margin-top:3px}
+
+.btn{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:10px;font-weight:600;font-size:13px;transition:.15s;border:1px solid transparent}
+.btn svg{flex-shrink:0}
+.btn-primary{background:var(--primary);color:#fff;box-shadow:0 4px 12px rgba(13,148,136,.28)}
+.btn-primary:hover{background:var(--primary-d)}
+.btn-accent{background:var(--accent);color:#fff;box-shadow:0 4px 12px rgba(37,99,235,.25)}
+.btn-accent:hover{background:#1d4ed8}
+.btn-rose{background:var(--rose);color:#fff}
+.btn-rose:hover{background:#be123c}
+.btn-outline{background:#fff;border-color:var(--border);color:#334155}
+.btn-outline:hover{background:#f8fafc;border-color:#cbd5e1}
+.btn-ghost{color:var(--muted)}
+.btn-ghost:hover{background:#f1f5f9;color:var(--text)}
+.btn-sm{padding:6px 11px;font-size:12px;border-radius:8px}
+.btn-block{width:100%;justify-content:center}
+
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{text-align:left;color:#64748b;font-size:11px;text-transform:uppercase;letter-spacing:.6px;font-weight:700;padding:12px 16px;border-bottom:1px solid var(--border);white-space:nowrap;background:#fafcfd}
+tbody td{padding:12px 16px;border-bottom:1px solid #f1f5f9;vertical-align:middle}
+tbody tr:hover{background:#f8fafc}
+tbody tr:last-child td{border-bottom:none}
+.tbl-actions{display:flex;gap:6px;justify-content:flex-end}
+.ta{width:34px;height:32px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;color:#64748b;background:#f1f5f9}
+.ta:hover{background:#e2e8f0;color:var(--text)}
+.ta.danger:hover{background:var(--danger-l);color:var(--danger)}
+
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.badge .bd{width:6px;height:6px;border-radius:50%;background:currentColor}
+.bg-success{background:var(--success-l);color:var(--success)}
+.bg-warning{background:var(--warning-l);color:var(--warning)}
+.bg-danger{background:var(--danger-l);color:var(--danger)}
+.bg-info{background:var(--accent-l);color:var(--accent)}
+.bg-teal{background:var(--primary-l);color:var(--primary-d)}
+.bg-neutral{background:#f1f5f9;color:#64748b}
+.bg-violet{background:var(--violet-l);color:var(--violet)}
+
+.patient-cell{display:flex;align-items:center;gap:11px}
+.patient-cell .avatar{width:34px;height:34px;font-size:12px}
+.patient-cell b{display:block;font-size:13px}
+.patient-cell span{color:var(--muted);font-size:11.5px}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,.45);backdrop-filter:blur(2px);z-index:100;display:none;align-items:flex-start;justify-content:center;padding:40px 16px;overflow-y:auto}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:16px;box-shadow:0 20px 60px rgba(15,23,42,.25);width:100%;max-width:640px;animation:pop .2s}
+.modal.lg{max-width:860px}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border)}
+.modal-head h3{font-size:16px}
+.modal-body{padding:22px;max-height:70vh;overflow-y:auto}
+.modal-foot{padding:14px 22px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px}
+@keyframes pop{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}
+
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:720px){.form-grid{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:6px}
+.field span{font-size:12px;font-weight:600;color:#334155}
+.field .hint{font-size:11px;color:var(--muted);font-weight:400}
+.field input,.field select,.field textarea{border:1px solid var(--border);border-radius:10px;padding:9px 12px;outline:none;transition:.15s;background:#fff}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(13,148,136,.12)}
+.field input.ro{background:#f8fafc;color:#64748b}
+.field.full{grid-column:1/-1}
+
+.toast-wrap{position:fixed;bottom:24px;right:24px;z-index:200;display:flex;flex-direction:column;gap:10px}
+.toast{background:#0f172a;color:#fff;padding:12px 18px;border-radius:12px;font-size:13px;font-weight:500;box-shadow:0 10px 30px rgba(15,23,42,.3);display:flex;align-items:center;gap:10px;animation:pop .2s}
+.toast.green{background:var(--success)}
+.toast.red{background:var(--danger)}
+
+.chart-box{position:relative;height:260px}
+.chart-box canvas{width:100%;height:100%}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px;font-size:12px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+
+.tabs{display:flex;gap:4px;background:#f1f5f9;padding:4px;border-radius:10px;width:fit-content;margin-bottom:18px}
+.tab{padding:7px 15px;border-radius:8px;font-weight:600;font-size:12.5px;color:var(--muted)}
+.tab.active{background:#fff;color:var(--primary-d);box-shadow:0 1px 4px rgba(15,23,42,.1)}
+
+.progress{height:8px;background:#f1f5f9;border-radius:8px;overflow:hidden}
+.progress i{display:block;height:100%;background:linear-gradient(90deg,var(--primary),#14b8a6);border-radius:8px}
+
+.timeline{position:relative;padding-left:24px}
+.timeline::before{content:'';position:absolute;left:7px;top:6px;bottom:6px;width:2px;background:#e2e8f0}
+.tl-item{position:relative;padding:0 0 18px 14px}
+.tl-item::before{content:'';position:absolute;left:-22px;top:5px;width:12px;height:12px;border-radius:50%;background:#fff;border:3px solid var(--primary)}
+.tl-item.done::before{border-color:var(--success)}
+.tl-item.up::before{border-color:var(--warning)}
+.tl-item b{font-size:13px}
+.tl-item p{color:var(--muted);font-size:12px;margin-top:2px}
+
+.empty{padding:48px 20px;text-align:center;color:var(--muted)}
+.empty svg{opacity:.35;margin-bottom:10px}
+.empty p{font-size:13.5px}
+
+.alert{display:flex;gap:12px;padding:13px 16px;border-radius:12px;font-size:13px;align-items:flex-start}
+.alert.info{background:var(--accent-l);color:#1e3a8a}
+.alert.warn{background:var(--warning-l);color:#78350f}
+.alert.rose{background:var(--rose-l);color:#881337}
+.alert.teal{background:var(--primary-l);color:#134e4a}
+.alert b{display:block}
+
+.risk-tag{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px}
+.kpi{text-align:center;padding:16px}
+.kpi .n{font-size:26px;font-weight:700}
+.kpi .k{font-size:11.5px;color:var(--muted);margin-top:2px}
+.flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;font-weight:600;color:#475569}
+.flow .fnode{background:var(--primary-l);color:var(--primary-d);padding:7px 12px;border-radius:9px}
+.flow .fnode.warn{background:var(--warning-l);color:var(--warning)}
+.flow .arrow{color:#94a3b8}
+.otp-progress{display:flex;gap:6px}
+.otp-seg{height:7px;flex:1;border-radius:6px;background:#e2e8f0}
+.otp-seg.on{background:var(--primary)}
+.otp-seg.warn{background:var(--warning)}
+.otp-seg.bad{background:var(--danger)}
+.print-hide{display:contents}
+@media print{.sidebar,.topbar,.head-actions,.tbl-actions{display:none!important}.main{margin:0}.content{padding:0}}
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:none;box-shadow:0 0 0 100vmax rgba(15,23,42,.4)}
+  .main{margin-left:0}
+  .topbar .menu-btn{display:flex}
+  .content{padding:18px 16px 60px}
+  .profile .nm,.profile .rl{display:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-logo">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      </div>
+      <div><b>SHRUTI Care</b><small>Medical Management Suite</small></div>
+    </div>
+    <nav class="nav" id="nav"></nav>
+    <div class="sidebar-foot">SIH 2026 · MedTech/HealthTech<br>v2.0 — AI-Assisted Screening<br><span id="wsStatus" style="color:var(--warning)">Connecting...</span></div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="icon-btn menu-btn" onclick="toggleSidebar()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <div class="search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input id="globalSearch" placeholder="Search patients, records, medicines…" oninput="globalSearch(this.value)">
+      </div>
+      <div class="top-actions">
+        <div style="position:relative">
+          <button class="icon-btn" onclick="toggleBell()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <span class="dot" id="bellDot"></span>
+          </button>
+          <div class="bell-pop" id="bellPop"></div>
+        </div>
+        <button class="icon-btn" onclick="printReport()" title="Print">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        </button>
+        <div class="profile">
+          <div class="avatar">DR</div>
+          <div><div class="nm">Dr. Riya Verma</div><div class="rl">Chief Medical Officer</div></div>
+        </div>
+      </div>
+    </header>
+
+    <div class="content" id="content"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modalBox"></div>
+</div>
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+/* ============================= ICONS ============================= */
+const I={
+  dash:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>',
+  users:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  ear:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8.5a6 6 0 1 1 12 0c0 2.5-1.5 4-3 5.5-1.2 1.2-1.5 2-1.5 3.5"/><circle cx="10" cy="15" r="1"/><path d="M6 15v1a6 6 0 0 0 12 0v-1"/></svg>',
+  baby:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4" r="2"/><path d="M12 6v5"/><path d="M12 11 6.5 15"/><path d="M12 11l5.5 4"/><path d="M6.5 15a5.5 5.5 0 0 0 11 0"/><path d="M4 19l-1 2"/><path d="M20 19l1 2"/></svg>',
+  syringe:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 2 4 4"/><path d="m17 7 3-3"/><path d="M19 9 8.7 19.3a1 1 0 0 1-1.4 0L2 14l4-4 2.5 2.5"/><path d="m14 4 6 6"/><path d="m10 2 4 4"/><path d="m9 7 4 4"/></svg>',
+  cal:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
+  rx:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M4 6h16"/><path d="M12 2v4"/><path d="M8 6v5a3 3 0 0 0 6 0V6"/></svg>',
+  lab:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.31"/><path d="M14 9.3V2"/><path d="M8.5 2h7"/><path d="M14 9.3a6.5 6.5 0 1 1-4 0"/><path d="M5.52 16h12.96"/></svg>',
+  heart:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.8 0-3 .5-4.5 2-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7Z"/></svg>',
+  pill:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/></svg>',
+  wallet:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>',
+  staff:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  chart:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>',
+  tool:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>',
+  plus:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+  edit:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>',
+  trash:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
+  check:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
+  x:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+  eye:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>',
+  print:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>',
+  bell:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>',
+  dow:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
+  wave:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12c1.5-4 3-6 4-6s2.5 4 4 6 3 3 4 3 2-1 2-1.5S14 12 14 12s.5.5 1 .5S18 11 20 9"/></svg>',
+  alert:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
+};
+
+/* ============================= UTILS ============================= */
+const $=s=>document.querySelector(s);
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const pad=n=>String(n).padStart(2,'0');
+const today=()=>{const d=new Date();return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`};
+const iso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const fmtDate=s=>{if(!s)return'—';const [y,m,d]=s.split('-');return `${d}-${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+m-1]}-${y}`};
+const addDays=(s,n)=>{const d=new Date(s+'T12:00:00');d.setDate(d.getDate()+n);return iso(d)};
+const daysBetween=(a,b)=>{const x=new Date(a+'T12:00:00'),y=new Date(b+'T12:00:00');return Math.round((y-x)/86400000)};
+const ageFromDob=dob=>{if(!dob)return'—';const b=new Date(dob),n=new Date();let y=n.getFullYear()-b.getFullYear(),m=n.getMonth()-b.getMonth();if(n.getDate()<b.getDate())m--;if(m<0){y--;m+=12}if(y===0&&m===0)return`${n.getDate()-b.getDate()||1}d`;if(y===0)return`${m}mo`;return`${y}y ${m}mo`};
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const initials=n=>String(n||'?').trim().split(/\s+/).slice(0,2).map(w=>w[0].toUpperCase()).join('');
+const money=n=>'₹'+Number(n||0).toLocaleString('en-IN');
+const fmtNo=n=>Number(n||0).toLocaleString('en-IN');
+const colorFor=n=>{const c=['#0d9488','#2563eb','#e11d48','#7c3aed','#d97706','#0891b2','#16a34a','#db2777'];let h=0;for(const ch of String(n))h=(h*31+ch.charCodeAt(0))>>>0;return c[h%c.length]};
+const monthsBack=n=>{const d=new Date();d.setDate(1);d.setMonth(d.getMonth()-n);return iso(d)};
+const monthsAhead=n=>{const d=new Date();d.setDate(1);d.setMonth(d.getMonth()+n);return iso(d)};
+
+/* ============================= STORE ============================= */
+const DB={
+  patients:[],screenings:[],pregnancies:[],immunizations:[],appointments:[],
+  prescriptions:[],labs:[],vitals:[],pharmacy:[],billing:[],staff:[],notifications:[]
+};
+const LSKEY='shruti_care_v1';
+function load(){try{const s=JSON.parse(localStorage.getItem(LSKEY));if(s&&s.patients)s=Object.assign(DB,s)}catch(e){}}
+function save(){localStorage.setItem(LSKEY,JSON.stringify(DB))}
+function nextId(key){return (DB[key].reduce((m,r)=>Math.max(m,+r.id||0),0)+1).toString()}
+
+function seed(){
+  if(localStorage.getItem(LSKEY)){load();return}
+  const d=today();
+  DB.staff=[
+    {id:'1',name:'Dr. Riya Verma',role:'Chief Medical Officer',dept:'Pediatrics',phone:'+91 98111 00001',email:'riya@shruti.care',shift:'Day',speciality:'Neonatology'},
+    {id:'2',name:'Dr. Arjun Mehta',role:'Senior Consultant',dept:'OB-GYN',phone:'+91 98111 00002',email:'arjun@shruti.care',shift:'Day',speciality:'Maternal & Fetal Medicine'},
+    {id:'3',name:'Dr. Kavya Nair',role:'Consultant',dept:'ENT / Audiology',phone:'+91 98111 00003',email:'kavya@shruti.care',shift:'Day',speciality:'Audiology'},
+    {id:'4',name:'ANM Suman Devi',role:'ANM',dept:'Community Health',phone:'+91 98111 00004',email:'suman@shruti.care',shift:'Field',speciality:'Maternal & Child Health'},
+    {id:'5',name:'ASHA Priya Kumari',role:'ASHA',dept:'Community Health',phone:'+91 98111 00005',email:'priya@shruti.care',shift:'Field',speciality:'Newborn Screening'},
+    {id:'6',name:'Dr. Rohan Iyer',role:'Consultant',dept:'General Medicine',phone:'+91 98111 00006',email:'rohan@shruti.care',shift:'Night',speciality:'Internal Medicine'}
+  ];
+  DB.patients=[
+    {id:'1',name:'Aarav Sharma',dob:'2026-02-14',gender:'Male',phone:'+91 90001 00001',blood:'B+',address:'Sector 12, Noida',allergies:'None',height:52,weight:3.8,regDate:addDays(d,-180),notes:''},
+    {id:'2',name:'Aadhya Patel',dob:'2026-01-05',gender:'Female',phone:'+91 90001 00002',blood:'O+',address:'Civil Lines, Delhi',allergies:'Penicillin',height:51,weight:3.4,regDate:addDays(d,-205),notes:'NICU 2 days at birth'},
+    {id:'3',name:'Kiaan Singh',dob:'2026-03-20',gender:'Male',phone:'+91 90001 00003',blood:'A+',address:'Rohini, Delhi',allergies:'None',height:50,weight:3.1,regDate:addDays(d,-145),notes:''},
+    {id:'4',name:'Vivaan Reddy',dob:'2026-06-02',gender:'Male',phone:'+91 90001 00004',blood:'AB+',address:'Jubilee Hills, Hyd',allergies:'None',height:49,weight:2.9,regDate:addDays(d,-72),notes:'Home birth'},
+    {id:'5',name:'Ananya Iyer',dob:'2026-07-25',gender:'Female',phone:'+91 90001 00005',blood:'B-',address:'Indiranagar, Bengaluru',allergies:'None',height:50,weight:3.2,regDate:addDays(d,-19),notes:'Referred — jaundice follow-up'},
+    {id:'6',name:'Priya Gupta',dob:'1998-04-12',gender:'Female',phone:'+91 90002 00001',blood:'O+',address:'GK-1, New Delhi',allergies:'None',height:160,weight:64,regDate:addDays(d,-90),notes:'G2P1L1'},
+    {id:'7',name:'Sunita Kumari',dob:'1996-08-30',gender:'Female',phone:'+91 90002 00002',blood:'B+',address:'Patna',allergies:'Sulfa',height:152,weight:58,regDate:addDays(d,-40),notes:'G3P2L2'},
+    {id:'8',name:'Neha Joshi',dob:'2000-01-21',gender:'Female',phone:'+91 90002 00003',blood:'A+',address:'Pune',allergies:'None',height:158,weight:52,regDate:addDays(d,-160),notes:'G1P0',status:'High risk'},
+    {id:'9',name:'Meena Devi',dob:'1995-11-02',gender:'Female',phone:'+91 90002 00004',blood:'AB-',address:'Gorakhpur',allergies:'None',height:150,weight:47,regDate:addDays(d,-300),notes:'G4P3'}
+  ];
+  DB.screenings=[
+    {id:'1',patientId:'2',date:addDays(d,-2),earLeft:'PASS',earRight:'PASS',snrLeft:14,snrRight:11,verdict:'PASS',followUp:addDays(d,84),status:'Cleared',operator:'ANM Suman Devi',note:''},
+    {id:'2',patientId:'1',date:addDays(d,-12),earLeft:'PASS',earRight:'PASS',snrLeft:9,snrRight:12,verdict:'PASS',followUp:addDays(d,70),status:'Cleared',operator:'ASHA Priya Kumari',note:''},
+    {id:'3',patientId:'3',date:addDays(d,-4),earLeft:'REFER',earRight:'PASS',snrLeft:-2,snrRight:8,verdict:'REFER',followUp:addDays(d,6),status:'Re-screen due',operator:'ANM Suman Devi',note:'Refer — right ear clean'},
+    {id:'4',patientId:'4',date:addDays(d,-1),earLeft:'PASS',earRight:'RETEST',snrLeft:7,snrRight:null,verdict:'RETEST',followUp:addDays(d,1),status:'Re-screen due',operator:'ANM Suman Devi',note:'Noisy ward — retest'},
+    {id:'5',patientId:'5',date:addDays(d,-3),earLeft:'PASS',earRight:'REFER',snrLeft:10,snrRight:-1,verdict:'REFER',followUp:addDays(d,5),status:'ABR referral',operator:'ASHA Priya Kumari',note:'Attached to 6-week visit'}
+  ];
+  DB.pregnancies=[
+    {id:'1',patientId:'6',lmp:addDays(d,-140),edd:addDays(d,140),gravida:2,para:1,ab:0,live:1,blood:'O+',bp:'118/76',weight:64,height:160,risk:'Low',ttDose:1,visits:[],fhr:150,fundal:22,complication:'',dueDate:addDays(d,140)},
+    {id:'2',patientId:'7',lmp:addDays(d,-210),edd:addDays(d,70),gravida:3,para:2,ab:0,live:2,blood:'B+',bp:'126/82',weight:58,height:152,risk:'Medium',ttDose:2,visits:[],fhr:142,fundal:30,complication:'Mild anaemia',dueDate:addDays(d,70)},
+    {id:'3',patientId:'8',lmp:addDays(d,-175),edd:addDays(d,105),gravida:1,para:0,ab:0,live:0,blood:'A+',bp:'148/94',weight:52,height:158,risk:'High',ttDose:1,visits:[],fhr:146,fundal:26,complication:'Gestational hypertension',dueDate:addDays(d,105)},
+    {id:'4',patientId:'9',lmp:addDays(d,-95),edd:addDays(d,185),gravida:4,para:3,ab:0,live:3,blood:'AB-',bp:'112/74',weight:47,height:150,risk:'High',ttDose:0,visits:[],fhr:138,fundal:17,complication:'Rh negative — anti-D planning',dueDate:addDays(d,185)}
+  ];
+  DB.immunizations=[
+    {id:'1',patientId:'1',vaccine:'BCG',dose:1,date:addDays(d,-170),dueDate:addDays(d,-170),status:'Given',site:'Left arm'},
+    {id:'2',patientId:'1',vaccine:'OPV 0 + HepB 0',dose:0,date:addDays(d,-170),dueDate:addDays(d,-170),status:'Given',site:''},
+    {id:'3',patientId:'1',vaccine:'Pentavalent 1 + OPV 1',dose:1,date:addDays(d,-130),dueDate:addDays(d,-130),status:'Given',site:'Left thigh'},
+    {id:'4',patientId:'1',vaccine:'Pentavalent 2 + OPV 2',dose:2,date:addDays(d,-90),dueDate:addDays(d,-90),status:'Given',site:'Right thigh'},
+    {id:'5',patientId:'1',vaccine:'Pentavalent 3 + OPV 3',dose:3,date:addDays(d,-50),dueDate:addDays(d,-50),status:'Given',site:'Left thigh'},
+    {id:'6',patientId:'1',vaccine:'MR 1 (9 months)',dose:1,date:'',dueDate:addDays(d,40),status:'Due',site:''},
+    {id:'7',patientId:'2',vaccine:'BCG',dose:1,date:addDays(d,-200),dueDate:addDays(d,-200),status:'Given',site:'Left arm'},
+    {id:'8',patientId:'2',vaccine:'Pentavalent 1 + OPV 1',dose:1,date:addDays(d,-160),dueDate:addDays(d,-160),status:'Given',site:'Left thigh'},
+    {id:'9',patientId:'2',vaccine:'Pentavalent 2 + OPV 2',dose:2,date:addDays(d,-118),dueDate:addDays(d,-118),status:'Given',site:'Right thigh'},
+    {id:'10',patientId:'2',vaccine:'Pentavalent 3 + OPV 3',dose:3,date:'',dueDate:addDays(d,-70),status:'Overdue',site:''},
+    {id:'11',patientId:'3',vaccine:'BCG',dose:1,date:addDays(d,-140),dueDate:addDays(d,-140),status:'Given',site:'Left arm'},
+    {id:'12',patientId:'5',vaccine:'BCG',dose:1,date:addDays(d,-15),dueDate:addDays(d,-15),status:'Given',site:'Left arm'},
+    {id:'13',patientId:'6',vaccine:'Td 1 (Tetanus)',dose:1,date:addDays(d,-80),dueDate:addDays(d,-80),status:'Given',site:'Left arm'},
+    {id:'14',patientId:'6',vaccine:'Td 2 (Tetanus)',dose:2,date:'',dueDate:addDays(d,-20),status:'Overdue',site:''},
+    {id:'15',patientId:'7',vaccine:'Td 1 (Tetanus)',dose:1,date:addDays(d,-150),dueDate:addDays(d,-150),status:'Given',site:'Left arm'},
+    {id:'16',patientId:'7',vaccine:'Td 2 (Tetanus)',dose:2,date:addDays(d,-90),dueDate:addDays(d,-90),status:'Given',site:'Right arm'},
+    {id:'17',patientId:'8',vaccine:'Td 1 (Tetanus)',dose:1,date:addDays(d,-120),dueDate:addDays(d,-120),status:'Given',site:'Left arm'},
+    {id:'18',patientId:'8',vaccine:'Td 2 (Tetanus)',dose:2,date:'',dueDate:addDays(d,-60),status:'Overdue',site:''}
+  ];
+  DB.appointments=[
+    {id:'1',patientId:'1',doctor:'Dr. Riya Verma',dept:'Pediatrics',date:addDays(d,-10),time:'10:00',status:'Completed',reason:'Well-baby check'},
+    {id:'2',patientId:'6',doctor:'Dr. Arjun Mehta',dept:'OB-GYN',date:d,time:'10:30',status:'Scheduled',reason:'ANC Visit 3'},
+    {id:'3',patientId:'3',doctor:'Dr. Kavya Nair',dept:'ENT / Audiology',date:addDays(d,6),time:'11:00',status:'Scheduled',reason:'Hearing re-screen (REFER follow-up)'},
+    {id:'4',patientId:'8',doctor:'Dr. Arjun Mehta',dept:'OB-GYN',date:d,time:'12:30',status:'Scheduled',reason:'High-risk review — BP'},
+    {id:'5',patientId:'2',doctor:'Dr. Riya Verma',dept:'Pediatrics',date:addDays(d,-3),time:'09:30',status:'Completed',reason:'Vaccination'},
+    {id:'6',patientId:'5',doctor:'Dr. Kavya Nair',dept:'ENT / Audiology',date:addDays(d,5),time:'14:00',status:'Scheduled',reason:'ABR referral follow-up'},
+    {id:'7',patientId:'4',doctor:'Dr. Riya Verma',dept:'Pediatrics',date:d,time:'15:00',status:'Scheduled',reason:'Hearing retest'}
+  ];
+  DB.prescriptions=[
+    {id:'1',patientId:'2',doctor:'Dr. Riya Verma',date:addDays(d,-2),medicines:[{name:'Neonatal phototherapy — BiliBlanket',dose:'per protocol',freq:'Continuous',dur:'48–72 h'},{name:'Vitamin D3 400 IU',dose:'0.5 ml',freq:'Once daily',dur:'60 days'}],notes:'Jaundice follow-up at 1 week. Ensure hydration and breast-milk feeding every 2–3 hours.'},
+    {id:'2',patientId:'3',doctor:'Dr. Kavya Nair',date:addDays(d,-4),medicines:[{name:'Ear drops (Betamethasone)',dose:'2 drops',freq:'BD',dur:'5 days'}],notes:'Wax impaction; re-screen both ears after 5 days.'},
+    {id:'3',patientId:'8',doctor:'Dr. Arjun Mehta',date:addDays(d,-60),medicines:[{name:'Labetalol 100 mg',dose:'1 tab',freq:'BD',dur:'Ongoing'},{name:'Calcium 500 mg + Vit D3',dose:'1 tab',freq:'OD',dur:'Pregnancy'}],notes:'Monitor BP daily. Report headache/visual disturbance urgently. High-risk register.'},
+    {id:'4',patientId:'7',doctor:'Dr. Arjun Mehta',date:addDays(d,-45),medicines:[{name:'Ferrous Ascorbate 100 mg',dose:'1 tab',freq:'OD',dur:'90 days'},{name:'Folic acid 5 mg',dose:'1 tab',freq:'OD',dur:'90 days'}],notes:'Mild anaemia. Repeat Hb after 1 month.'}
+  ];
+  DB.labs=[
+    {id:'1',patientId:'2',test:'Total Bilirubin',date:addDays(d,-2),result:'11.2',unit:'mg/dL',range:'< 12 (day 3)',status:'Normal',cat:'Biochemistry'},
+    {id:'2',patientId:'8',test:'Blood Pressure',date:addDays(d,-1),result:'148/94',unit:'mmHg',range:'< 140/90',status:'Critical',cat:'Clinical'},
+    {id:'3',patientId:'7',test:'Haemoglobin',date:addDays(d,-45),result:'9.8',unit:'g/dL',range:'11.0 – 14.0',status:'Low',cat:'Haematology'},
+    {id:'4',patientId:'6',test:'HbA1c',date:addDays(d,-30),result:'5.2',unit:'%',range:'< 5.7',status:'Normal',cat:'Biochemistry'},
+    {id:'5',patientId:'8',test:'Urine Protein',date:addDays(d,-1),result:'1+',unit:'',range:'Negative',status:'Critical',cat:'Urinalysis'},
+    {id:'6',patientId:'5',test:'Bilirubin (transcutaneous)',date:addDays(d,-3),result:'9.8',unit:'mg/dL',range:'< 13',status:'Normal',cat:'Biochemistry'}
+  ];
+  DB.vitals=[
+    {id:'1',patientId:'1',date:addDays(d,-10),hr:132,bp:'90/60',temp:36.9,spo2:98,rr:40},
+    {id:'2',patientId:'1',date:addDays(d,-40),hr:138,bp:'88/58',temp:37.1,spo2:97,rr:42},
+    {id:'3',patientId:'1',date:addDays(d,-80),hr:130,bp:'90/60',temp:36.8,spo2:99,rr:38},
+    {id:'4',patientId:'8',date:addDays(d,-1),hr:88,bp:'148/94',temp:36.7,spo2:98,rr:18},
+    {id:'5',patientId:'8',date:addDays(d,-15),hr:84,bp:'136/88',temp:36.9,spo2:98,rr:17},
+    {id:'6',patientId:'8',date:addDays(d,-35),hr:80,bp:'128/84',temp:36.8,spo2:99,rr:16},
+    {id:'7',patientId:'6',date:addDays(d,-7),hr:76,bp:'118/76',temp:36.6,spo2:99,rr:15},
+    {id:'8',patientId:'2',date:addDays(d,-2),hr:142,bp:'92/58',temp:37.0,spo2:96,rr:44}
+  ];
+  DB.pharmacy=[
+    {id:'1',name:'Paracetamol Syrup 250mg/5ml',cat:'Analgesic',stock:120,price:45,expiry:'2027-06-30',reorder:50},
+    {id:'2',name:'ORS Sachet',cat:'Rehydration',stock:40,price:12,expiry:'2027-01-31',reorder:60},
+    {id:'3',name:'Zinc Sulphate 20mg',cat:'Supplement',stock:15,price:18,expiry:'2026-12-31',reorder:30},
+    {id:'4',name:'Iron + Folic Acid (IFA)',cat:'Supplement',stock:220,price:2,expiry:'2027-03-31',reorder:100},
+    {id:'5',name:'Calcium + Vit D3',cat:'Supplement',stock:85,price:8,expiry:'2027-05-31',reorder:40},
+    {id:'6',name:'Labetalol 100mg',cat:'Cardiovascular',stock:12,price:32,expiry:'2026-11-30',reorder:25},
+    {id:'7',name:'Vitamin D3 400 IU Drops',cat:'Supplement',stock:9,price:95,expiry:'2027-08-31',reorder:20},
+    {id:'8',name:'Ear Tips (disposable, ₹5)',cat:'Consumable',stock:340,price:5,expiry:'2028-01-31',reorder:200}
+  ];
+  DB.billing=[
+    {id:'1',patientId:'5',date:addDays(d,-3),items:[{d:'Newborn hearing screening (SHRUTI)',a:1,p:50}],total:50,status:'Paid'},
+    {id:'2',patientId:'6',date:addDays(d,-7),items:[{d:'ANC visit + consultation',a:1,p:150},{d:'IFA tablets (30)',a:1,p:60}],total:210,status:'Paid'},
+    {id:'3',patientId:'8',date:addDays(d,-1),items:[{d:'High-risk review + BP monitor',a:1,p:200},{d:'Urine protein test',a:1,p:80}],total:280,status:'Pending'},
+    {id:'4',patientId:'2',date:addDays(d,-2),items:[{d:'Bilirubin test',a:1,p:120},{d:'Phototherapy kit',a:1,p:300}],total:420,status:'Paid'}
+  ];
+  save();
+}
+
+/* ============================= NAV ============================= */
+const NAV=[
+  {g:'Overview',items:[
+    {id:'dash',l:'Dashboard',i:'dash'},
+    {id:'reports',l:'Reports & Analytics',i:'chart'}
+  ]},
+  {g:'Hearing Screening',items:[
+    {id:'screening',l:'Newborn Hearing',i:'ear'},
+    {id:'realtime',l:'Real-Time Screening',i:'wave'},
+    {id:'simulator',l:'Screening Simulator',i:'tool'},
+    {id:'dpoae_viz',l:'DPOAE Visualization',i:'chart'},
+    {id:'ai_engine',l:'AI Signal Quality',i:'lab'},
+    {id:'devices',l:'Device Management',i:'tool'},
+    {id:'passport',l:'Hearing Passport',i:'baby'},
+    {id:'referrals',l:'Referral Navigation',i:'rx'}
+  ]},
+  {g:'Clinical',items:[
+    {id:'patients',l:'Patients',i:'users'},
+    {id:'prenatal',l:'Prenatal & Maternity',i:'baby'},
+    {id:'immunization',l:'Immunization',i:'syringe'},
+    {id:'appointments',l:'Appointments',i:'cal'},
+    {id:'prescriptions',l:'Prescriptions',i:'rx'},
+    {id:'labs',l:'Lab & Diagnostics',i:'lab'},
+    {id:'vitals',l:'Vitals & Growth',i:'heart'}
+  ]},
+  {g:'Operations',items:[
+    {id:'pharmacy',l:'Pharmacy',i:'pill'},
+    {id:'billing',l:'Billing',i:'wallet'},
+    {id:'staff',l:'Staff',i:'staff'}
+  ]},
+  {g:'Research & AI',items:[
+    {id:'prenatal_res',l:'Prenatal Research',i:'lab'},
+    {id:'explainable',l:'Explainable AI',i:'lab'},
+    {id:'parent_info',l:'Parent Module',i:'baby'},
+    {id:'tools',l:'Clinical Tools',i:'tool'}
+  ]}
+];
+let current='dash';
+function renderNav(){
+  $('#nav').innerHTML=NAV.map(g=>`
+    <div class="nav-group">${g.g}</div>
+    ${g.items.map(it=>`<button class="nav-item" data-id="${it.id}" onclick="go('${it.id}')">${I[it.i]}<span>${it.l}</span><span class="pill" style="${it.id==='screening'?'':'display:none'}">${dueScreenings().length}</span></button>`).join('')}
+  `).join('');
+  updateNav();
+}
+function updateNav(){
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('active',b.dataset.id===current));
+}
+function toggleSidebar(){$('#sidebar').classList.toggle('open')}
+function go(id){current=id;$('#sidebar').classList.remove('open');renderView();window.scrollTo(0,0);try{history.replaceState(null,'','#'+id)}catch(e){}}
+
+/* ============================= MODALS / TOAST ============================= */
+function openModal(html,lg){$('#modalBox').className='modal'+(lg?' lg':'');$('#modalBox').innerHTML=html;$('#modalOverlay').classList.add('open')}
+function closeModal(){$('#modalOverlay').classList.remove('open')}
+function toast(msg,type){const t=document.createElement('div');t.className='toast'+(type==='ok'?' green':type==='err'?' red':'');t.innerHTML=(type==='ok'?I.check:type==='err'?I.x:'' )+'<span>'+msg+'</span>';$('#toastWrap').appendChild(t);setTimeout(()=>{t.style.opacity='0';t.style.transition='.3s';setTimeout(()=>t.remove(),300)},2600)}
+
+/* ============================= HELPERS ============================= */
+const pById=id=>DB.patients.find(p=>p.id===id);
+const scById=id=>DB.screenings.find(s=>s.id===id);
+function pgById(id){return DB.pregnancies.find(p=>p.patientId===id)}
+function patientRow(p,sub){
+  return `<div class="patient-cell"><div class="avatar" style="background:${colorFor(p.name)}">${initials(p.name)}</div><div><b>${esc(p.name)}</b><span>${sub||''}</span></div></div>`;
+}
+function gaFromLmp(lmp){
+  if(!lmp)return null;
+  const gest=daysBetween(lmp,today());
+  if(gest<0)return null;
+  return {weeks:Math.floor(gest/7),days:gest%7,total:gest,trimester:gest<98?1:gest<196?2:3};
+}
+function gaOfPreg(p){
+  const g=gaFromLmp(p.lmp);
+  return g?`${g.weeks}w ${g.days}d`:'—';
+}
+function riskClass(r){return r==='High'?'bg-danger':r==='Medium'?'bg-warning':'bg-success'}
+function verdictBadge(v){return v==='PASS'?'bg-success':v==='REFER'?'bg-danger':'bg-warning'}
+function statusBadge(s){const m={Cleared:'bg-success','Re-screen due':'bg-warning','ABR referral':'bg-danger',Scheduled:'bg-info',Completed:'bg-success',Given:'bg-success',Due:'bg-warning',Overdue:'bg-danger',Paid:'bg-success',Pending:'bg-warning',Cancelled:'bg-neutral',Normal:'bg-success',Low:'bg-warning','Critical':'bg-danger',High:'bg-danger',Medium:'bg-warning',Low2:'bg-success'};return `<span class="badge ${m[s]||'bg-neutral'}">${s}</span>`}
+function ageBadge(patientId){
+  const p=pById(patientId);
+  return p&&p.dob?`<span class="badge bg-teal">${ageFromDob(p.dob)}</span>`:'';
+}
+function selectPatients(sel){
+  return `<select id="selPatient" class="${sel||''}" required>
+    <option value="">Select patient…</option>
+    ${DB.patients.map(p=>`<option value="${p.id}">${esc(p.name)} (${esc(p.phone||'no phone')})${p.dob?' · '+ageFromDob(p.dob):''}</option>`).join('')}
+  </select>`;
+}
+function dueScreenings(){
+  return DB.screenings.filter(s=>s.status==='Re-screen due'||s.status==='ABR referral');
+}
+
+/* ============================= DASHBOARD ============================= */
+function renderDash(){
+  const d=today();
+  const todayAppts=DB.appointments.filter(a=>a.date===d&&a.status!=='Completed');
+  const refs=DB.screenings.filter(s=>s.verdict==='REFER');
+  const passRate=DB.screenings.length?Math.round(DB.screenings.filter(s=>s.verdict==='PASS').length/DB.screenings.length*100):0;
+  const hr=DB.pregnancies.filter(p=>p.risk==='High').length;
+  const overdue=DB.immunizations.filter(v=>v.status==='Overdue').length;
+  const upcomingAppts=DB.appointments.filter(a=>a.date>=d&&a.status!=='Completed').sort((a,b)=>a.date.localeCompare(b.date)).slice(0,4);
+  const sc=DB.screenings.sort((a,b)=>b.date.localeCompare(a.date));
+  const pTrend=[];
+  for(let i=5;i>=0;i--){pTrend.push({m:monthsBack(i),n:DB.patients.filter(p=>p.regDate<=monthsAhead(1)&&p.regDate>=monthsBack(i)).length})}
+  const scTrend=[];
+  for(let i=5;i>=0;i--){const s=monthsBack(i),e=monthsAhead(1);scTrend.push({m:s,pass:DB.screenings.filter(x=>x.verdict==='PASS'&&x.date>=s&&x.date<e).length,refer:DB.screenings.filter(x=>x.verdict==='REFER'&&x.date>=s&&x.date<e).length})}
+  const rev=DB.billing.filter(b=>b.status==='Paid').reduce((s,b)=>s+ (+b.total||0),0);
+  $('#content').innerHTML=`
+  <div class="page-head">
+    <div><h1>Welcome back, Dr. Riya</h1><p>${new Date().toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'})} · Everything at a glance</p></div>
+    <div class="head-actions">
+      <button class="btn btn-rose" onclick="go('screening')">${I.ear} New Screening</button>
+      <button class="btn btn-primary" onclick="openRegisterPatient()">${I.plus} Register Patient</button>
+    </div>
+  </div>
+
+  <div class="grid g4" style="margin-bottom:16px">
+    <div class="card stat"><div class="ic teal">${I.users}</div><div><div class="v">${DB.patients.length}</div><div class="l">Total Patients</div><div class="t">+${DB.patients.filter(p=>p.regDate>=addDays(d,-30)).length} this month</div></div></div>
+    <div class="card stat"><div class="ic rose">${I.ear}</div><div><div class="v">${DB.screenings.length}</div><div class="l">Screenings Done</div><div class="t">${passRate}% pass · ${refs.length} referrals</div></div></div>
+    <div class="card stat"><div class="ic violet">${I.baby}</div><div><div class="v">${DB.pregnancies.length}</div><div class="l">Active Pregnancies</div><div class="t">${hr} high-risk being tracked</div></div></div>
+    <div class="card stat"><div class="ic amber">${I.syringe}</div><div><div class="v">${todayAppts.length}</div><div class="l">Appts Today</div><div class="t">${overdue} immunizations overdue</div></div></div>
+  </div>
+
+  <div class="grid g2" style="margin-bottom:16px">
+    <div class="card">
+      <div class="card-head"><div><h3>Patients Registered</h3><div class="sub">Last 6 months</div></div></div>
+      <div class="card-pad"><div class="chart-box"><canvas id="chPatients"></canvas></div></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div><h3>Screening Verdicts</h3><div class="sub">PASS vs REFER, last 6 months</div></div></div>
+      <div class="card-pad"><div class="chart-box"><canvas id="chScreening"></canvas></div></div>
+    </div>
+  </div>
+
+  <div class="grid g2">
+    <div class="card">
+      <div class="card-head"><div><h3>Today's Schedule</h3><div class="sub">${todayAppts.length} appointment(s)</div></div><button class="btn btn-outline btn-sm" onclick="go('appointments')">View all</button></div>
+      ${todayAppts.length?`<div class="card-pad" style="padding-top:8px">${todayAppts.map(a=>{const p=pById(a.patientId);return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f1f5f9"><div style="background:var(--accent-l);color:var(--accent);border-radius:10px;padding:6px 10px;font-size:12px;font-weight:700;min-width:52px;text-align:center">${a.time}</div>${patientRow(p||{name:'—'},a.doctor)}<div style="margin-left:auto" class="badge bg-neutral">${a.dept}</div></div>`}).join('')}</div>`:`<div class="empty"><p>No appointments scheduled today.</p></div>`}
+    </div>
+    <div class="card">
+      <div class="card-head"><div><h3>Upcoming</h3><div class="sub">Next in pipeline</div></div></div>
+      <div class="card-pad" style="padding-top:8px">
+        ${upcomingAppts.map(a=>{const p=pById(a.patientId);return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f1f5f9">${patientRow(p||{name:'—'},a.reason)}<div style="margin-left:auto;text-align:right"><b style="font-size:12.5px">${fmtDate(a.date)}</b><div class="badge bg-info">${a.time}</div></div></div>`}).join('')}
+      </div>
+    </div>
+  </div>
+
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card">
+      <div class="card-head"><div><h3>Recent Screenings</h3><div class="sub">SHRUTI DPOAE results</div></div><button class="btn btn-outline btn-sm" onclick="go('screening')">All</button></div>
+      <div class="table-wrap"><table><thead><tr><th>Newborn</th><th>Date</th><th>L / R</th><th>Verdict</th><th></th></tr></thead>
+      <tbody>${sc.slice(0,5).map(s=>{const p=pById(s.patientId);return `<tr><td>${patientRow(p||{name:'—'},ageBadge(s.patientId))}</td><td>${fmtDate(s.date)}</td><td><span class="badge ${s.earLeft==='PASS'?'bg-success':'bg-danger'}">${s.earLeft}</span> <span class="badge ${s.earRight==='PASS'?'bg-success':'bg-danger'}">${s.earRight}</span></td><td>${verdictBadge(s.verdict)}</td><td class="tbl-actions"><button class="ta" onclick="viewScreening('${s.id}')">${I.eye}</button></td></tr>`}).join('')}</tbody></table></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div><h3>Revenue</h3><div class="sub">Collected from paid invoices</div></div></div>
+      <div class="card-pad">
+        <div style="display:flex;align-items:flex-end;gap:10px;margin-bottom:14px"><div class="v" style="font-size:30px;font-weight:700;color:var(--primary-d)">${money(rev)}</div><div class="badge bg-success" style="margin-bottom:6px">${DB.billing.length} invoices</div></div>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)">
+          <span>Paid: <b style="color:var(--success)">${money(DB.billing.filter(b=>b.status==='Paid').reduce((s,b)=>s+(+b.total||0),0))}</b></span>
+          <span>Pending: <b style="color:var(--warning)">${money(DB.billing.filter(b=>b.status==='Pending').reduce((s,b)=>s+(+b.total||0),0))}</b></span>
+        </div>
+      </div>
+    </div>
+  </div>
+  `;
+  lineChart('chPatients',pTrend.map(x=>shortMon(x.m)),[pTrend.map(x=>x.n)],[['#0d9488']],['Patients']);
+  groupedBar('chScreening',scTrend.map(x=>shortMon(x.m)),[{n:'PASS',v:scTrend.map(x=>x.pass),c:'#16a34a'},{n:'REFER',v:scTrend.map(x=>x.refer),c:'#e11d48'}]);
+}
+function shortMon(isoStr){const [y,m]=isoStr.split('-');return ['J','F','M','A','M','J','J','A','S','O','N','D'][+m-1]+"'"+(y+'').slice(2)}
+function printReport(){window.print()}
+
+/* ============================= CHARTS ============================= */
+if(!CanvasRenderingContext2D.prototype.roundRect){
+  CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){r=Math.min(r,Math.abs(w)/2,Math.abs(h)/2);this.moveTo(x+r,y);this.arcTo(x+w,y,x+w,y+h,r);this.arcTo(x+w,y+h,x,y+h,r);this.arcTo(x,y+h,x,y,r);this.arcTo(x,y,x+w,y,r);this.closePath();return this};
+}
+function prepCanvas(id){
+  const c=document.getElementById(id);if(!c)return null;
+  const dpr=window.devicePixelRatio||1;const r=c.getBoundingClientRect();
+  c.width=r.width*dpr;c.height=r.height*dpr;c.style.width=r.width+'px';c.style.height=r.height+'px';
+  const x=c.getContext('2d');x.scale(dpr,dpr);return{x,w:r.width,h:r.height,ctx:x};
+}
+function lineChart(id,labels,series,colors,names){
+  const p=prepCanvas(id);if(!p)return;const{ctx,w,h}=p;
+  const pad={l:42,r:12,t:14,b:28};
+  const max=Math.max(4,...series.flat().map(v=>v*1.2));
+  const min=0;
+  const y=(v)=>h-pad.b-((v-min)/(max-min))*(h-pad.t-pad.b);
+  const x=(i)=>pad.l+(i/(Math.max(1,labels.length-1)))*(w-pad.l-pad.r);
+  ctx.font='10px Segoe UI';
+  ctx.strokeStyle='#e2e8f0';ctx.fillStyle='#94a3b8';
+  for(let g=0;g<=4;g++){const v=min+(max-min)*g/4;ctx.beginPath();ctx.moveTo(pad.l,y(v));ctx.lineTo(w-pad.r,y(v));ctx.stroke();ctx.fillText(Math.round(v),6,y(v)+3)}
+  labels.forEach((l,i)=>{ctx.fillText(l,x(i)-6,h-pad.b+14)});
+  series.forEach((s,si)=>{
+    ctx.strokeStyle=colors[si][0];ctx.lineWidth=2.2;ctx.lineJoin='round';ctx.beginPath();
+    s.forEach((v,i)=>{i?ctx.lineTo(x(i),y(v)):ctx.moveTo(x(i),y(v))});ctx.stroke();
+    const g=ctx.createLinearGradient(0,pad.t,0,h-pad.b);g.addColorStop(0,colors[si][0]+'26');g.addColorStop(1,colors[si][0]+'00');
+    ctx.fillStyle=g;ctx.beginPath();ctx.moveTo(x(0),h-pad.b);s.forEach((v,i)=>ctx.lineTo(x(i),y(v)));ctx.lineTo(x(s.length-1),h-pad.b);ctx.closePath();ctx.fill();
+    ctx.fillStyle=colors[si][0];s.forEach((v,i)=>{ctx.beginPath();ctx.arc(x(i),y(v),3,0,7);ctx.fill()});
+  });
+}
+function groupedBar(id,labels,series){
+  const p=prepCanvas(id);if(!p)return;const{ctx,w,h}=p;
+  const pad={l:36,r:10,t:14,b:26};
+  const max=Math.max(3,...series.flatMap(s=>s.v))*1.15;
+  const bw=Math.min(26,(w-pad.l-pad.r)/labels.length/1.7);
+  ctx.font='10px Segoe UI';ctx.strokeStyle='#e2e8f0';ctx.fillStyle='#94a3b8';
+  for(let g=0;g<=4;g++){const v=max*g/4,ys=h-pad.b-(v/max)*(h-pad.t-pad.b);ctx.beginPath();ctx.moveTo(pad.l,ys);ctx.lineTo(w-pad.r,ys);ctx.stroke();ctx.fillText(Math.round(v),4,ys+3)}
+  labels.forEach((l,i)=>{
+    ctx.fillStyle='#94a3b8';ctx.fillText(l,pad.l+(i+.5)*((w-pad.l-pad.r)/labels.length)-(bw*series.length/2),h-pad.b+14);
+    series.forEach((s,si)=>{
+      const x0=pad.l+(i+.5)*((w-pad.l-pad.r)/labels.length)-bw*series.length/2+si*bw;
+      const hh=(s.v[i]/max)*(h-pad.t-pad.b);
+      ctx.fillStyle=s.c;ctx.globalAlpha=.9;
+      ctx.fillRect(x0+1,h-pad.b-hh,bw-2,hh);
+      ctx.globalAlpha=1;
+      ctx.fillStyle='#334155';ctx.fillText(s.v[i]||'',x0+bw/2-4,h-pad.b-hh-3);
+    });
+  });
+}
+function donut(id,data){
+  const p=prepCanvas(id);if(!p)return;const{ctx,w,h}=p;
+  const cx=w/2,cy=h/2,r=Math.min(w,h)/2-10,ir=r*.62;
+  const total=data.reduce((s,d)=>s+d.v,0)||1;
+  let a=-Math.PI/2;
+  data.forEach(d=>{
+    const a2=a+(d.v/total)*Math.PI*2;
+    ctx.beginPath();ctx.arc(cx,cy,r,a,a2);ctx.arc(cx,cy,ir,a2,a,true);ctx.closePath();
+    ctx.fillStyle=d.c;ctx.fill();
+    a=a2;
+  });
+  ctx.fillStyle='#0f172a';ctx.font='700 15px Segoe UI';ctx.textAlign='center';
+  ctx.fillText(total,cx,cy+4);
+  ctx.font='10px Segoe UI';ctx.fillStyle='#94a3b8';ctx.fillText('total',cx,cy+16);
+  ctx.textAlign='left';
+}
+
+/* ============================= PATIENTS ============================= */
+function renderPatients(){
+  const q=(globalSearchVal||'').toLowerCase();
+  const list=DB.patients.filter(p=>!q||(p.name+' '+p.phone+' '+p.id).toLowerCase().includes(q));
+  $('#content').innerHTML=`
+  <div class="page-head">
+    <div><h1>Patients</h1><p>${DB.patients.length} registered · ${DB.patients.filter(p=>p.dob&&daysBetween(p.dob,today())<0).length} children under care</p></div>
+    <div class="head-actions"><button class="btn btn-primary" onclick="openRegisterPatient()">${I.plus} Register Patient</button></div>
+  </div>
+  <div class="card">
+    <div class="table-wrap"><table><thead><tr><th>Patient</th><th>DOB / Age</th><th>Gender</th><th>Blood</th><th>Phone</th><th>Allergies</th><th>Actions</th></tr></thead>
+    <tbody>${list.map(p=>`<tr>
+      <td>${patientRow(p,'ID '+p.id)}</td>
+      <td>${p.dob?fmtDate(p.dob)+' <span class="badge bg-teal">'+ageFromDob(p.dob)+'</span>':'—'}</td>
+      <td>${p.gender}</td>
+      <td>${p.blood||'—'}</td>
+      <td>${esc(p.phone||'—')}</td>
+      <td>${p.allergies&&p.allergies!=='None'?`<span class="badge bg-danger">${esc(p.allergies)}</span>`:'None'}</td>
+      <td class="tbl-actions">
+        <button class="ta" onclick="viewPatient('${p.id}')" title="View">${I.eye}</button>
+        <button class="ta" onclick="openEditPatient('${p.id}')" title="Edit">${I.edit}</button>
+        <button class="ta danger" onclick="delPatient('${p.id}')" title="Delete">${I.trash}</button>
+      </td></tr>`).join('')}
+    </tbody></table></div>
+    ${list.length?'':'<div class="empty"><p>No patients found.</p></div>'}
+  </div>`;
+}
+let globalSearchVal='';
+function globalSearch(v){globalSearchVal=v;if(current==='patients')renderPatients()}
+function openRegisterPatient(){
+  openModal(`
+  <div class="modal-head"><h3>Register New Patient</h3><button class="ta" onclick="closeModal()">${I.x}</button></div>
+  <form onsubmit="savePatient(event)">
+  <div class="modal-body">
+    <div class="form-grid">
+      <div class="field full"><span>Full Name</span><input id="f-name" required placeholder="e.g. Aarav Sharma"></div>
+      <div class="field"><span>Date of Birth</span><input id="f-dob" type="date" max="${today()}" onchange="autoFillAge()"></div>
+      <div class="field"><span>Gender</span><select id="f-gender"><option>Male</option><option>Female</option><option>Other</option></select></div>
+      <div class="field"><span>Phone</span><input id="f-phone" placeholder="+91…"></div>
+      <div class="field"><span>Blood Group</span><select id="f-blood"><option></option>${['O+','O-','A+','A-','B+','B-','AB+','AB-'].map(b=>`<option>${b}</option>`).join('')}</select></div>
+      <div class="field"><span>Height (cm)</span><input id="f-height" type="number" step="0.1" placeholder="e.g. 50"></div>
+      <div class="field"><span>Weight (kg)</span><input id="f-weight" type="number" step="0.1" placeholder="e.g. 3.2"></div>
+      <div class="field full"><span>Address</span><input id="f-addr" placeholder="City, State"></div>
+      <div class="field full"><span>Allergies</span><input id="f-all" placeholder="None"></div>
+      <div class="field full"><span>Clinical Notes</span><textarea id="f-notes" rows="2" placeholder="Birth history, risks…"></textarea></div>
+    </div>
+  </div>
+  <div class="modal-foot"><button type="button" class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-primary">${I.check} Register</button></div>
+  </form>`);
+}
+function autoFillAge(){const dob=$('#f-dob').value;if(dob){const a=ageFromDob(dob);if(document.getElementById('f-name')){} } }
+function savePatient(e){
+  e.preventDefault();
+  const p={id:nextId('patients'),name:$('#f-name').value.trim(),dob:$('#f-dob').value,gender:$('#f-gender').value,phone:$('#f-phone').value.trim(),blood:$('#f-blood').value,height:$('#f-height').value,weight:$('#f-weight').value,address:$('#f-addr').value.trim(),allergies:$('#f-all').value.trim()||'None',notes:$('#f-notes').value.trim(),regDate:today()};
+  DB.patients.push(p);save();closeModal();toast('Patient registered successfully','ok');renderPatients();
+}
+function openEditPatient(id){
+  const p=pById(id);
+  openModal(`
+  <div class="modal-head"><h3>Edit Patient</h3><button class="ta" onclick="closeModal()">${I.x}</button></div>
+  <form onsubmit="updatePatient(event,'${id}')">
+  <div class="modal-body">
+    <div class="form-grid">
+      <div class="field full"><span>Full Name</span><input id="f-name" value="${esc(p.name)}" required></div>
+      <div class="field"><span>Date of Birth</span><input id="f-dob" type="date" value="${p.dob||''}" max="${today()}"></div>
+      <div class="field"><span>Gender</span><select id="f-gender"><option ${p.gender==='Male'?'selected':''}>Male</option><option ${p.gender==='Female'?'selected':''}>Female</option><option ${p.gender==='Other'?'selected':''}>Other</option></select></div>
+      <div class="field"><span>Phone</span><input id="f-phone" value="${esc(p.phone||'')}"></div>
+      <div class="field"><span>Blood Group</span><select id="f-blood"><option></option>${['O+','O-','A+','A-','B+','B-','AB+','AB-'].map(b=>`<option ${p.blood===b?'selected':''}>${b}</option>`).join('')}</select></div>
+      <div class="field"><span>Height (cm)</span><input id="f-height" type="number" step="0.1" value="${p.height||''}"></div>
+      <div class="field"><span>Weight (kg)</span><input id="f-weight" type="number" step="0.1" value="${p.weight||''}"></div>
+      <div class="field full"><span>Address</span><input id="f-addr" value="${esc(p.address||'')}"></div>
+      <div class="field full"><span>Allergies</span><input id="f-all" value="${esc(p.allergies==='None'?'':p.allergies)}"></div>
+      <div class="field full"><span>Clinical Notes</span><textarea id="f-notes" rows="2">${esc(p.notes||'')}</textarea></div>
+    </div>
+  </div>
+  <div class="modal-foot"><button type="button" class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-primary">${I.check} Save</button></div>
+  </form>`);
+}
+function updatePatient(e,id){
+  e.preventDefault();const p=pById(id);
+  Object.assign(p,{name:$('#f-name').value.trim(),dob:$('#f-dob').value,gender:$('#f-gender').value,phone:$('#f-phone').value.trim(),blood:$('#f-blood').value,height:$('#f-height').value,weight:$('#f-weight').value,address:$('#f-addr').value.trim(),allergies:$('#f-all').value.trim()||'None',notes:$('#f-notes').value.trim()});
+  save();closeModal();toast('Patient updated','ok');renderPatients();
+}
+function delPatient(id){
+  if(!confirm('Delete this patient and all linked records?'))return;
+  DB.patients=DB.patients.filter(p=>p.id!==id);
+  DB.screenings=DB.screenings.filter(s=>s.patientId!==id);
+  DB.pregnancies=DB.pregnancies.filter(p=>p.patientId!==id);
+  DB.immunizations=DB.immunizations.filter(v=>v.patientId!==id);
+  DB.appointments=DB.appointments.filter(a=>a.patientId!==id);
+  save();toast('Patient deleted','err');renderPatients();
+}
+function viewPatient(id){
+  const p=pById(id);
+  const sc=DB.screenings.filter(s=>s.patientId===id);
+  const labs=DB.labs.filter(l=>l.patientId===id);
+  const im=DB.immunizations.filter(v=>v.patientId===id);
+  const rx=DB.prescriptions.filter(r=>r.patientId===id);
+  const pg=pgById(id);
+  openModal(`
+  <div class="modal-head"><h3>Patient Record</h3><button class="ta" onclick="closeModal()">${I.x}</button></div>
+  <div class="modal-body">
+    <div style="display:flex;gap:14px;align-items:center;margin-bottom:18px">${patientRow(p, 'ID '+p.id)}<div style="margin-left:auto;display:flex;gap:6px"><span class="badge bg-neutral">${p.gender}</span>${p.blood?`<span class="badge bg-violet">${p.blood}</span>`:''}${p.dob?`<span class="badge bg-teal">${ageFromDob(p.dob)}</span>`:''}</div></div>
+    <div class="grid g3" style="margin-bottom:16px">
+      <div class="kpi card"><div class="n">${p.height||'—'}</div><div class="k">Height (cm)</div></div>
+      <div class="kpi card"><div class="n">${p.weight||'—'}</div><div class="k">Weight (kg)</div></div>
+      <div class="kpi card"><div class="n">${p.height&&p.weight?(p.weight/((p.height/100)**2)).toFixed(1):'—'}</div><div class="k">BMI</div></div>
+    </div>
+    <div class="alert info" style="margin-bottom:16px">${I.bell}<div><b>Contact</b>${esc(p.phone||'—')} · ${esc(p.address||'—')}<br>${p.allergies&&p.allergies!=='None'?`<span style="color:var(--danger)">Allergy: ${esc(p.allergies)}</span>`:'No known allergies'}</div></div>
+    ${pg?`<div class="alert teal" style="margin-bottom:16px">${I.baby}<div><b>Pregnancy in progress</b>GA ${gaOfPreg(pg)} · EDD ${fmtDate(pg.edd)} · Risk ${pg.risk}</div></div>`:''}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <div><h4 style="font-size:13px;margin-bottom:8px">Hearing Screening (${sc.length})</h4>${sc.length?sc.slice(0,4).map(s=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f1f5f9"><span>${fmtDate(s.date)}</span>${verdictBadge(s.verdict)}</div>`).join(''):'<p class="k" style="color:var(--muted)">No screening yet.</p>'}</div>
+      <div><h4 style="font-size:13px;margin-bottom:8px">Immunization (${im.length})</h4>${im.slice(0,4).map(v=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f1f5f9"><span>${esc(v.vaccine)}</span>${statusBadge(v.status)}</div>`).join('')}</div>
+    </div>
+    ${labs.length?`<h4 style="font-size:13px;margin:14px 0 8px">Lab Results</h4>${labs.map(l=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f1f5f9"><span>${esc(l.test)} (${fmtDate(l.date)})</span><span><b>${esc(l.result)} ${l.unit}</b> <span class="k" style="color:var(--muted)">(${esc(l.range)})</span></span></div>`).join('')}`:''}
+    ${rx.length?`<h4 style="font-size:13px;margin:14px 0 8px">Prescriptions</h4>${rx.map(r=>`<div style="padding:6px 0;border-bottom:1px solid #f1f5f9"><b>${fmtDate(r.date)}</b> — ${r.medicines.map(m=>m.name).join(', ')}</div>`).join('')}`:''}
+  </div>`);
+}
+
+/* ============================= SCREENING (SHRUTI) ============================= */
+function renderScreening(){
+  const pass=DB.screenings.filter(s=>s.verdict==='PASS').length;
+  const refer=DB.screenings.filter(s=>s.verdict==='REFER').length;
+  const retest=DB.screenings.filter(s=>s.verdict==='RETEST').length;
+  const due=dueScreenings();
+  const list=[...DB.screenings].sort((a,b)=>b.date.localeCompare(a.date));
+  $('#content').innerHTML=`
+  <div class="page-head">
+    <div><h1>Newborn Hearing Screening</h1><p>SHRUTI · DPOAE screener · PASS / REFER protocol under NPPCD & RBSK</p></div>
+    <div class="head-actions">
+      <button class="btn btn-outline" onclick="screeningStats()">${I.chart} Protocol</button>
+      <button class="btn btn-rose" onclick="openScreening()">${I.plus} New Screening</button>
+    </div>
+  </div>
+
+  <div class="grid g4" style="margin-bottom:16px">
+    <div class="card stat"><div class="ic teal">${I.ear}</div><div><div class="v">${DB.screenings.length}</div><div class="l">Total Tests</div><div class="t">avg under 30 s</div></div></div>
+    <div class="card stat"><div class="ic blue">${I.check}</div><div><div class="v">${pass}</div><div class="l">PASS</div><div class="t">${DB.screenings.length?Math.round(pass/DB.screenings.length*100):0}% of tests</div></div></div>
+    <div class="card stat"><div class="ic rose">${I.alert}</div><div><div class="v">${refer}</div><div class="l">REFER</div><div class="t">+${retest} retest needed</div></div></div>
+    <div class="card stat"><div class="ic amber">${I.syringe}</div><div><div class="v">${due.length}</div><div class="l">Follow-up Due</div><div class="t">linked to 6/10/14-wk visits</div></div></div>
+  </div>
+
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-pad">
+      <h3 style="font-size:14px;margin-bottom:10px">Referral Escalation Ladder</h3>
+      <div class="flow">
+        <span class="fnode">Screening at birth</span><span class="arrow">→</span>
+        <span class="fnode">REFER</span><span class="arrow">→</span>
+        <span class="fnode">Auto-attach to 6/10/14-wk immunisation visit</span><span class="arrow">→</span>
+        <span class="fnode warn">Re-screen at a visit the family already makes</span><span class="arrow">→</span>
+        <span class="fnode warn">ABR referral</span><span class="arrow">→</span>
+        <span class="fnode warn">Missed → SMS → ASHA home visit → block worklist</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><div><h3>Screening Records</h3><div class="sub">${list.length} recorded</div></div></div>
+    <div class="table-wrap"><table>
+    <thead><tr><th>Newborn</th><th>Date</th><th>Ear Results</th><th>SNR L/R</th><th>Verdict</th><th>Follow-up</th><th>Status</th><th>Operator</th><th></th></tr></thead>
+    <tbody>${list.map(s=>{const p=pById(s.patientId);
+      return `<tr>
+      <td>${patientRow(p||{name:'—'},ageBadge(s.patientId))}</td>
+      <td>${fmtDate(s.date)}</td>
+      <td><span class="badge ${s.earLeft==='PASS'?'bg-success':'bg-danger'}">L ${s.earLeft}</span> <span class="badge ${s.earRight==='PASS'?'bg-success':'bg-danger'}">R ${s.earRight}</span></td>
+      <td>${s.snrLeft??'—'} / ${s.snrRight??'—'} dB</td>
+      <td>${verdictBadge(s.verdict)}</td>
+      <td>${s.followUp?fmtDate(s.followUp):'—'}</td>
+      <td>${statusBadge(s.status)}</td>
+      <td>${esc(s.operator||'—')}</td>
+      <td class="tbl-actions"><button class="ta" onclick="viewScreening('${s.id}')">${I.eye}</button><button class="ta" onclick="openScreening('${s.id}')">${I.edit}</button></td></tr>`}).join('')}
+    </tbody></table></div>
+  </div>`;
+}
+function openScreening(id){
+  const s=id?scById(id):null;
+  const p=s?pById(s.patientId):null;
+  openModal(`
+  <div class="modal-head"><h3>${s?'Edit':'Record'} Hearing Screening</h3><button class="ta" onclick="closeModal()">${I.x}</button></div>
+  <form onsubmit="saveScreening(event,'${id||''}')">
+  <div class="modal-body">
+    <div class="form-grid">
+      <div class="field full"><span>Newborn / Patient</span>${s?`<input class="ro" value="${esc(p?p.name:'—')}" readonly>`:selectPatients()}</div>
+      <div class="field"><span>Test Date</span><input id="s-date" type="date" value="${s?s.date:today()}" max="${today()}" required></div>
+      <div class="field"><span>Operator</span><input id="s-op" value="${s?s.operator:'ASHA / ANM '}" placeholder="e.g. ASHA Priya"></div>
+      <div class="field"><span>Left Ear (f₂ 2–5 kHz)</span><select id="s-l" onchange="autoVerdict()"><option ${s&&s.earLeft==='PASS'?'selected':''}>PASS</option><option ${s&&s.earLeft==='REFER'?'selected':''}>REFER</option><option ${s&&s.earLeft==='RETEST'?'selected':''}>RETEST</option></select></div>
+      <div class="field"><span>Right Ear</span><select id="s-r" onchange="autoVerdict()"><option ${s&&s.earRight==='PASS'?'selected':''}>PASS</option><option ${s&&s.earRight==='REFER'?'selected':''}>REFER</option><option ${s&&s.earRight==='RETEST'?'selected':''}>RETEST</option></select></div>
+      <div class="field"><span>SNR Left (dB)</span><input id="s-sl" type="number" step="0.5" value="${s&&s.snrLeft!=null?s.snrLeft:''}" placeholder="≥ 6 = good"></div>
+      <div class="field"><span>SNR Right (dB)</span><input id="s-sr" type="number" step="0.5" value="${s&&s.snrRight!=null?s.snrRight:''}" placeholder="≥ 6 = good"></div>
+      <div class="field"><span>Verdict</span><select id="s-verdict"><option ${s&&s.verdict==='PASS'?'selected':''}>PASS</option><option ${s&&s.verdict==='REFER'?'selected':''}>REFER</option><option ${s&&s.verdict==='RETEST'?'selected':''}>RETEST</option></select></div>
+      <div class="field"><span>Follow-up Date</span><input id="s-fu" type="date" value="${s?s.followUp:addDays(today(),14)}"></div>
+      <div class="field"><span>Status</span><select id="s-status"><option ${s&&s.status==='Cleared'?'selected':''}>Cleared</option><option ${s&&s.status==='Re-screen due'?'selected':''}>Re-screen due</option><option ${s&&s.status==='ABR referral'?'selected':''}>ABR referral</option></select></div>
+      <div class="field full"><span>Notes</span><textarea id="s-note" rows="2">${s?esc(s.note):'Seal check ok · ambient noise within ceiling'}</textarea></div>
+    </div>
+    <div class="alert info" style="margin-top:14px">${I.wave}<div><b>Protocol — IEC 60645-6</b>f₂/f₁ = 1.22 · L₁/L₂ = 65/55 dB SPL · f₂ = 2/3/4/5 kHz · Pass = SNR ≥ 6 dB at 3 of 4. Never a diagnosis — always a triage.</div></div>
+  </div>
+  <div class="modal-foot"><button type="button" class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-primary">${I.check} Save Screening</button></div>
+  </form>`);
+}
+function autoVerdict(){
+  const l=$('#s-l').value,r=$('#s-r').value;
+  const v=$('#s-verdict');
+  if(l==='RETEST'||r==='RETEST')v.value='RETEST';
+  else if(l==='REFER'||r==='REFER')v.value='REFER';
+  else v.value='PASS';
+}
+function saveScreening(e,id){
+  e.preventDefault();
+  const data={patientId:id?scById(id).patientId:$('#selPatient').value,date:$('#s-date').value,operator:$('#s-op').value.trim(),earLeft:$('#s-l').value,earRight:$('#s-r').value,snrLeft:$('#s-sl').value?+$('#s-sl').value:null,snrRight:$('#s-sr').value?+$('#s-sr').value:null,verdict:$('#s-verdict').value,followUp:$('#s-fu').value,status:$('#s-status').value,note:$('#s-note').value.trim()};
+  if(!data.patientId){toast('Please select a patient','err');return}
+  if(id){Object.assign(scById(id),data);toast('Screening updated','ok')}
+  else{DB.screenings.push(Object.assign({id:nextId('screenings')},data));addNotif({t:'Screening recorded — '+data.verdict,m:`${(pById(data.patientId)||{}).name||'Patient'} · follow-up ${fmtDate(data.followUp)}`,c:data.verdict==='PASS'?'success':data.verdict==='REFER'?'danger':'warning'})}
+  save();closeModal();renderScreening();
+}
+function viewScreening(id){
+  const s=scById(id),p=pById(s.patientId);
+  const f2=[2,3,4,5];
+  openModal(`
+  <div class="modal-head"><h3>Screening Report</h3><button class="ta" onclick="window.print()">${I.print}</button><button class="ta" onclick="closeModal()">${I.x}</button></div>
+  <div class="modal-body">
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">${patientRow(p||{name:'—'},p?'ID '+p.id:'')}${verdictBadge(s.verdict)}<div style="margin-left:auto" class="badge bg-neutral">${fmtDate(s.date)}</div></div>
+    <div class="grid g2" style="margin-bottom:16px">
+      <div class="kpi card"><div class="n" style="color:var(--primary-d)">${s.snrLeft??'—'}</div><div class="k">SNR Left (dB)</div></div>
+      <div class="kpi card"><div class="n" style="color:var(--primary-d)">${s.snrRight??'—'}</div><div class="k">SNR Right (dB)</div></div>
+    </div>
+    <h4 style="font-size:13px;margin-bottom:8px">DPOAE across test frequencies</h4>
+    <div class="otp-progress" style="margin-bottom:14px">${f2.map((f,i)=>{const base=s.snrLeft!=null?s.snrLeft:i===1?7:i===2?9:5;const v=base+2-i;return `<div style="flex:1;text-align:center"><div style="font-size:11px;color:var(--muted);margin-bottom:4px">f₂ ${f}k</div><div class="otp-seg ${v>=6?'on':v>=4?'warn':'bad'}" style="height:${10+Math.max(6,v)*2}px"></div><div style="font-size:11px;margin-top:4px;font-weight:600">${v} dB</div></div>`}).join('')}</div>
+    <div class="alert ${s.verdict==='PASS'?'teal':'warn'}" style="margin-bottom:14px">${I.wave}<div><b>Clinical reading</b>${s.verdict==='PASS'?'Coherent cochlear emissions present in both ears — PASS for newborn hearing screening. This is a screen, not a diagnosis.':'Cochlear emissions below criterion in one or both ears. The infant is REFERRED to audiological evaluation (ABR) — attached to the nearest immunisation visit to close the loop.'}</div></div>
+    <div class="grid g3"><div class="kpi card"><div class="n" style="font-size:16px">${esc(s.operator||'—')}</div><div class="k">Operator</div></div><div class="kpi card"><div class="n" style="font-size:16px">${fmtDate(s.followUp)}</div><div class="k">Follow-up</div></div><div class="kpi card"><div class="n" style="font-size:16px">${s.status}</div><div class="k">Status</div></div></div>
+  </div>`);
+}
+function screeningStats(){
+  openModal(`
+  <div class="modal-head"><h3>SHRUTI Screening Protocol</h3><button class="ta" onclick="closeModal()">${I.x}</button></div>
+  <div class="modal-body">
+    <div class="timeline">
+      <div class="tl-item done"><b>1 · Probe-fit check</b><p>Broadband chirp — bad seal → refuse to test</p></div>
+      <div class="tl-item done"><b>2 · In-situ calibration</b><p>Set 65/55 dB SPL in THIS ear canal; corrects for volume & seal</p></div>
+      <div class="tl-item done"><b>3 · Ambient noise check</b><p>Above ceiling → RETEST, never PASS</p></div>
+      <div class="tl-item done"><b>4 · Dual-tone stimulus</b><p>f₂ = 2, 3, 4, 5 kHz · two separate balanced-armature receivers — the device physically cannot manufacture the emission it looks for</p></div>
+      <div class="tl-item done"><b>5 · Average & reject</b><p>A/B phase-locked coherent averaging + adaptive frame rejection, 24-bit codec</p></div>
+      <div class="tl-item up"><b>6 · Decide</b><p>SNR ≥ 6 dB at 3 of 4 frequencies → PASS, in under 30 s on the OLED</p></div>
+    </div>
+    <div class="grid g3">
+      <div class="kpi card"><div class="n">1.22</div><div class="k">f₂/f₁</div></div>
+      <div class="kpi card"><div class="n">65/55</div><div class="k">L₁/L₂ dB SPL</div></div>
+      <div class="kpi card"><div class="n">2–5</div><div class="k">f₂ kHz</div></div>
+    </div>
+    <div class="alert teal" style="margin-top:14px">${I.alert}<div><b>Why this matters</b>₹5,000 BOM vs ₹1.85–2.9 lakh imported screeners — 37–58× cheaper, run by ASHA/ANM after ~2 hours training, detection in weeks not 24 months.</div></div>
+  </div>`);
+}
+
+/* ============================= PRENATAL ============================= */
+function renderPrenatal(){
+  const hr=DB.pregnancies.filter(p=>p.risk==='High');
+  const dueSoon=DB.pregnancies.filter(p=>p.edd&&daysBetween(today(),p.edd)<=42&&daysBetween(today(),p.edd)>=0);
+  const ttDue=DB.pregnancies.filter(p=>p.ttDose<2);
+  $('#content').innerHTML=`
+  <div class="page-head">
+    <div><h1>Prenatal & Maternity</h1><p>Ante-natal care, high-risk tracking, tetanus doses, and delivery readiness</p></div>
+    <div class="head-actions"><button class="btn btn-rose" onclick="openPregnancy()">${I.plus} Register Pregnancy</button></div>
+  </div>
+
+  <div class="grid g4" style="margin-bottom:16px">
+    <div class="card stat"><div class="ic teal">${I.baby}</div><div><div class="v">${DB.pregnancies.length}</div><div class="l">Active Pregnancies</div></div></div>
+    <div class="card stat"><div class="ic rose">${I.alert}</div><div><div class="v">${hr.length}</div><div class="l">High-Risk</div><div class="t">flagged for review</div></div></div>
+    <div class="card stat"><div class="ic amber">${I.cal}</div><div><div class="v">${dueSoon.length}</div><div class="l">Due ≤ 6 weeks</div><div class="t">delivery prep</div></div></div>
+    <div class="card stat"><div class="ic violet">${I.syringe}</div><div><div class="v">${ttDue.length}</div><div class="l">TT Dose Pending</div><div class="t">Td 1/2 for mother</div></div></div>
+  </div>
+
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-head"><div><h3>Pregnancy Register</h3><div class="sub">RCH-compliant ANC tracking</div></div></div>
+    <div class="table-wrap"><table>
+    <thead><tr><th>Mother</th><th>GA</th><th>EDD</th><th>BP</th><th>FHR</th><th>Fundal Ht</th><th>TT</th><th>Risk</th><th>Complication</th><th></th></tr></thead>
+    <tbody>${DB.pregnancies.map(pg=>{const m=pById(pg.patientId);return `<tr>
+      <td>${patientRow(m||{name:'—'},`G${pg.gravida}P${pg.para}`)}</td>
+      <td><b>${gaOfPreg(pg)}</b></td>
+      <td>${pg.edd?fmtDate(pg.edd):'—'}</td>
+      <td>${pg.bp||'—'}</td>
+      <td>${pg.fhr||'—'}</td>
+      <td>${pg.fundal||'—'} cm</td>
+      <td>${pg.ttDose}/2</td>
+      <td><span class="risk-tag ${riskClass(pg.risk)}">${pg.risk}</span></td>
+      <td>${pg.complication?`<span class="badge bg-warning">${esc(pg.complication)}</span>`:'—'}</td>
+      <td class="tbl-actions"><button class="ta" onclick="viewPregnancy('${pg.patientId}')">${I.eye}</button><button class="ta" onclick="openPregnancy('${pg.patientId}')">${I.edit}</button></td></tr>`}).join('')}
+    </tbody></table></div>
+    ${DB.pregnancies.length?'':'<div class="empty"><p>No pregnancies registered.</p></div>'}
+  </div>
+
+  <div class="grid g2">
+    <div class="card">
+      <div class="card-head"><div><h3>ANC Visit Schedule (4-visit model)</h3></div></div>
+      <div class="card-pad"><div class="timeline">
+        <div class="tl-item done"><b>Visit 1 — before 16 weeks</b><p>Registration · Hb · BP · urine · blood group · Td 1 · IFA</p></div>
+        <div class="tl-item done"><b>Visit 2 — 16–28 weeks</b><p>Td 2 (4 wk gap) · IFA · BP · fundal height · fetal movements</p></div>
+        <div class="tl-item up"><b>Visit 3 — 28–36 weeks</b><p>Abdominal exam · fetal lie · iron recheck · birth planning</p></div>
+        <div class="tl-item up"><b>Visit 4 — 36 weeks to term</b><p>Delivery plan · referral slip · newborn hearing screening prep</p></div>
+      </div></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div><h3>High-Risk Watchlist</h3><div class="sub">${hr.length} patient(s)</div></div></div>
+      <div class="card-pad" style="padding-top:8px">
+        ${hr.length?hr.map(pg=>{const m=pById(pg.patientId);return `<div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #f1f5f9">${patientRow(m||{name:'—'},`GA ${gaOfPreg(pg)}`)}<div style="margin-left:auto;text-align:right"><span class="badge bg-danger">${esc(pg.complication||'High risk')}</span><div style="font-size:11px;color:var(--muted);margin-top:3px">BP ${pg.bp||'—'}</div></div></div>`}).join(''):'<div class="empty"><p>No high-risk pregnancies.</p></div>'}
+      </div>
+    </div>
+  </div>`;
+}
+function openPregnancy(pid){
+  const pg=pid?pgById(pid):null;
+  const m=pg?pById(pg.patientId):null;
+  openModal(`
+  <div class="modal-head"><h3>${pg?'Edit':'Register'} Pregnancy</h3><button class="ta" onclick="closeModal()">${I.x}</button></div>
+  <form onsubmit="savePregnancy(event,'${pid||''}')">
+  <div class="modal-body">
+    <div class="form-grid">
+      <div class="field full"><span>Mother</span>${pg?`<input class="ro" value="${esc(m?m.name:'—')}" readonly>`:selectPatients()}</div>
+      <div class="field"><span>LMP (last menstrual period)</span><input id="p-lmp" type="date" value="${pg?pg.lmp:''}" max="${today()}" required oninput="computeEDD()"></div>
+      <div class="field"><span>EDD (auto)</span><input id="p-edd" type="date" class="ro" value="${pg?pg.edd:''}" readonly><span class="hint">280 days from LMP (Naegele)</span></div>
+      <div class="field"><span>Gravida</span><input id="p-g" type="number" min="1" value="${pg?pg.gravida:1}"></div>
+      <div class="field"><span>Para</span><input id="p-p" type="number" min="0" value="${pg?pg.para:0}"></div>
+      <div class="field"><span>Abortions</span><input id="p-a" type="number" min="0" value="${pg?pg.ab:0}"></div>
+      <div class="field"><span>Live births</span><input id="p-l" type="number" min="0" value="${pg?pg.live:0}"></div>
+      <div class="field"><span>Blood Group</span><select id="p-blood"><option></option>${['O+','O-','A+','A-','B+','B-','AB+','AB-'].map(b=>`<option ${pg&&pg.blood===b?'selected':''}>${b}</option>`).join('')}</select></div>
+      <div class="field"><span>Latest BP</span><input id="p-bp" value="${pg?pg.bp:''}" placeholder="120/80"></div>
+      <div class="field"><span>Weight (kg)</span><input id="p-w" type="number" step="0.1" value="${pg?pg.weight:''}"></div>
+      <div class="field"><span>Fetal Heart Rate</span><input id="p-fhr" type="number" value="${pg?pg.fhr:''}" placeholder="120–160"></div>
+      <div class="field"><span>Fundal Height (cm)</span><input id="p-fh" type="number" step="0.5" value="${pg?pg.fundal:''}"></div>
+      <div class="field"><span>TT (Td) Doses Given</span><input id="p-tt" type="number" min="0" max="2" value="${pg?pg.ttDose:0}"></div>
+      <div class="field"><span>Risk Level</span><select id="p-risk"><option ${pg&&pg.risk==='Low'?'selected':''}>Low</option><option ${pg&&pg.risk==='Medium'?'selected':''}>Medium</option><option ${pg&&pg.risk==='High'?'selected':''}>High</option></select></div>
+      <div class="field full"><span>Complications / Notes</span><textarea id="p-comp" rows="2">${pg?esc(pg.complication):''}</textarea></div>
+    </div>
+  </div>
+  <div class="modal-foot"><button type="button" class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-primary">${I.check} Save</button></div>
+  </form>`);
+}
+function computeEDD(){const lmp=$('#p-lmp').value;if(lmp){const d=new Date(lmp+'T12:00:00');d.setDate(d.getDate()+280);$('#p-edd').value=iso(d)}}
+function savePregnancy(e,pid){
+  e.preventDefault();
+  const lmp=$('#p-lmp').value,edd=$('#p-edd').value;
+  const data={patientId:pid?pgById(pid).patientId:$('#selPatient').value,lmp,edd,gravida:+$('#p-g').value||1,para:+$('#p-p').value||0,ab:+$('#p-a').value||0,live:+$('#p-l').value||0,blood:$('#p-blood').value,bp:$('#p-bp').value.trim(),weight:$('#p-w').value,fhr:$('#p-fhr').value,fundal:$('#p-fh').value,ttDose:+$('#p-tt').value||0,risk:$('#p-risk').value,complication:$('#p-comp').value.trim()};
+  if(!data.patientId){toast('Select a mother','err');return}
+  if(data.risk==='High'&&!data.complication)data.complication='High risk — escalated';
+  if(pid){Object.assign(pgById(pid),data);toast('Pregnancy updated','ok')}
+  else{DB.pregnancies.push(Object.assign({id:nextId('pregnancies'),visits:[]},data));addNotif({t:'Pregnancy registered',m:`EDD ${fmtDate(edd)} · Risk ${data.risk}`,c:data.risk==='High'?'danger':'success'})}
+  if(data.risk==='High')addNotif({t:'High-risk flag',m:'Review BP & plan referral.',c:'danger'});
+  save();closeModal();renderPrenatal();
+}
+function viewPregnancy(pid){
+  const pg=pgById(pid),m=pById(pid);
+  const g=gaFromLmp(pg.lmp);
+  const rds=pg.risk==='High'?['Isoimmunisation / Rh typing','Blood sugar test','BP monitoring daily','USG + fetal well-being','Dietary + rest counselling']:pg.risk==='Medium'?['Hb repeat in 4 weeks','Diet & IFA compliance','Watch for swelling']:['Routine ANC — next visit in 4 weeks'];
+  openModal(`
+  <div class="modal-head"><h3>Pregnancy Care Plan</h3><button class="ta" onclick="closeModal()">${I.x}</button></div>
+  <div class="modal-body">
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">${patientRow(m||{name:'—'},`G${pg.gravida}P${pg.para}`)}<span class="risk-tag ${riskClass(pg.risk)}">${pg.risk} RISK</span><div style="margin-left:auto;text-align:right"><div style="font-weight:700">${fmtDate(pg.edd)}</div><div class="k" style="color:var(--muted)">EDD</div></div></div>
+    <div class="grid g4" style="margin-bottom:16px">
+      <div class="kpi card"><div class="n">${gaOfPreg(pg)}</div><div class="k">Gestational age</div></div>
+      <div class="kpi card"><div class="n">${g?g.trimester:'—'}</div><div class="k">Trimester</div></div>
+      <div class="kpi card"><div class="n">${pg.fhr||'—'}</div><div class="k">Fetal HR (bpm)</div></div>
+      <div class="kpi card"><div class="n">${pg.fundal||'—'}</div><div class="k">Fundal ht (cm)</div></div>
+    </div>
+    <div class="grid g2" style="margin-bottom:16px">
+      <div class="kpi card"><div class="n" style="font-size:17px">${pg.bp||'—'}</div><div class="k">Blood Pressure</div></div>
+      <div class="kpi card"><div class="n">${pg.ttDose}/2</div><div class="k">Td (tetanus) doses</div></div>
+    </div>
+    ${pg.complication?`<div class="alert rose" style="margin-bottom:16px">${I.alert}<div><b>Complication</b>${esc(pg.complication)}</div></div>`:''}
+    <h4 style="font-size:13px;margin-bottom:8px">Recommended plan this visit</h4>
+    ${rds.map(r=>`<div style="display:flex;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid #f1f5f9">${I.check}<span style="color:var(--success)"></span><span>${r}</span></div>`).join('')}
+    <div class="alert info" style="margin-top:14px">${I.bell}<div><b>Reminder</b>Link newborn to hearing screening at delivery point — and auto-attach any REFER to the 6/10/14-week immunisation visits.</div></div>
+  </div>`);
+}
+
+/* ============================= IMMUNIZATION ============================= */
+function renderImmunization(){
+  const all=DB.immunizations;
+  const given=all.filter(v=>v.status==='Given').length;
+  const due=all.filter(v=>v.status==='Due').length;
+  const overdue=all.filter(v=>v.status==='Overdue').length;
+  const list=[...all].sort((a,b)=>(a.dueDate||'9999').localeCompare(b.dueDate||'9999'));
+  $('#content').innerHTML=`
+  <div class="page-head">
+    <div><h1>Immunization</h1><p>Universal Immunisation Programme (UIP) + IAP schedule · TT for mothers</p></div>
+    <div class="head-actions"><button class="btn btn-primary" onclick="openImmunization()">${I.plus} Log Dose</button></div>
+  </div>
+  <div class="grid g4" style="margin-bottom:16px">
+    <div class="card stat"><div class="ic teal">${I.syringe}</div><div><div class="v">${given}</div><div class="l">Doses Given</div></div></div>
+    <div class="card stat"><div class="ic amber">${I.cal}</div><div><div class="v">${due}</div><div class="l">Due</div></div></div>
+    <div class="card stat"><div class="ic rose">${I.alert}</div><div><div class="v">${overdue}</div><div class="l">Overdue</div><div class="t">contact family</div></div></div>
+    <div class="card stat"><div class="ic blue">${I.check}</div><div><div class="v">${all.length?Math.round(given/all.length*100):0}%</div><div class="l">Coverage</div></div></div>
+  </div>
+  <div class="card">
+    <div class="card-head"><div><h3>Vaccination Records</h3><div class="sub">Sorted by due date</div></div></div>
+    <div class="table-wrap"><table>
+    <thead><tr><th>Patient</th><th>Vaccine</th><th>Dose</th><th>Due Date</th><th>Given Date</th><th>Status</th><th>Site</th><th></th></tr></thead>
+    <tbody>${list.map(v=>{const p=pById(v.patientId);const days=v.dueDate?daysBetween(today(),v.dueDate):null;return `<tr>
+      <td>${patientRow(p||{name:'—'},ageBadge(v.patientId))}</td>
+      <td><b>${esc(v.vaccine)}</b></td>
+      <td>${v.dose}</td>
+      <td>${v.dueDate?fmtDate(v.dueDate):'—'}${days!=null&&days<0&&v.status!=='Given'?`<div style="font-size:11px;color:var(--danger)">${-days}d overdue</div>`:''}</td>
+      <td>${v.date?fmtDate(v.date):'—'}</td>
+      <td>${statusBadge(v.status)}</td>
+      <td>${esc(v.site||'—')}</td>
+      <td class="tbl-actions"><button class="ta" onclick="markGiven('${v.id}')" title="Mark given">${I.check}</button><button class="ta danger" onclick="delImmunization('${v.id}')">${I.trash}</button></td></tr>`}).join('')}
+    </tbody></table></div>
+  </div>`;
+}
+function openImmunization(){
+  openModal(`
+  <div class="modal-head"><h3>Log Vaccination</h3><button class="ta" onclick="closeModal()">${I.x}</button></div>
+  <form onsubmit="saveImmunization(event)">
+  <div class="modal-body">
+    <div class="form-grid">
+      <div class="field full"><span>Patient</span>${selectPatients()}</div>
+      <div class="field"><span>Vaccine</span><input id="v-name" list="vacList" required placeholder="e.g. Pentavalent 1 + OPV 1"><datalist id="vacList">${['BCG','OPV 0 + HepB 0','Pentavalent 1 + OPV 1','Pentavalent 2 + OPV 2','Pentavalent 3 + OPV 3 + IPV','MR 1 (9 months)','Vitamin A (9 months)','JE-1 (9 months)','DPT Booster 1 + OPV Booster','MR 2 (16-24 months)','DPT Booster 2 (5 years)','Td (10 & 16 years)','Td 1 (Tetanus — mother)','Td 2 (Tetanus — mother)','HepB 3'].map(v=>`<option value="${v}">`).join('')}</datalist></div>
+      <div class="field"><span>Dose</span><input id="v-dose" type="number" min="0" value="1"></div>
+      <div class="field"><span>Due Date</span><input id="v-due" type="date" value="${today()}"></div>
+      <div class="field"><span>Given Date</span><input id="v-date" type="date" value="${today()}" max="${today()}"></div>
+      <div class="field"><span>Injection Site</span><select id="v-site"><option>Left arm</option><option>Right arm</option><option>Left thigh</option><option>Right thigh</option><option>Oral</option></select></div>
+      <div class="field"><span>Status</span><select id="v-status"><option>Given</option><option>Due</option><option>Overdue</option></select></div>
+    </div>
+  </div>
+  <div class="modal-foot"><button type="button" class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-primary">${I.check} Save</button></div>
+  </form>`);
+}
+function saveImmunization(e){
+  e.preventDefault();
+  const pid=$('#selPatient').value;
+  if(!pid){toast('Select a patient','err');return}
+  DB.immunizations.push({id:nextId('immunizations'),patientId:pid,vaccine:$('#v-name').value.trim(),dose:+$('#v-dose').value||1,dueDate:$('#v-due').value,date:$('#v-date').value,status:$('#v-status').value,site:$('#v-site').value});
+  save();closeModal();toast('Vaccination logged','ok');renderImmunization();
+}
+function markGiven(id){
+  const v=DB.immunizations.find(x=>x.id===id);
+  v.status='Given';v.date=today();v.site=v.site||'Left arm';
+  save();toast('Marked as given','ok');renderImmunization();
+}
+function delImmunization(id){DB.immunizations=DB.immunizations.filter(v=>v.id!==id);save();renderImmunization()}
+
+/* ============================= APPOINTMENTS ============================= */
+function renderAppointments(){
+  const list=[...DB.appointments].sort((a,b)=>(a.date+b.time).localeCompare(b.date+b.time));
+  const todayAppts=DB.appointments.filter(a=>a.date===today());
+  const upcoming=DB.appointments.filter(a=>a.date>today()&&a.status!=='Cancelled').length;
+  const done=DB.appointments.filter(a=>a.status==='Completed').length;
+  $('#content').innerHTML=`
+  <div class="page-head">
+    <div><h1>Appointments</h1><p>Schedule, track, and complete visits</p></div>
+    <div class="head-actions"><button class="btn btn-primary" onclick="openAppointment()">${I.plus} New Appointment</button></div>
+  </div>
+  <div class="grid g4" style="margin-bottom:16px">
+    <div class="card stat"><div class="ic blue">${I.cal}</div><div><div class="v">${todayAppts.length}</div><div class="l">Today</div></div></div>
+    <div class="card stat"><div class="ic violet">${I.cal}</div><div><div class="v">${upcoming}</div><div class="l">Upcoming</div></div></div>
+    <div class="card stat"><div class="ic teal">${I.check}</div><div><div class="v">${done}</div><div class="l">Completed</div></div></div>
+    <div class="card stat"><div class="ic rose">${I.alert}</div><div><div class="v">${DB.appointments.filter(a=>a.status==='Cancelled').length}</div><div class="l">Cancelled</div></div></div>
+  </div>
+  <div class="card">
+    <div class="card-head"><div><h3>All Appointments</h3></div></div>
+    <div class="table-wrap"><table>
+    <thead><tr><th>Patient</th><th>Date</th><th>Time</th><th>Doctor</th><th>Dept</th><th>Reason</th><th>Status</th><th></th></tr></thead>
+    <tbody>${list.map(a=>{const p=pById(a.patientId);return `<tr>
+      <td>${patientRow(p||{name:'—'})}</td>
+      <td>${fmtDate(a.date)}${a.date===today()?' <span class="badge bg-info">today</span>':''}</td>
+      <td>${a.time}</td>
+      <td>${esc(a.doctor)}</td>
+      <td><span class="badge bg-neutral">${esc(a.dept)}</span></td>
+      <td>${esc(a.reason||'—')}</td>
+      <td>${statusBadge(a.status)}</td>
+      <td class="tbl-actions">
+        ${a.status!=='Completed'?`<button class="ta" onclick="completeAppt('${a.id}')" title="Complete">${I.check}</button>`:''}
+        ${a.status==='Scheduled'?`<button class="ta danger" onclick="cancelAppt('${a.id}')">${I.x}</button>`:''}
+      </td></tr>`}).join('')}
+    </tbody></table></div>
+  </div>`;
+}
+function openAppointment(){
+  openModal(`
+  <div class="modal-head"><h3>New Appointment</h3><button class="ta" onclick="closeModal()">${I.x}</button></div>
+  <form onsubmit="saveAppointment(event)">
+  <div class="modal-body">
+    <div class="form-grid">
+      <div class="field full"><span>Patient</span>${selectPatients()}</div>
+      <div class="field"><span>Date</span><input id="a-date" type="date" value="${today()}" required></div>
+      <div class="field"><span>Time</span><input id="a-time" type="time" value="10:00" required></div>
+      <div class="field"><span>Doctor</span><input id="a-doc" list="docList" required><datalist id="docList">${DB.staff.filter(s=>s.role.startsWith('Dr')).map(s=>`<option value="${s.name}">`).join('')}</datalist></div>
+      <div class="field"><span>Department</span><select id="a-dept"><option>Pediatrics</option><option>OB-GYN</option><option>ENT / Audiology</option><option>General Medicine</option><option>Community Health</option></select></div>
+      <div class="field full"><span>Reason</span><input id="a-reason" placeholder="e.g. Hearing re-screen"></div>
+    </div>
+  </div>
+  <div class="modal-foot"><button type="button" class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-primary">${I.check} Schedule</button></div>
+  </form>`);
+}
+function saveAppointment(e){
+  e.preventDefault();
+  const pid=$('#selPatient').value;if(!pid){toast('Select a patient','err');return}
+  DB.appointments.push({id:nextId('appointments'),patientId:pid,date:$('#a-date').value,time:$('#a-time').value,doctor:$('#a-doc').value.trim(),dept:$('#a-dept').value,reason:$('#a-reason').value.trim(),status:'Scheduled'});
+  save();closeModal();toast('Appointment scheduled','ok');renderAppointments();
+}
+function completeAppt(id){const a=DB.appointments.find(x=>x.id===id);a.status='Completed';save();renderAppointments()}
+function cancelAppt(id){const a=DB.appointments.find(x=>x.id===id);a.status='Cancelled';save();renderAppointments()}
+
+/* ============================= PRESCRIPTIONS ============================= */
+function renderPrescriptions(){
+  const list=[...DB.prescriptions].sort((a,b)=>b.date.localeCompare(a.date));
+  $('#content').innerHTML=`
+  <div class="page-head">
+    <div><h1>Prescriptions</h1><p>e-Prescriptions with printable formats</p></div>
+    <div class="head-actions"><button class="btn btn-primary" onclick="openRx()">${I.plus} New Prescription</button></div>
+  </div>
+  <div class="grid g2">
+    ${list.map(r=>{const p=pById(r.patientId);return `<div class="card">
+      <div class="card-head"><div><h3>${esc(p?p.name:'—')}</h3><div class="sub">${fmtDate(r.date)} · ${esc(r.doctor)}</div></div><div style="display:flex;gap:6px"><button class="ta" onclick="printRx('${r.id}')">${I.print}</button><button class="ta danger" onclick="delRx('${r.id}')">${I.trash}</button></div></div>
+      <div class="card-pad" style="padding-top:14px">
+        ${r.medicines.map(m=>`<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #f1f5f9;font-size:13px"><div style="width:20px;color:var(--primary);font-weight:700">Rx</div><div style="flex:1"><b>${esc(m.name)}</b><div style="color:var(--muted);font-size:12px">${esc(m.dose)} · ${esc(m.freq)} · ${esc(m.dur)}</div></div></div>`).join('')}
+        ${r.notes?`<div class="alert info" style="margin-top:12px">${I.alert}<div>${esc(r.notes)}</div></div>`:''}
+      </div></div>`}).join('')}
+    ${list.length?'':'<div class="empty"><p>No prescriptions yet.</p></div>'}
+  </div>`;
+}
+function openRx(){
+  openModal(`
+  <div class="modal-head"><h3>New Prescription</h3><button class="ta" onclick="closeModal()">${I.x}</button></div>
+  <form onsubmit="saveRx(event)">
+  <div class="modal-body">
+    <div class="form-grid">
+      <div class="field full"><span>Patient</span>${selectPatients()}</div>
+      <div class="field"><span>Doctor</span><input id="r-doc" list="docList" required value="Dr. Riya Verma"></div>
+      <div class="field"><span>Date</span><input id="r-date" type="date" value="${today()}" max="${today()}"></div>
+      <div class="field full"><span>Medicine 1</span><input id="r-m1" placeholder="Name" required></div>
+      <div class="field"><span>Dose</span><input id="r-d1" placeholder="1 tab / 5 ml"></div>
+      <div class="field"><span>Frequency</span><input id="r-f1" placeholder="OD / BD / TDS"></div>
+      <div class="field"><span>Duration</span><input id="r-u1" placeholder="7 days"></div>
+      <div class="field full"><span>Medicine 2 (optional)</span><input id="r-m2" placeholder="Name"></div>
+      <div class="field"><span>Dose</span><input id="r-d2" placeholder=""></div>
+      <div class="field"><span>Frequency</span><input id="r-f2" placeholder=""></div>
+      <div class="field"><span>Duration</span><input id="r-u2" placeholder=""></div>
+      <div class="field full"><span>Instructions</span><textarea id="r-notes" rows="2"></textarea></div>
+    </div>
+  </div>
+  <div class="modal-foot"><button type="button" class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-primary">${I.check} Save</button></div>
+  </form>`);
+}
+function saveRx(e){
+  e.preventDefault();
+  const pid=$('#selPatient').value;if(!pid){toast('Select a patient','err');return}
+  const meds=[];
+  if($('#r-m1').value.trim())meds.push({name:$('#r-m1').value.trim(),dose:$('#r-d1').value.trim(),freq:$('#r-f1').value.trim(),dur:$('#r-u1').value.trim()});
+  if($('#r-m2').value.trim())meds.push({name:$('#r-m2').value.trim(),dose:$('#r-d2').value.trim(),freq:$('#r-f2').value.trim(),dur:$('#r-u2').value.trim()});
+  DB.prescriptions.push({id:nextId('prescriptions'),patientId:pid,doctor:$('#r-doc').value.trim(),date:$('#r-date').value,medicines:meds,notes:$('#r-notes').value.trim()});
+  save();closeModal();toast('Prescription saved','ok');renderPrescriptions();
+}
+function printRx(id){
+  const r=DB.prescriptions.find(x=>x.id===id),p=pById(r.patientId);
+  const w=window.open('','_blank');
+  w.document.write(`<html><head><title>Prescription</title><style>body{font-family:Segoe UI,sans-serif;padding:40px;color:#0f172a}hr{border:none;border-top:1px solid #e2e8f0;margin:14px 0}.med{padding:8px 0;border-bottom:1px solid #f1f5f9}table{width:100%;font-size:14px}</style></head><body>
+    <div style="display:flex;justify-content:space-between;align-items:center"><h1 style="color:#0d9488;margin:0">SHRUTI Care</h1><div style="text-align:right;color:#64748b;font-size:13px">${esc(r.doctor)}<br>${fmtDate(r.date)}</div></div><hr>
+    <p><b>Patient:</b> ${esc(p?p.name:'—')} · ${esc(p?p.phone:'')} ${p&&p.dob?'· '+ageFromDob(p.dob):''}</p>
+    ${r.medicines.map(m=>`<div class="med"><b>${esc(m.name)}</b><div>Dose: ${esc(m.dose)} &nbsp; Freq: ${esc(m.freq)} &nbsp; Duration: ${esc(m.dur)}</div></div>`).join('')}
+    ${r.notes?`<p style="margin-top:16px">${esc(r.notes)}</p>`:''}
+    <p style="margin-top:30px;color:#64748b;font-size:12px">Generated by SHRUTI Care · This is a triage/screening support record — not legal medical advice.</p>
+  </body></html>`);w.document.close();w.print();
+}
+function delRx(id){DB.prescriptions=DB.prescriptions.filter(r=>r.id!==id);save();renderPrescriptions()}
+
+/* ============================= LABS ============================= */
+function renderLabs(){
+  const crit=DB.labs.filter(l=>l.status==='Critical').length;
+  const list=[...DB.labs].sort((a,b)=>b.date.localeCompare(a.date));
+  $('#content').innerHTML=`
+  <div class="page-head">
+    <div><h1>Lab & Diagnostics</h1><p>Test results with reference ranges and flagging</p></div>
+    <div class="head-actions"><button class="btn btn-primary" onclick="openLab()">${I.plus} Add Result</button></div>
+  </div>
+  <div class="grid g3" style="margin-bottom:16px">
+    <div class="card stat"><div class="ic teal">${I.lab}</div><div><div class="v">${DB.labs.length}</div><div class="l">Tests Done</div></div></div>
+    <div class="card stat"><div class="ic rose">${I.alert}</div><div><div class="v">${crit}</div><div class="l">Critical Flags</div><div class="t">action needed</div></div></div>
+    <div class="card stat"><div class="ic amber">${I.lab}</div><div><div class="v">${DB.labs.filter(l=>l.status==='Low').length}</div><div class="l">Out of Range</div></div></div>
+  </div>
+  <div class="card">
+    <div class="table-wrap"><table>
+    <thead><tr><th>Patient</th><th>Test</th><th>Category</th><th>Date</th><th>Result</th><th>Reference</th><th>Status</th><th></th></tr></thead>
+    <tbody>${list.map(l=>{const p=pById(l.patientId);return `<tr>
+      <td>${patientRow(p||{name:'—'})}</td>
+      <td><b>${esc(l.test)}</b></td>
+      <td>${esc(l.cat||'—')}</td>
+      <td>${fmtDate(l.date)}</td>
+      <td><b style="color:${l.status==='Critical'?'var(--danger)':l.status==='Low'?'var(--warning)':'var(--text)'}">${esc(l.result)} ${esc(l.unit)}</b></td>
+      <td class="k" style="color:var(--muted)">${esc(l.range)}</td>
+      <td>${statusBadge(l.status)}</td>
+      <td class="tbl-actions"><button class="ta danger" onclick="delLab('${l.id}')">${I.trash}</button></td></tr>`}).join('')}
+    </tbody></table></div>
+    ${list.length?'':'<div class="empty"><p>No lab results.</p></div>'}
+  </div>`;
+}
+function openLab(){
+  openModal(`
+  <div class="modal-head"><h3>Add Lab Result</h3><button class="ta" onclick="closeModal()">${I.x}</button></div>
+  <form onsubmit="saveLab(event)">
+  <div class="modal-body">
+    <div class="form-grid">
+      <div class="field full"><span>Patient</span>${selectPatients()}</div>
+      <div class="field"><span>Test Name</span><input id="l-test" list="testList" required placeholder="e.g. Haemoglobin"><datalist id="testList">${['Haemoglobin','Total Bilirubin','HbA1c','Blood Pressure','Urine Protein','Blood Glucose','TSH','Platelet Count','Blood Group','RPR','HIV','HbF','Cord Blood — random sugar'].map(t=>`<option value="${t}">`).join('')}</datalist></div>
+      <div class="field"><span>Category</span><select id="l-cat"><option>Haematology</option><option>Biochemistry</option><option>Urinalysis</option><option>Clinical</option><option>Serology</option></select></div>
+      <div class="field"><span>Date</span><input id="l-date" type="date" value="${today()}" max="${today()}"></div>
+      <div class="field"><span>Result Value</span><input id="l-val" required></div>
+      <div class="field"><span>Unit</span><input id="l-unit" placeholder="g/dL / % / mmHg"></div>
+      <div class="field"><span>Reference Range</span><input id="l-range" placeholder="e.g. 11–14"></div>
+      <div class="field"><span>Status</span><select id="l-status"><option>Normal</option><option>Low</option><option>Critical</option></select></div>
+    </div>
+  </div>
+  <div class="modal-foot"><button type="button" class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-primary">${I.check} Save</button></div>
+  </form>`);
+}
+function saveLab(e){
+  e.preventDefault();
+  const pid=$('#selPatient').value;if(!pid){toast('Select a patient','err');return}
+  DB.labs.push({id:nextId('labs'),patientId:pid,test:$('#l-test').value.trim(),cat:$('#l-cat').value,date:$('#l-date').value,result:$('#l-val').value.trim(),unit:$('#l-unit').value.trim(),range:$('#l-range').value.trim(),status:$('#l-status').value});
+  save();closeModal();toast('Lab result saved','ok');renderLabs();
+}
+function delLab(id){DB.labs=DB.labs.filter(l=>l.id!==id);save();renderLabs()}
+
+/* ============================= VITALS ============================= */
+function renderVitals(){
+  const list=[...DB.vitals].sort((a,b)=>b.date.localeCompare(a.date));
+  const patientsWith=[...new Set(DB.vitals.map(v=>v.patientId))];
+  const selPid=lastVitalsPid||(patientsWith[0]||'');
+  $('#content').innerHTML=`
+  <div class="page-head">
+    <div><h1>Vitals & Growth</h1><p>Record vitals and track growth trends</p></div>
+    <div class="head-actions"><button class="btn btn-primary" onclick="openVitals()">${I.plus} Record Vitals</button></div>
+  </div>
+  <div class="card" style="margin-bottom:16px;padding:16px 20px">
+    <label style="font-size:12px;font-weight:600;color:#334155;margin-right:10px">Patient:</label>
+    <select onchange="lastVitalsPid=this.value;renderVitals()" style="border:1px solid var(--border);border-radius:10px;padding:8px 12px;max-width:320px">
+      ${patientsWith.map(pid=>{const p=pById(pid);return `<option value="${pid}" ${pid===selPid?'selected':''}>${esc(p?p.name:'—')}</option>`}).join('')}
+    </select>
+  </div>
+  <div class="grid g2" style="margin-bottom:16px">
+    <div class="card"><div class="card-head"><div><h3>Heart Rate</h3></div></div><div class="card-pad"><div class="chart-box"><canvas id="chHR"></canvas></div></div></div>
+    <div class="card"><div class="card-head"><div><h3>SpO₂ & Temp</h3></div></div><div class="card-pad"><div class="chart-box"><canvas id="chO2"></canvas></div></div></div>
+  </div>
+  <div class="card">
+    <div class="card-head"><div><h3>Vitals Log</h3></div></div>
+    <div class="table-wrap"><table>
+    <thead><tr><th>Patient</th><th>Date</th><th>HR</th><th>BP</th><th>Temp</th><th>SpO₂</th><th>RR</th><th></th></tr></thead>
+    <tbody>${list.map(v=>{const p=pById(v.patientId);return `<tr>
+      <td>${patientRow(p||{name:'—'})}</td>
+      <td>${fmtDate(v.date)}</td>
+      <td>${v.hr||'—'} <span class="k" style="color:var(--muted)">bpm</span></td>
+      <td>${v.bp||'—'}</td>
+      <td>${v.temp?v.temp+'°C':''}</td>
+      <td>${v.spo2?v.spo2+'%':''}</td>
+      <td>${v.rr||'—'}</td>
+      <td class="tbl-actions"><button class="ta danger" onclick="delVitals('${v.id}')">${I.trash}</button></td></tr>`}).join('')}
+    </tbody></table></div>
+  </div>`;
+  const pvs=DB.vitals.filter(v=>v.patientId===selPid).sort((a,b)=>a.date.localeCompare(b.date));
+  if(pvs.length){
+    const labs=pvs.map(v=>fmtDate(v.date).slice(0,6));
+    lineChart('chHR',labs,[[pvs.map(v=>v.hr||0)]],[['#e11d48']],['bpm']);
+    lineChart('chO2',labs,[[pvs.map(v=>v.spo2||0)],[pvs.map(v=>v.temp||0)]],[['#0d9488'],['#2563eb']],['SpO₂','Temp']);
+  }
+}
+let lastVitalsPid='';
+function openVitals(){
+  openModal(`
+  <div class="modal-head"><h3>Record Vitals</h3><button class="ta" onclick="closeModal()">${I.x}</button></div>
+  <form onsubmit="saveVitals(event)">
+  <div class="modal-body">
+    <div class="form-grid">
+      <div class="field full"><span>Patient</span>${selectPatients()}</div>
+      <div class="field"><span>Date</span><input id="vt-date" type="date" value="${today()}" max="${today()}"></div>
+      <div class="field"><span>Heart Rate (bpm)</span><input id="vt-hr" type="number"></div>
+      <div class="field"><span>Blood Pressure</span><input id="vt-bp" placeholder="120/80"></div>
+      <div class="field"><span>Temperature (°C)</span><input id="vt-t" type="number" step="0.1"></div>
+      <div class="field"><span>SpO₂ (%)</span><input id="vt-o2" type="number" min="0" max="100"></div>
+      <div class="field"><span>Resp. Rate</span><input id="vt-rr" type="number"></div>
+    </div>
+  </div>
+  <div class="modal-foot"><button type="button" class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-primary">${I.check} Save</button></div>
+  </form>`);
+}
+function saveVitals(e){
+  e.preventDefault();
+  const pid=$('#selPatient').value;if(!pid){toast('Select a patient','err');return}
+  DB.vitals.push({id:nextId('vitals'),patientId:pid,date:$('#vt-date').value,hr:$('#vt-hr').value,bp:$('#vt-bp').value.trim(),temp:$('#vt-t').value,spo2:$('#vt-o2').value,rr:$('#vt-rr').value});
+  lastVitalsPid=pid;save();closeModal();toast('Vitals recorded','ok');renderVitals();
+}
+function delVitals(id){DB.vitals=DB.vitals.filter(v=>v.id!==id);save();renderVitals()}
+
+/* ============================= PHARMACY ============================= */
+function renderPharmacy(){
+  const low=DB.pharmacy.filter(m=>m.stock<=m.reorder);
+  const expSoon=DB.pharmacy.filter(m=>m.expiry&&daysBetween(today(),m.expiry)<=90);
+  const value=DB.pharmacy.reduce((s,m)=>s+ (+m.stock)*(+m.price||0),0);
+  $('#content').innerHTML=`
+  <div class="page-head">
+    <div><h1>Pharmacy</h1><p>Inventory, stock alerts and expiry tracking</p></div>
+    <div class="head-actions"><button class="btn btn-primary" onclick="openMed()">${I.plus} Add Medicine</button></div>
+  </div>
+  <div class="grid g3" style="margin-bottom:16px">
+    <div class="card stat"><div class="ic teal">${I.pill}</div><div><div class="v">${DB.pharmacy.length}</div><div class="l">Medicines</div></div></div>
+    <div class="card stat"><div class="ic rose">${I.alert}</div><div><div class="v">${low.length}</div><div class="l">Low Stock</div><div class="t">reorder</div></div></div>
+    <div class="card stat"><div class="ic amber">${I.cal}</div><div><div class="v">${expSoon.length}</div><div class="l">Expiring ≤ 90d</div></div></div>
+  </div>
+  <div class="card">
+    <div class="table-wrap"><table>
+    <thead><tr><th>Medicine</th><th>Category</th><th>Stock</th><th>Price</th><th>Expiry</th><th>Reorder Lvl</th><th>Status</th><th></th></tr></thead>
+    <tbody>${DB.pharmacy.map(m=>{const lowSt=m.stock<=m.reorder;const exp= m.expiry&&daysBetween(today(),m.expiry)<=90;const st=lowSt?(m.stock===0?'bg-danger':'bg-warning'):exp?'bg-warning':'bg-success';const txt=lowSt?(m.stock===0?'Out of stock':'Low stock'):exp?'Expiring soon':'In stock';return `<tr>
+      <td><b>${esc(m.name)}</b></td>
+      <td>${esc(m.cat||'—')}</td>
+      <td><b>${m.stock}</b></td>
+      <td>${money(m.price)}</td>
+      <td>${m.expiry?fmtDate(m.expiry):'—'}</td>
+      <td>${m.reorder}</td>
+      <td><span class="badge ${st}">${txt}</span></td>
+      <td class="tbl-actions"><button class="ta" onclick="adjustStock('${m.id}',-1)">−</button><button class="ta" onclick="adjustStock('${m.id}',1)">+</button><button class="ta danger" onclick="delMed('${m.id}')">${I.trash}</button></td></tr>`}).join('')}
+    </tbody></table></div>
+  </div>
+  <div style="margin-top:12px;text-align:right;color:var(--muted);font-size:12.5px">Inventory value ≈ <b style="color:var(--primary-d)">${money(value)}</b></div>`;
+}
+function openMed(){
+  openModal(`
+  <div class="modal-head"><h3>Add Medicine</h3><button class="ta" onclick="closeModal()">${I.x}</button></div>
+  <form onsubmit="saveMed(event)">
+  <div class="modal-body">
+    <div class="form-grid">
+      <div class="field full"><span>Medicine Name</span><input id="m-name" required></div>
+      <div class="field"><span>Category</span><input id="m-cat" list="catList"><datalist id="catList">${['Analgesic','Supplement','Cardiovascular','Rehydration','Antibiotic','Consumable','Vaccine','Other'].map(c=>`<option value="${c}">`).join('')}</datalist></div>
+      <div class="field"><span>Stock Quantity</span><input id="m-stock" type="number" min="0" value="0" required></div>
+      <div class="field"><span>Price (₹)</span><input id="m-price" type="number" min="0" step="0.5" required></div>
+      <div class="field"><span>Expiry</span><input id="m-exp" type="date"></div>
+      <div class="field"><span>Reorder Level</span><input id="m-reorder" type="number" min="0" value="20"></div>
+    </div>
+  </div>
+  <div class="modal-foot"><button type="button" class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-primary">${I.check} Add</button></div>
+  </form>`);
+}
+function saveMed(e){
+  e.preventDefault();
+  DB.pharmacy.push({id:nextId('pharmacy'),name:$('#m-name').value.trim(),cat:$('#m-cat').value.trim()||'Other',stock:+$('#m-stock').value,price:+$('#m-price').value,expiry:$('#m-exp').value,reorder:+$('#m-reorder').value||20});
+  save();closeModal();toast('Medicine added','ok');renderPharmacy();
+}
+function adjustStock(id,delta){const m=DB.pharmacy.find(x=>x.id===id);m.stock=Math.max(0,m.stock+delta);save();renderPharmacy()}
+function delMed(id){DB.pharmacy=DB.pharmacy.filter(m=>m.id!==id);save();renderPharmacy()}
+
+/* ============================= BILLING ============================= */
+function renderBilling(){
+  const total=DB.billing.reduce((s,b)=>s+(+b.total||0),0);
+  const paid=DB.billing.filter(b=>b.status==='Paid').reduce((s,b)=>s+(+b.total||0),0);
+  const pending=total-paid;
+  const list=[...DB.billing].sort((a,b)=>b.date.localeCompare(a.date));
+  $('#content').innerHTML=`
+  <div class="page-head">
+    <div><h1>Billing</h1><p>Invoices and payment tracking</p></div>
+    <div class="head-actions"><button class="btn btn-primary" onclick="openInvoice()">${I.plus} New Invoice</button></div>
+  </div>
+  <div class="grid g3" style="margin-bottom:16px">
+    <div class="card stat"><div class="ic teal">${I.wallet}</div><div><div class="v">${money(total)}</div><div class="l">Total Billed</div></div></div>
+    <div class="card stat"><div class="ic blue">${I.check}</div><div><div class="v">${money(paid)}</div><div class="l">Collected</div></div></div>
+    <div class="card stat"><div class="ic rose">${I.alert}</div><div><div class="v">${money(pending)}</div><div class="l">Pending</div></div></div>
+  </div>
+  <div class="card">
+    <div class="table-wrap"><table>
+    <thead><tr><th>Invoice</th><th>Patient</th><th>Date</th><th>Items</th><th>Total</th><th>Status</th><th></th></tr></thead>
+    <tbody>${list.map(b=>{const p=pById(b.patientId);return `<tr>
+      <td><b>#${b.id}</b></td>
+      <td>${patientRow(p||{name:'—'})}</td>
+      <td>${fmtDate(b.date)}</td>
+      <td>${b.items.length} item(s)</td>
+      <td><b>${money(b.total)}</b></td>
+      <td>${statusBadge(b.status)}</td>
+      <td class="tbl-actions"><button class="ta" onclick="printInvoice('${b.id}')">${I.print}</button><button class="ta" onclick="togglePay('${b.id}')" title="Toggle paid">${I.check}</button><button class="ta danger" onclick="delBill('${b.id}')">${I.trash}</button></td></tr>`}).join('')}
+    </tbody></table></div>
+    ${list.length?'':'<div class="empty"><p>No invoices.</p></div>'}
+  </div>`;
+}
+function openInvoice(){
+  openModal(`
+  <div class="modal-head"><h3>New Invoice</h3><button class="ta" onclick="closeModal()">${I.x}</button></div>
+  <form onsubmit="saveInvoice(event)">
+  <div class="modal-body">
+    <div class="form-grid">
+      <div class="field full"><span>Patient</span>${selectPatients()}</div>
+      <div class="field"><span>Date</span><input id="b-date" type="date" value="${today()}" max="${today()}"></div>
+      <div class="field"><span>Status</span><select id="b-status"><option>Paid</option><option>Pending</option></select></div>
+      <div class="field full"><span>Item 1 — Description</span><input id="b-i1" placeholder="e.g. Newborn hearing screening"></div>
+      <div class="field"><span>Qty</span><input id="b-q1" type="number" min="1" value="1"></div>
+      <div class="field"><span>Price (₹)</span><input id="b-p1" type="number" min="0" step="0.5" value="0"></div>
+      <div class="field full"><span>Item 2 — Description (optional)</span><input id="b-i2" placeholder=""></div>
+      <div class="field"><span>Qty</span><input id="b-q2" type="number" min="1" value="1"></div>
+      <div class="field"><span>Price (₹)</span><input id="b-p2" type="number" min="0" step="0.5" value="0"></div>
+    </div>
+  </div>
+  <div class="modal-foot"><button type="button" class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-primary">${I.check} Create</button></div>
+  </form>`);
+}
+function saveInvoice(e){
+  e.preventDefault();
+  const pid=$('#selPatient').value;if(!pid){toast('Select a patient','err');return}
+  const items=[];let total=0;
+  const a={d:$('#b-i1').value.trim(),q:+$('#b-q1').value,p:+$('#b-p1').value};
+  if(a.d){items.push({d:a.d,a:a.q,p:a.p});total+=a.q*a.p}
+  const b={d:$('#b-i2').value.trim(),q:+$('#b-q2').value,p:+$('#b-p2').value};
+  if(b.d){items.push({d:b.d,a:b.q,p:b.p});total+=b.q*b.p}
+  DB.billing.push({id:nextId('billing'),patientId:pid,date:$('#b-date').value,items,total,status:$('#b-status').value});
+  save();closeModal();toast('Invoice created','ok');renderBilling();
+}
+function togglePay(id){const b=DB.billing.find(x=>x.id===id);b.status=b.status==='Paid'?'Pending':'Paid';save();renderBilling()}
+function printInvoice(id){
+  const b=DB.billing.find(x=>x.id===id),p=pById(b.patientId);
+  const w=window.open('','_blank');
+  w.document.write(`<html><head><title>Invoice #${b.id}</title><style>body{font-family:Segoe UI,sans-serif;padding:40px;color:#0f172a}table{width:100%;border-collapse:collapse;font-size:14px;margin-top:20px}th,td{padding:10px;border-bottom:1px solid #e2e8f0;text-align:left}hr{border:none;border-top:1px solid #e2e8f0;margin:14px 0}</style></head><body>
+  <div style="display:flex;justify-content:space-between"><h1 style="color:#0d9488;margin:0">SHRUTI Care</h1><div style="text-align:right"><b>INVOICE #${b.id}</b><br>${fmtDate(b.date)}</div></div><hr>
+  <p><b>Patient:</b> ${esc(p?p.name:'—')} · ${esc(p?p.phone:'')}</p>
+  <table><thead><tr><th>Item</th><th>Qty</th><th>Price</th><th>Amount</th></tr></thead><tbody>${b.items.map(i=>`<tr><td>${esc(i.d)}</td><td>${i.a}</td><td>${money(i.p)}</td><td>${money(i.a*i.p)}</td></tr>`).join('')}</tbody></table>
+  <div style="text-align:right;margin-top:16px;font-size:16px"><b>Total: ${money(b.total)}</b><br><span style="color:${b.status==='Paid'?'#16a34a':'#d97706'}">${b.status}</span></div>
+  <p style="margin-top:30px;color:#64748b;font-size:12px">Thank you. Generated by SHRUTI Care.</p></body></html>`);
+  w.document.close();w.print();
+}
+function delBill(id){DB.billing=DB.billing.filter(b=>b.id!==id);save();renderBilling()}
+
+/* ============================= STAFF ============================= */
+function renderStaff(){
+  const doc=DB.staff.filter(s=>s.role.startsWith('Dr'));
+  $('#content').innerHTML=`
+  <div class="page-head">
+    <div><h1>Staff</h1><p>${DB.staff.length} team members · ${doc.length} doctors</p></div>
+    <div class="head-actions"><button class="btn btn-primary" onclick="openStaff()">${I.plus} Add Staff</button></div>
+  </div>
+  <div class="grid g3">
+    ${DB.staff.map(s=>`<div class="card card-pad" style="display:flex;gap:14px;align-items:center">
+      <div class="avatar" style="width:46px;height:46px;font-size:16px;background:${colorFor(s.name)}">${initials(s.name)}</div>
+      <div style="flex:1;min-width:0">
+        <b style="font-size:14px">${esc(s.name)}</b>
+        <div style="color:var(--primary-d);font-size:12px;font-weight:600">${esc(s.role)} · ${esc(s.dept)}</div>
+        <div class="k" style="color:var(--muted);font-size:12px;margin-top:2px">${esc(s.speciality||'')} · ${esc(s.phone||'')}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px"><span class="badge bg-neutral">${esc(s.shift)}</span><button class="ta danger" onclick="delStaff('${s.id}')">${I.trash}</button></div>
+    </div>`).join('')}
+  </div>`;
+}
+function openStaff(){
+  openModal(`
+  <div class="modal-head"><h3>Add Staff</h3><button class="ta" onclick="closeModal()">${I.x}</button></div>
+  <form onsubmit="saveStaff(event)">
+  <div class="modal-body">
+    <div class="form-grid">
+      <div class="field full"><span>Full Name</span><input id="s-name" required></div>
+      <div class="field"><span>Role</span><select id="s-role"><option>Dr.</option><option>ANM</option><option>ASHA</option><option>Nurse</option><option>Pharmacist</option><option>Lab Technician</option></select></div>
+      <div class="field"><span>Department</span><select id="s-dept"><option>Pediatrics</option><option>OB-GYN</option><option>ENT / Audiology</option><option>General Medicine</option><option>Community Health</option><option>Pharmacy</option><option>Laboratory</option></select></div>
+      <div class="field"><span>Speciality</span><input id="s-spec"></div>
+      <div class="field"><span>Phone</span><input id="s-phone"></div>
+      <div class="field"><span>Email</span><input id="s-email" type="email"></div>
+      <div class="field"><span>Shift</span><select id="s-shift"><option>Day</option><option>Night</option><option>Field</option><option>On-call</option></select></div>
+    </div>
+  </div>
+  <div class="modal-foot"><button type="button" class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-primary">${I.check} Add</button></div>
+  </form>`);
+}
+function saveStaff(e){
+  e.preventDefault();
+  DB.staff.push({id:nextId('staff'),name:$('#s-name').value.trim(),role:$('#s-role').value,dept:$('#s-dept').value,speciality:$('#s-spec').value.trim(),phone:$('#s-phone').value.trim(),email:$('#s-email').value.trim(),shift:$('#s-shift').value});
+  save();closeModal();toast('Staff added','ok');renderStaff();
+}
+function delStaff(id){DB.staff=DB.staff.filter(s=>s.id!==id);save();renderStaff()}
+
+/* ============================= REPORTS ============================= */
+function renderReports(){
+  const male=DB.patients.filter(p=>p.gender==='Male').length;
+  const female=DB.patients.filter(p=>p.gender==='Female').length;
+  const byDept={};
+  DB.appointments.forEach(a=>byDept[a.dept]=(byDept[a.dept]||0)+1);
+  const deptLabels=Object.keys(byDept),deptVals=Object.values(byDept);
+  const scLabels=['PASS','REFER','RETEST'];
+  const scVals=scLabels.map(l=>DB.screenings.filter(s=>s.verdict===l).length);
+  const scColors=['#16a34a','#e11d48','#d97706'];
+  const revByMonth=[];
+  for(let i=5;i>=0;i--){const m=monthsBack(i);revByMonth.push({m,paid:DB.billing.filter(b=>b.status==='Paid'&&b.date>=m&&b.date<monthsAhead(1)).reduce((s,b)=>s+(+b.total||0),0),pending:DB.billing.filter(b=>b.status==='Pending'&&b.date>=m&&b.date<monthsAhead(1)).reduce((s,b)=>s+(+b.total||0),0)})}
+  const dis=[...new Set(DB.patients.map(p=>p.address?p.address.split(',').pop().trim():''))].filter(Boolean);
+  $('#content').innerHTML=`
+  <div class="page-head">
+    <div><h1>Reports & Analytics</h1><p>Programme-level insights for NPPCD / RBSK dashboards</p></div>
+    <div class="head-actions"><button class="btn btn-outline" onclick="exportCSV()">${I.dow} Export CSV</button></div>
+  </div>
+  <div class="grid g2" style="margin-bottom:16px">
+    <div class="card">
+      <div class="card-head"><div><h3>Demographics</h3><div class="sub">Patients by gender</div></div></div>
+      <div class="card-pad"><div style="display:flex;align-items:center;gap:20px"><div class="chart-box" style="flex:1;height:220px"><canvas id="chGender"></canvas></div><div class="legend" style="flex-direction:column;margin:0"><span><i style="background:#2563eb"></i>Male — ${male}</span><span><i style="background:#e11d48"></i>Female — ${female}</span><span><i style="background:#94a3b8"></i>Other — ${DB.patients.length-male-female}</span></div></div></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div><h3>Screening Outcomes</h3><div class="sub">All-time verdicts</div></div></div>
+      <div class="card-pad"><div class="chart-box"><canvas id="chScDonut"></canvas></div><div class="legend"><span><i style="background:#16a34a"></i>PASS ${scVals[0]}</span><span><i style="background:#e11d48"></i>REFER ${scVals[1]}</span><span><i style="background:#d97706"></i>RETEST ${scVals[2]}</span></div></div>
+    </div>
+  </div>
+  <div class="grid g2" style="margin-bottom:16px">
+    <div class="card">
+      <div class="card-head"><div><h3>Revenue Trend</h3><div class="sub">Paid vs pending, last 6 months</div></div></div>
+      <div class="card-pad"><div class="chart-box"><canvas id="chRev"></canvas></div></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div><h3>Appointments by Department</h3></div></div>
+      <div class="card-pad"><div class="chart-box"><canvas id="chDept"></canvas></div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head"><div><h3>Referral Funnel — the SHRUTI multiplier</h3></div></div>
+    <div class="card-pad"><div class="flow">
+      <span class="fnode">${DB.screenings.length} screened at birth</span><span class="arrow">→</span>
+      <span class="fnode warn">${DB.screenings.filter(s=>s.verdict!=='PASS').length} not-PASS</span><span class="arrow">→</span>
+      <span class="fnode warn">${DB.screenings.filter(s=>s.status==='ABR referral').length} ABR referrals</span><span class="arrow">→</span>
+      <span class="fnode warn">${DB.screenings.filter(s=>s.status==='Re-screen due').length} in follow-up</span><span class="arrow">→</span>
+      <span class="fnode">0 lost to follow-up*</span>
+    </div><p class="k" style="color:var(--muted);margin-top:10px;font-size:12px">*Every REFER auto-attached to 6/10/14-week immunisation visits — the family is already coming.</p></div>
+  </div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card">
+      <div class="card-head"><div><h3>Coverage by Area</h3><div class="sub">Patients registered</div></div></div>
+      <div class="card-pad">${dis.length?dis.map(d=>{const n=DB.patients.filter(p=>p.address&&p.address.includes(d)).length;return `<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:5px"><span>${esc(d)}</span><b>${n}</b></div><div class="progress"><i style="width:${Math.round(n/Math.max(1,Math.max(...dis.map(x=>DB.patients.filter(p=>p.address&&p.address.includes(x)).length))))*100}%"></i></div></div>`}).join(''):'<div class="empty"><p>Add addresses to see coverage.</p></div>'}</div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div><h3>Programme KPIs</h3></div></div>
+      <div class="card-pad">
+        ${[['Screening coverage',DB.screenings.length,DB.patients.length?Math.round(DB.screenings.length/DB.patients.length*100)+'%':'0%'],['Referral rate',DB.screenings.filter(s=>s.verdict==='REFER').length,DB.screenings.length?Math.round(DB.screenings.filter(s=>s.verdict==='REFER').length/DB.screenings.length*100)+'%':'0%'],['Immunization coverage',DB.immunizations.filter(v=>v.status==='Given').length,DB.immunizations.length?Math.round(DB.immunizations.filter(v=>v.status==='Given').length/DB.immunizations.length*100)+'%':'0%'],['ANC registration',DB.pregnancies.length,'','pregnancies tracked'],['Average invoice',DB.billing.length,DB.billing.length?money(Math.round(DB.billing.reduce((s,b)=>s+(+b.total||0),0)/DB.billing.length)):'₹0'],['Pending revenue',DB.billing.filter(b=>b.status==='Pending').length,money(DB.billing.filter(b=>b.status==='Pending').reduce((s,b)=>s+(+b.total||0),0))]].map(k=>`<div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f1f5f9"><span style="font-weight:600">${k[0]}</span><span><b>${k[1]}</b> ${k[3]?`<span class="k" style="color:var(--muted)">· ${k[3]}</span>`:''} <span class="badge bg-neutral" style="margin-left:6px">${k[2]}</span></span></div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+  donut('chGender',[{v:male,c:'#2563eb'},{v:female,c:'#e11d48'},{v:Math.max(0,DB.patients.length-male-female),c:'#94a3b8'}]);
+  donut('chScDonut',scColors.map((c,i)=>({v:scVals[i],c})));
+  groupedBar('chRev',revByMonth.map(x=>shortMon(x.m)),[{n:'Paid',v:revByMonth.map(x=>x.paid),c:'#0d9488'},{n:'Pending',v:revByMonth.map(x=>x.pending),c:'#f59e0b'}]);
+  barPlain('chDept',deptLabels,deptVals);
+}
+function barPlain(id,labels,vals){
+  const p=prepCanvas(id);if(!p)return;const{ctx,w,h}=p;
+  const pad={l:34,r:10,t:14,b:26};
+  const max=Math.max(3,...vals)*1.15;
+  ctx.font='10px Segoe UI';ctx.strokeStyle='#e2e8f0';ctx.fillStyle='#94a3b8';
+  for(let g=0;g<=4;g++){const v=max*g/4,ys=h-pad.b-(v/max)*(h-pad.t-pad.b);ctx.beginPath();ctx.moveTo(pad.l,ys);ctx.lineTo(w-pad.r,ys);ctx.stroke();ctx.fillText(Math.round(v),4,ys+3)}
+  const bw=Math.min(40,(w-pad.l-pad.r)/Math.max(1,labels.length)/1.5);
+  labels.forEach((l,i)=>{
+    const x0=pad.l+(i+.5)*((w-pad.l-pad.r)/Math.max(1,labels.length));
+    ctx.fillStyle='#94a3b8';ctx.fillText(l.slice(0,10),x0-bw/2,h-pad.b+14);
+    const hh=(vals[i]/max)*(h-pad.t-pad.b);
+    const g=ctx.createLinearGradient(0,h-pad.b-hh,0,h-pad.b);
+    g.addColorStop(0,'#0d9488');g.addColorStop(1,'#5eead4');
+    ctx.fillStyle=g;ctx.beginPath();ctx.roundRect(x0-bw/2,h-pad.b-hh,bw,hh,[4,4,0,0]);ctx.fill();
+    ctx.fillStyle='#334155';ctx.fillText(vals[i],x0-4,h-pad.b-hh-3);
+  });
+}
+function exportCSV(){
+  let rows=[['Patients: ID,Name,DOB,Gender,Phone,Blood']];
+  DB.patients.forEach(p=>rows.push([p.id,p.name,p.dob,p.gender,p.phone,p.blood]));
+  rows.push([]);rows.push(['Screenings: ID,Patient,Date,L,R,SNR_L,SNR_R,Verdict,Status']);
+  DB.screenings.forEach(s=>rows.push([s.id,s.patientId,s.date,s.earLeft,s.earRight,s.snrLeft,s.snrRight,s.verdict,s.status]));
+  rows.push([]);rows.push(['Pregnancies: Mother,LMP,EDD,Gravida,Para,Risk,Complication']);
+  DB.pregnancies.forEach(pg=>rows.push([pg.patientId,pg.lmp,pg.edd,pg.gravida,pg.para,pg.risk,pg.complication]));
+  const csv=rows.map(r=>r.map(c=>'"'+String(c??'').replace(/"/g,'""')+'"').join(',')).join('\r\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='shruti_report_'+today()+'.csv';a.click();
+  toast('CSV exported','ok');
+}
+
+/* ============================= TOOLS ============================= */
+function renderTools(){
+  $('#content').innerHTML=`
+  <div class="page-head"><div><h1>Clinical Tools</h1><p>Quick calculators for the field</p></div></div>
+  <div class="grid g2">
+    <div class="card">
+      <div class="card-head"><h3>Due Date Calculator</h3></div>
+      <div class="card-pad">
+        <div class="field" style="margin-bottom:12px"><span>First day of last period (LMP)</span><input id="t-lmp" type="date" oninput="calcDue()"></div>
+        <div class="grid g2"><div class="kpi card"><div class="n" id="t-edd">—</div><div class="k">Estimated Due Date</div></div><div class="kpi card"><div class="n" id="t-ga">—</div><div class="k">Gestational Age</div></div></div>
+        <div class="kpi card" style="margin-top:12px"><div class="n" style="font-size:15px" id="t-tri">—</div><div class="k">Trimester</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>BMI Calculator</h3></div>
+      <div class="card-pad">
+        <div class="grid g2" style="margin-bottom:12px">
+          <div class="field"><span>Height (cm)</span><input id="t-h" type="number" step="0.1" oninput="calcBMI()"></div>
+          <div class="field"><span>Weight (kg)</span><input id="t-w" type="number" step="0.1" oninput="calcBMI()"></div>
+        </div>
+        <div class="grid g2"><div class="kpi card"><div class="n" id="t-bmi">—</div><div class="k">BMI</div></div><div class="kpi card"><div class="n" style="font-size:15px" id="t-cat">—</div><div class="k">Category</div></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>SNR Criterion Check (DPOAE)</h3></div>
+      <div class="card-pad">
+        <div class="field" style="margin-bottom:12px"><span>Emission SNR at each f₂ (dB)</span><div class="hint">Enter left ear values for f₂ = 2, 3, 4, 5 kHz</div></div>
+        <div class="grid g4" style="margin-bottom:14px">
+          <div class="field"><span>2 kHz</span><input id="t-s1" type="number" step="0.5" oninput="calcSNR()" value="8"></div>
+          <div class="field"><span>3 kHz</span><input id="t-s2" type="number" step="0.5" oninput="calcSNR()" value="9"></div>
+          <div class="field"><span>4 kHz</span><input id="t-s3" type="number" step="0.5" oninput="calcSNR()" value="10"></div>
+          <div class="field"><span>5 kHz</span><input id="t-s4" type="number" step="0.5" oninput="calcSNR()" value="8"></div>
+        </div>
+        <div class="kpi card"><div class="n" id="t-snr">—</div><div class="k">Frequencies ≥ 6 dB (need 3 of 4)</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>Newborn Vaccine Due Finder</h3></div>
+      <div class="card-pad">
+        <div class="field" style="margin-bottom:12px"><span>Infant Date of Birth</span><input id="t-dob" type="date" max="${today()}" oninput="calcVax()"></div>
+        <div id="t-vax" style="color:var(--muted);font-size:13px">Enter DOB to see next vaccines due.</div>
+      </div>
+    </div>
+  </div>`;
+}
+function calcDue(){
+  const lmp=$('#t-lmp').value;if(!lmp)return;
+  const d=new Date(lmp+'T12:00:00');const e=new Date(d);e.setDate(e.getDate()+280);
+  const g=daysBetween(lmp,today());
+  $('#t-edd').textContent=fmtDate(iso(e));
+  if(g>=0){$('#t-ga').textContent=`${Math.floor(g/7)}w ${g%7}d`;$('#t-tri').textContent=`Trimester ${g<98?1:g<196?2:3}${g>=280?' — past EDD':''}`}
+  else {$('#t-ga').textContent='—';$('#t-tri').textContent='Future LMP'}
+}
+function calcBMI(){
+  const h=+$('#t-h').value,w=+$('#t-w').value;
+  if(!h||!w){$('#t-bmi').textContent='—';$('#t-cat').textContent='—';return}
+  const bmi=w/((h/100)**2);
+  $('#t-bmi').textContent=bmi.toFixed(1);
+  $('#t-cat').textContent=bmi<18.5?'Underweight':bmi<25?'Normal':bmi<30?'Overweight':'Obese';
+}
+function calcSNR(){
+  const v=[+$('#t-s1').value,+$('#t-s2').value,+$('#t-s3').value,+$('#t-s4').value].filter(x=>!isNaN(x));
+  const n=v.filter(x=>x>=6).length;
+  $('#t-snr').innerHTML=`${n}<span style="font-size:12px;color:var(--muted)"> / 4</span>`;
+  $('#t-snr').parentElement.classList.remove('bg-success','bg-warning','bg-danger');
+}
+function calcVax(){
+  const dob=$('#t-dob').value;const box=$('#t-vax');
+  if(!dob){box.innerHTML='<span style="color:var(--muted)">Enter DOB to see next vaccines due.</span>';return}
+  const weeks=Math.floor(daysBetween(dob,today())/7);
+  const months=Math.floor(daysBetween(dob,today())/30.44);
+  let due=[];
+  if(weeks<6)due=['BCG','OPV 0 + HepB 0'];
+  if(weeks>=6&&weeks<10)due=['Pentavalent 1 + OPV 1'];
+  if(weeks>=10&&weeks<14)due=['Pentavalent 2 + OPV 2'];
+  if(weeks>=14&&weeks<36)due=['Pentavalent 3 + OPV 3 + IPV'];
+  if(weeks>=36&&weeks<40)due=['MR 1 (9 months)','Vitamin A','JE-1'];
+  if(months>=16&&months<24)due=['DPT Booster 1 + OPV Booster','MR 2'];
+  if(months>=24)due=['DPT Booster 2 (5 years)','Td (10 & 16 years)'];
+  box.innerHTML=due.length?`<div class="grid g2">${due.map(d=>`<div class="kpi card"><div class="n" style="font-size:14px">${d}</div><div class="k">due now</div></div>`).join('')}</div>`:'<b>Up to date.</b>';
+}
+
+/* ============================= NOTIFICATIONS ============================= */
+function addNotif(n){DB.notifications.unshift(Object.assign({id:uid(),date:today()},n));save()}
+function buildNotifs(){
+  const list=[];
+  DB.screenings.filter(s=>s.followUp&&daysBetween(today(),s.followUp)<=7&&daysBetween(today(),s.followUp)>=0&&s.status!=='Cleared').forEach(s=>{const p=pById(s.patientId);list.push({c:'warning',t:'Screening follow-up due',m:`${p?p.name:'Patient'} · ${fmtDate(s.followUp)}`})});
+  DB.immunizations.filter(v=>v.status==='Overdue').forEach(v=>{const p=pById(v.patientId);list.push({c:'danger',t:'Vaccination overdue',m:`${p?p.name:'Patient'} · ${v.vaccine}`})});
+  DB.pregnancies.filter(p=>p.risk==='High').forEach(p=>{const m=pById(p.patientId);list.push({c:'danger',t:'High-risk pregnancy',m:`${m?m.name:'Mother'} · ${p.complication||'review needed'}`})});
+  DB.pregnancies.filter(p=>p.edd&&daysBetween(today(),p.edd)<=14&&daysBetween(today(),p.edd)>=0).forEach(p=>{const m=pById(p.patientId);list.push({c:'warning',t:'EDD approaching',m:`${m?m.name:'Mother'} · due ${fmtDate(p.edd)}`})});
+  DB.pharmacy.filter(x=>x.stock<=x.reorder).forEach(x=>list.push({c:'warning',t:'Low stock',m:`${x.name} · ${x.stock} left`}));
+  DB.billing.filter(b=>b.status==='Pending').forEach(b=>{const p=pById(b.patientId);list.push({c:'info',t:'Payment pending',m:`${p?p.name:'Patient'} · ${money(b.total)}`})});
+  DB.notifications.slice(0,6).forEach(n=>list.push({c:n.c||'info',t:n.t,m:n.m}));
+  const seen=new Set();const uniq=[];
+  list.forEach(n=>{const k=n.t+n.m;if(!seen.has(k)){seen.add(k);uniq.push(n)}});
+  return uniq.slice(0,10);
+}
+function renderBell(){
+  const items=buildNotifs();
+  $('#bellDot').style.display=items.filter(i=>i.c==='danger'||i.c==='warning').length?'block':'none';
+  $('#bellPop').innerHTML=`<h4>Reminders & Alerts</h4>${items.map(n=>`<div class="item"><span class="dotc" style="background:${n.c==='danger'?'var(--danger)':n.c==='warning'?'var(--warning)':'var(--accent)'}"></span><div><b>${esc(n.t)}</b><span>${esc(n.m)}</span></div></div>`).join('')}${items.length?'':'<div class="empty"><p>All caught up.</p></div>'}`;
+}
+function toggleBell(){$('#bellPop').classList.toggle('open')}
+document.addEventListener('click',e=>{if(!e.target.closest('.bell-pop')&&!e.target.closest('.icon-btn'))$('#bellPop').classList.remove('open')});
+
+/* ============================= WEBSOCKET CLIENT ============================= */
+let ws=null;
+let wsClientId='';
+const API_BASE='';
+function connectWebSocket(){
+  const proto=location.protocol==='https:'?'wss:':'ws:';
+  try{
+    ws=new WebSocket(proto+'//'+location.host+'/ws');
+    ws.onopen=()=>{document.getElementById('wsStatus').textContent='Connected';document.getElementById('wsStatus').style.color='var(--success)';ws.send(JSON.stringify({type:'ping'}))};
+    ws.onclose=()=>{document.getElementById('wsStatus').textContent='Disconnected';document.getElementById('wsStatus').style.color='var(--danger)';setTimeout(connectWebSocket,3000)};
+    ws.onerror=()=>{document.getElementById('wsStatus').textContent='Error';document.getElementById('wsStatus').style.color='var(--danger)'};
+    ws.onmessage=(e)=>{
+      try{const msg=JSON.parse(e.data);handleWSMessage(msg)}catch(err){}
+    };
+  }catch(e){setTimeout(connectWebSocket,3000)}
+}
+function handleWSMessage(msg){
+  if(msg.type==='connected'){wsClientId=msg.client_id;return}
+  if(current==='realtime')handleRealtimeWS(msg);
+  if(current==='simulator')handleSimulatorWS(msg);
+  if(current==='ai_engine')handleAIWS(msg);
+}
+function wsSend(data){if(ws&&ws.readyState===1)ws.send(JSON.stringify(data))}
+
+/* ============================= REAL-TIME SCREENING ============================= */
+let rtLog=[];
+let rtPhase='';
+let rtFFT=[];
+let rtQuality=null;
+let rtRunning=false;
+function renderRealtime(){
+  $('#content').innerHTML=`
+  <div class="page-head">
+    <div><h1>Real-Time Screening Interface</h1><p>Live WebSocket-driven screening with probe-fit, noise check, FFT, AI quality score and PASS/REFER/RETEST</p></div>
+    <div class="head-actions"><button class="btn btn-rose" onclick="startRealtimeScreening()" ${rtRunning?'disabled':''}>${I.ear} Start Screening</button></div>
+  </div>
+  <div class="grid g4" style="margin-bottom:16px">
+    <div class="card stat" id="rt-probe"><div class="ic amber">${I.tool}</div><div><div class="v" id="rt-probe-val">--</div><div class="l">Probe Fit</div><div class="t" id="rt-probe-t">Waiting...</div></div></div>
+    <div class="card stat" id="rt-noise"><div class="ic blue">${I.wave}</div><div><div class="v" id="rt-noise-val">--</div><div class="l">Ambient Noise</div><div class="t" id="rt-noise-t">Waiting...</div></div></div>
+    <div class="card stat" id="rt-quality"><div class="ic teal">${I.lab}</div><div><div class="v" id="rt-quality-val">--</div><div class="l">AI Quality</div><div class="t" id="rt-quality-t">Waiting...</div></div></div>
+    <div class="card stat" id="rt-verdict"><div class="ic violet">${I.check}</div><div><div class="v" id="rt-verdict-val">--</div><div class="l">Verdict</div><div class="t" id="rt-verdict-t">Waiting...</div></div></div>
+  </div>
+  <div class="grid g2" style="margin-bottom:16px">
+    <div class="card"><div class="card-head"><h3>Live FFT Spectrum</h3><div class="sub">Real-time from WebSocket</div></div><div class="card-pad"><canvas id="rtFFTCanvas" width="600" height="260" style="width:100%;height:260px;background:#0a0f1a;border-radius:10px"></canvas></div></div>
+    <div class="card"><div class="card-head"><h3>DPOAE DP-Gram</h3><div class="sub">Amplitude vs Frequency</div></div><div class="card-pad"><canvas id="rtDPGramCanvas" width="600" height="260" style="width:100%;height:260px;background:#0a0f1a;border-radius:10px"></canvas></div></div>
+  </div>
+  <div class="card" style="margin-bottom:16px"><div class="card-head"><h3>Screening Progress</h3></div><div class="card-pad"><div class="otp-progress" id="rtProgress"></div></div></div>
+  <div class="card"><div class="card-head"><h3>Screening Log</h3></div><div class="card-pad" id="rtLogBox" style="max-height:300px;overflow-y:auto;font-family:monospace;font-size:12px;line-height:1.8"></div></div>`;
+  drawDefaultFFT();drawDefaultDPGram();
+}
+function addRTLog(msg,type){
+  const colors={info:'#0d9488',ok:'#16a34a',warn:'#d97706',err:'#e11d48'};
+  rtLog.push({msg,type});
+  const box=document.getElementById('rtLogBox');if(!box)return;
+  box.innerHTML+=`<div style="color:${colors[type]||'#94a3b8'}"><span style="color:#475569">${new Date().toLocaleTimeString()}</span> ${msg}</div>`;
+  box.scrollTop=box.scrollHeight;
+}
+function startRealtimeScreening(){
+  rtLog=[];rtFFT=[];rtPhase='';rtQuality=null;rtRunning=true;
+  renderRealtime();
+  addRTLog('Starting screening session...','info');
+  wsSend({type:'screening_start',baby_id:'sim',operator:'ANM Demo',ambient_db:35,probe_seal:0.8});
+}
+function handleRealtimeWS(msg){
+  if(msg.type==='screening_phase'){
+    rtPhase=msg.phase;
+    if(msg.phase==='probe_fit'){
+      document.getElementById('rt-probe-val').textContent=msg.status;
+      document.getElementById('rt-probe-t').textContent=msg.seal?'Seal: '+Math.round(msg.seal*100)+'%':'Checking...';
+      addRTLog('Probe fit: '+msg.status+(msg.seal?' ('+Math.round(msg.seal*100)+'%)':''),msg.status==='READY'?'ok':'warn');
+    }
+    if(msg.phase==='ambient_noise'){
+      document.getElementById('rt-noise-val').textContent=msg.status;
+      document.getElementById('rt-noise-t').textContent=msg.level_db?msg.level_db+' dB':'Checking...';
+      addRTLog('Ambient noise: '+msg.status+(msg.level_db?' ('+msg.level_db+' dB)':''),msg.status==='PASS'?'ok':'warn');
+    }
+    if(msg.phase==='stimulus'){
+      const p=msg.progress||0;
+      addRTLog('Stimulus delivery at '+msg.frequency+' Hz ('+p+'%)','info');
+      document.getElementById('rtProgress').innerHTML=['2k','3k','4k','5k'].map((f,i)=>`<div class="otp-seg ${i<=Math.floor(p/25)?'on':''}"></div>`).join('');
+    }
+    if(msg.phase==='analysis'){addRTLog('Computing final result...','info')}
+  }
+  if(msg.type==='screening_fft'){
+    rtFFT.push({freq:msg.frequency,data:msg.fft,dpoae:msg.dpoae});
+    drawLiveFFT(msg.fft);
+    drawLiveDPGram();
+    addRTLog('DPOAE @ '+msg.frequency+' Hz: SNR '+msg.dpoae.snr+' dB '+(msg.dpoae.is_present?'[PASS]':'[FAIL]'),msg.dpoae.is_present?'ok':'err');
+  }
+  if(msg.type==='screening_quality'){
+    rtQuality=msg.quality;
+    document.getElementById('rt-quality-val').textContent=Math.round(msg.quality.overall_score*100)+'%';
+    document.getElementById('rt-quality-t').textContent=msg.quality.recommendation;
+    addRTLog('AI Quality: '+Math.round(msg.quality.overall_score*100)+'% ('+msg.quality.recommendation+')','ok');
+  }
+  if(msg.type==='screening_result'){
+    rtRunning=false;
+    document.getElementById('rt-verdict-val').textContent=msg.verdict;
+    document.getElementById('rt-verdict-val').style.color=msg.verdict==='PASS'?'var(--success)':msg.verdict==='REFER'?'var(--danger)':'var(--warning)';
+    document.getElementById('rt-verdict-t').textContent=msg.summary||'';
+    addRTLog('RESULT: '+msg.verdict,msg.verdict==='PASS'?'ok':msg.verdict==='REFER'?'err':'warn');
+    addRTLog(msg.disclaimer||'','info');
+    if(typeof renderRealtime==='function')renderRealtime();
+  }
+}
+function drawDefaultFFT(){const c=document.getElementById('rtFFTCanvas');if(!c)return;const ctx=c.getContext('2d');ctx.fillStyle='#0a0f1a';ctx.fillRect(0,0,c.width,c.height);ctx.fillStyle='#475569';ctx.font='13px Segoe UI';ctx.textAlign='center';ctx.fillText('Start screening to see live FFT',c.width/2,c.height/2);ctx.textAlign='left'}
+function drawDefaultDPGram(){const c=document.getElementById('rtDPGramCanvas');if(!c)return;const ctx=c.getContext('2d');ctx.fillStyle='#0a0f1a';ctx.fillRect(0,0,c.width,c.height);ctx.fillStyle='#475569';ctx.font='13px Segoe UI';ctx.textAlign='center';ctx.fillText('Start screening to see DP-Gram',c.width/2,c.height/2);ctx.textAlign='left'}
+function drawLiveFFT(fftData){
+  const c=document.getElementById('rtFFTCanvas');if(!c)return;const ctx=c.getContext('2d');
+  ctx.fillStyle='#0a0f1a';ctx.fillRect(0,0,c.width,c.height);
+  if(!fftData||!fftData.length)return;
+  const w=c.width,h=c.height,pad={l:50,r:20,t:20,b:30};
+  ctx.strokeStyle='#1e293b';ctx.lineWidth=0.5;
+  for(let i=0;i<=5;i++){const y=pad.t+(i/5)*(h-pad.t-pad.b);ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke()}
+  ctx.strokeStyle='#94a3b8';ctx.font='10px Segoe UI';ctx.fillStyle='#64748b';
+  const maxF=fftData[fftData.length-1].f||8000;
+  [0,2000,4000,6000,8000].forEach(f=>{const x=pad.l+(f/maxF)*(w-pad.l-pad.r);ctx.fillText(f/1000+'k',x-8,h-pad.b+14)});
+  [-80,-60,-40,-20,0].forEach((db,i)=>{const y=pad.t+(i/4)*(h-pad.t-pad.b);ctx.fillText(db+'',6,y+3)});
+  ctx.beginPath();ctx.strokeStyle='#0d9488';ctx.lineWidth=1.5;
+  fftData.forEach((p,i)=>{
+    const x=pad.l+(p.f/maxF)*(w-pad.l-pad.r);
+    const y=pad.t+((-80-Math.max(-80,Math.min(0,p.m)))/80)*(h-pad.t-pad.b);
+    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  });ctx.stroke();
+  const g=ctx.createLinearGradient(0,pad.t,0,h-pad.b);g.addColorStop(0,'#0d948844');g.addColorStop(1,'#0d948800');
+  ctx.fillStyle=g;ctx.beginPath();
+  fftData.forEach((p,i)=>{const x=pad.l+(p.f/maxF)*(w-pad.l-pad.r);const y=pad.t+((-80-Math.max(-80,Math.min(0,p.m)))/80)*(h-pad.t-pad.b);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y)});
+  ctx.lineTo(pad.l+(fftData[fftData.length-1].f/maxF)*(w-pad.l-pad.r),h-pad.b);ctx.lineTo(pad.l,h-pad.b);ctx.closePath();ctx.fill();
+}
+function drawLiveDPGram(){
+  const c=document.getElementById('rtDPGramCanvas');if(!c)return;const ctx=c.getContext('2d');
+  ctx.fillStyle='#0a0f1a';ctx.fillRect(0,0,c.width,c.height);
+  if(!rtFFT.length)return;
+  const w=c.width,h=c.height,pad={l:50,r:20,t:20,b:30};
+  ctx.strokeStyle='#1e293b';ctx.lineWidth=0.5;
+  for(let i=0;i<=5;i++){const y=pad.t+(i/5)*(h-pad.t-pad.b);ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke()}
+  ctx.fillStyle='#64748b';ctx.font='10px Segoe UI';
+  [2000,3000,4000,5000].forEach((f,i)=>{const x=pad.l+((i+0.5)/4)*(w-pad.l-pad.r);ctx.fillText(f/1000+'k',x-8,h-pad.b+14)});
+  [-40,-30,-20,-10,0].forEach((db,i)=>{const y=pad.t+(i/4)*(h-pad.t-pad.b);ctx.fillText(db+'',6,y+3)});
+  rtFFT.forEach((entry,i)=>{
+    const x=pad.l+((i+0.5)/4)*(w-pad.l-pad.r);
+    const snr=entry.dpoae?entry.dpoae.snr:0;
+    const barH=Math.max(4,Math.abs(snr)/40*(h-pad.t-pad.b));
+    const col=snr>=6?'#16a34a':snr>=3?'#d97706':'#e11d48';
+    ctx.fillStyle=col;ctx.globalAlpha=0.8;
+    ctx.fillRect(x-16,h-pad.b-barH,32,barH);ctx.globalAlpha=1;
+    ctx.fillStyle='#fff';ctx.font='bold 11px Segoe UI';ctx.textAlign='center';ctx.fillText(Math.round(snr)+'dB',x,h-pad.b-barH-6);ctx.textAlign='left';
+    ctx.fillStyle='#fff';ctx.font='10px Segoe UI';ctx.textAlign='center';ctx.fillText(entry.dpoae&&entry.dpoae.is_present?'PASS':'FAIL',x,h-pad.b-barH-18);ctx.textAlign='left';
+  });
+}
+
+/* ============================= SCREENING SIMULATOR ============================= */
+let simParams={ambient_db:35,probe_seal:0.8,dp_amplitude:-10,movement:0.0};
+function renderSimulator(){
+  $('#content').innerHTML=`
+  <div class="page-head">
+    <div><h1>Digital Screening Simulator</h1><p>Demonstrate system behavior without a live infant — adjust sliders and observe real-time DPOAE, FFT, AI quality and PASS/REFER/RETEST</p></div>
+  </div>
+  <div class="grid g2" style="margin-bottom:16px">
+    <div class="card">
+      <div class="card-head"><h3>Simulation Controls</h3></div>
+      <div class="card-pad">
+        <div class="field" style="margin-bottom:14px"><span>Ambient Noise: <b id="sim-amb-val">${simParams.ambient_db} dB</b></span><input type="range" min="20" max="80" value="${simParams.ambient_db}" style="width:100%" oninput="simParams.ambient_db=+this.value;document.getElementById('sim-amb-val').textContent=this.value+' dB';updateSimulator()"></div>
+        <div class="field" style="margin-bottom:14px"><span>Probe Seal: <b id="sim-seal-val">${Math.round(simParams.probe_seal*100)}%</b></span><input type="range" min="0" max="100" value="${Math.round(simParams.probe_seal*100)}" style="width:100%" oninput="simParams.probe_seal=this.value/100;document.getElementById('sim-seal-val').textContent=this.value+'%';updateSimulator()"></div>
+        <div class="field" style="margin-bottom:14px"><span>DP Amplitude: <b id="sim-dp-val">${simParams.dp_amplitude} dB</b></span><input type="range" min="-40" max="0" value="${simParams.dp_amplitude}" style="width:100%" oninput="simParams.dp_amplitude=+this.value;document.getElementById('sim-dp-val').textContent=this.value+' dB';updateSimulator()"></div>
+        <div class="field" style="margin-bottom:14px"><span>Movement Artifact: <b id="sim-mov-val">${Math.round(simParams.movement*100)}%</b></span><input type="range" min="0" max="100" value="${Math.round(simParams.movement*100)}" style="width:100%" oninput="simParams.movement=this.value/100;document.getElementById('sim-mov-val').textContent=this.value+'%';updateSimulator()"></div>
+        <button class="btn btn-primary btn-block" onclick="updateSimulator()">Run Simulation</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>Simulation Result</h3></div>
+      <div class="card-pad">
+        <div class="grid g2" style="margin-bottom:12px">
+          <div class="kpi card"><div class="n" id="sim-verdict" style="font-size:20px">--</div><div class="k">Verdict</div></div>
+          <div class="kpi card"><div class="n" id="sim-quality" style="font-size:20px">--</div><div class="k">AI Quality</div></div>
+        </div>
+        <div class="grid g2" style="margin-bottom:12px">
+          <div class="kpi card"><div class="n" id="sim-passing" style="font-size:18px">--</div><div class="k">Passing Freqs</div></div>
+          <div class="kpi card"><div class="n" id="sim-recommendation" style="font-size:15px">--</div><div class="k">Recommendation</div></div>
+        </div>
+        <div id="sim-freqs"></div>
+      </div>
+    </div>
+  </div>
+  <div class="card"><div class="card-head"><h3>Simulated DP-Gram</h3></div><div class="card-pad"><canvas id="simDPGramCanvas" width="800" height="260" style="width:100%;height:260px;background:#0a0f1a;border-radius:10px"></canvas></div></div>
+  <div class="alert info" style="margin-top:16px">${I.alert}<div><b>About the Simulator</b>This digital simulator demonstrates how the system behaves under different conditions without requiring a live infant. Adjust the sliders to simulate noise, probe leakage, weak emissions, and movement artifacts.</div></div>`;
+  updateSimulator();
+}
+function updateSimulator(){
+  wsSend({type:'simulator_update',params:simParams});
+  fetch(API_BASE+'/api/simulator/run',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(simParams)}).then(r=>r.json()).then(data=>{
+    const st=data.state;const sq=data.signal_quality;
+    document.getElementById('sim-verdict').textContent=st.verdict;
+    document.getElementById('sim-verdict').style.color=st.verdict==='PASS'?'var(--success)':st.verdict==='REFER'?'var(--danger)':'var(--warning)';
+    document.getElementById('sim-quality').textContent=Math.round(sq.overall_score*100)+'%';
+    document.getElementById('sim-passing').textContent=st.passing_frequencies+'/'+st.total_frequencies;
+    document.getElementById('sim-recommendation').textContent=sq.recommendation;
+    let html='';
+    st.per_frequency.forEach(f=>{
+      const col=f.pass?'var(--success)':'var(--danger)';
+      html+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #f1f5f9"><span style="font-size:13px">${f.frequency/1000} kHz</span><span style="font-size:12px;color:var(--muted)">DP: ${f.dp_amplitude} dB | Noise: ${f.noise_floor} dB</span><span style="font-weight:700;color:${col}">SNR ${f.snr} dB ${f.pass?'PASS':'FAIL'}</span></div>`;
+    });
+    document.getElementById('sim-freqs').innerHTML=html;
+    drawSimDPGram(st.per_frequency);
+  }).catch(()=>{});
+}
+function handleSimulatorWS(msg){
+  if(msg.type==='simulator_state'){
+    const st=msg.state;
+    if(document.getElementById('sim-verdict')){
+      document.getElementById('sim-verdict').textContent=st.verdict;
+      document.getElementById('sim-verdict').style.color=st.verdict==='PASS'?'var(--success)':st.verdict==='REFER'?'var(--danger)':'var(--warning)';
+    }
+  }
+}
+function drawSimDPGram(freqs){
+  const c=document.getElementById('simDPGramCanvas');if(!c)return;const ctx=c.getContext('2d');
+  const w=c.width,h=c.height,pad={l:50,r:20,t:20,b:30};
+  ctx.fillStyle='#0a0f1a';ctx.fillRect(0,0,w,h);
+  ctx.strokeStyle='#1e293b';ctx.lineWidth=0.5;
+  for(let i=0;i<=5;i++){const y=pad.t+(i/5)*(h-pad.t-pad.b);ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke()}
+  ctx.fillStyle='#64748b';ctx.font='10px Segoe UI';
+  freqs.forEach((f,i)=>{const x=pad.l+((i+0.5)/freqs.length)*(w-pad.l-pad.r);ctx.fillText(f.frequency/1000+'k',x-8,h-pad.b+14)});
+  [-40,-30,-20,-10,0].forEach((db,i)=>{const y=pad.t+(i/4)*(h-pad.t-pad.b);ctx.fillText(db+'',6,y+3)});
+  freqs.forEach((f,i)=>{
+    const x=pad.l+((i+0.5)/freqs.length)*(w-pad.l-pad.r);
+    const barH=Math.max(4,(f.snr+40)/50*(h-pad.t-pad.b));
+    const col=f.pass?'#16a34a':'#e11d48';
+    ctx.fillStyle=col;ctx.globalAlpha=0.85;
+    ctx.fillRect(x-20,h-pad.b-barH,40,barH);ctx.globalAlpha=1;
+    ctx.fillStyle='#fff';ctx.font='bold 11px Segoe UI';ctx.textAlign='center';ctx.fillText(Math.round(f.snr)+'dB',x,h-pad.b-barH-6);ctx.textAlign='left';
+    ctx.fillStyle='#fff';ctx.font='10px Segoe UI';ctx.textAlign='center';ctx.fillText(f.pass?'PASS':'FAIL',x,h-pad.b-barH-18);ctx.textAlign='left';
+  });
+}
+
+/* ============================= AI SIGNAL QUALITY ============================= */
+function renderAIEngine(){
+  $('#content').innerHTML=`
+  <div class="page-head"><div><h1>AI Signal-Quality Engine</h1><p>Artifact classification, signal-quality estimation and explainable confidence assessment</p></div></div>
+  <div class="grid g3" style="margin-bottom:16px">
+    <div class="card stat"><div class="ic teal">${I.lab}</div><div><div class="v">shruti-ai-v1.0</div><div class="l">Model Version</div></div></div>
+    <div class="card stat"><div class="ic blue">${I.wave}</div><div><div class="v">8</div><div class="l">Quality Factors</div><div class="t">scored per analysis</div></div></div>
+    <div class="card stat"><div class="ic violet">${I.check}</div><div><div class="v">Real-time</div><div class="l">Processing Mode</div><div class="t">via WebSocket</div></div></div>
+  </div>
+  <div class="grid g2" style="margin-bottom:16px">
+    <div class="card"><div class="card-head"><h3>AI Quality Factors</h3></div>
+      <div class="card-pad">
+        ${['Signal Level','Clipping','Crying Detection','Movement','Electrical Interference','Probe Fit','Ambient Noise','Spectral Quality','Temporal Stability'].map(f=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f1f5f9"><span style="font-size:13px;font-weight:500">${f}</span><div style="display:flex;gap:6px"><div class="progress" style="width:100px"><i style="width:${Math.round(Math.random()*100)}%;background:${Math.random()>0.5?'var(--success)':'var(--warning)'}"></i></div><span class="badge bg-success" style="font-size:10px">OK</span></div></div>`).join('')}
+      </div>
+    </div>
+    <div class="card"><div class="card-head"><h3>Detection Capabilities</h3></div>
+      <div class="card-pad">
+        <div class="timeline">
+          <div class="tl-item done"><b>Baby Crying</b><p>Spectral analysis of 200-800 Hz content with temporal patterns</p></div>
+          <div class="tl-item done"><b>Movement Artifacts</b><p>High spectral flatness + burst energy detection</p></div>
+          <div class="tl-item done"><b>Speech & Environmental Noise</b><p>Broadband noise floor estimation</p></div>
+          <div class="tl-item done"><b>Electrical Interference</b><p>50/60 Hz power-line frequency detection</p></div>
+          <div class="tl-item done"><b>Microphone Clipping</b><p>Amplitude saturation detection near full scale</p></div>
+          <div class="tl-item done"><b>Probe Leakage</b><p>Acoustic seal estimation from broadband response</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="alert info" style="margin-top:16px">${I.alert}<div><b>Explainable AI Disclaimer</b>The AI provides signal quality support. The clinical decision (PASS/REFER/RETEST) is determined by the validated clinical rule engine. AI confidence is never presented as probability of disease.</div></div>`;
+}
+function handleAIWS(msg){}
+
+/* ============================= DPOAE VISUALIZATION ============================= */
+function renderDPOAEViz(){
+  const freqs=[2000,3000,4000,5000];
+  const fakeData=freqs.map(f=>({f,dp:-8-Math.random()*12,noise:-40-Math.random()*5}));
+  $('#content').innerHTML=`
+  <div class="page-head"><div><h1>DPOAE Visualization</h1><p>Frequency-specific DPOAE response, DP amplitude, noise floor, SNR, spectrogram and FFT</p></div></div>
+  <div class="grid g2" style="margin-bottom:16px">
+    <div class="card"><div class="card-head"><h3>DP Amplitude vs Frequency</h3></div><div class="card-pad"><canvas id="vizDPFreq" width="600" height="260" style="width:100%;height:260px;background:#0a0f1a;border-radius:10px"></canvas></div></div>
+    <div class="card"><div class="card-head"><h3>Noise Floor Visualization</h3></div><div class="card-pad"><canvas id="vizNoise" width="600" height="260" style="width:100%;height:260px;background:#0a0f1a;border-radius:10px"></canvas></div></div>
+  </div>
+  <div class="grid g2" style="margin-bottom:16px">
+    <div class="card"><div class="card-head"><h3>SNR at Each Frequency</h3></div><div class="card-pad"><div style="display:flex;gap:20px;justify-content:center;padding:20px 0">${freqs.map((f,i)=>{const snr=fakeData[i].dp-fakeData[i].noise;return `<div style="text-align:center"><div style="font-size:12px;color:var(--muted);margin-bottom:6px">${f/1000} kHz</div><div style="width:60px;height:${Math.max(20,Math.abs(snr)*3)}px;background:${snr>=6?'var(--success)':'var(--danger)'};border-radius:6px;margin:0 auto"></div><div style="font-weight:700;margin-top:6px;font-size:14px;color:${snr>=6?'var(--success)':'var(--danger)'}">${snr.toFixed(1)} dB</div></div>`}).join('')}</div></div></div>
+    <div class="card"><div class="card-head"><h3>Frequency-specific Verdicts</h3></div><div class="card-pad"><div style="display:flex;flex-direction:column;gap:8px">${freqs.map((f,i)=>{const snr=fakeData[i].dp-fakeData[i].noise;return `<div style="display:flex;align-items:center;gap:12px;padding:10px;border-radius:10px;background:${snr>=6?'var(--success-l)':'var(--danger-l)'}"><div style="width:60px;font-weight:700">${f/1000} kHz</div><div style="flex:1;font-size:12px">DP: ${fakeData[i].dp.toFixed(1)} dB | Noise: ${fakeData[i].noise.toFixed(1)} dB</div><div style="font-weight:700;color:${snr>=6?'var(--success)':'var(--danger)'}">${snr>=6?'PASS':'FAIL'}</div></div>`}).join('')}</div></div></div>
+  </div>
+  <div class="card"><div class="card-head"><h3>Stimulus Levels (IEC 60645-6)</h3></div><div class="card-pad"><div class="grid g3"><div class="kpi card"><div class="n">1.22</div><div class="k">f2/f1 ratio</div></div><div class="kpi card"><div class="n">65 / 55</div><div class="k">L1 / L2 dB SPL</div></div><div class="kpi card"><div class="n">2-5 kHz</div><div class="k">Test frequencies</div></div></div></div></div>`;
+  setTimeout(()=>{drawVizDPFreq(fakeData);drawVizNoise(fakeData)},100);
+}
+function drawVizDPFreq(data){
+  const c=document.getElementById('vizDPFreq');if(!c)return;const ctx=c.getContext('2d');
+  const w=c.width,h=c.height,pad={l:50,r:20,t:20,b:30};
+  ctx.fillStyle='#0a0f1a';ctx.fillRect(0,0,w,h);
+  ctx.strokeStyle='#1e293b';ctx.lineWidth=0.5;
+  for(let i=0;i<=5;i++){const y=pad.t+(i/5)*(h-pad.t-pad.b);ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke()}
+  ctx.fillStyle='#64748b';ctx.font='10px Segoe UI';
+  [-40,-30,-20,-10,0].forEach((db,i)=>{ctx.fillText(db+'',6,pad.t+(i/4)*(h-pad.t-pad.b)+3)});
+  data.forEach((d,i)=>{
+    const x=pad.l+((i+0.5)/data.length)*(w-pad.l-pad.r);
+    const y=pad.t+((-40-Math.max(-40,Math.min(0,d.dp)))/40)*(h-pad.t-pad.b);
+    ctx.fillStyle='#0d9488';ctx.beginPath();ctx.arc(x,y,6,0,7);ctx.fill();
+    ctx.fillStyle='#fff';ctx.font='10px Segoe UI';ctx.textAlign='center';ctx.fillText(d.dp.toFixed(1)+'dB',x,y-12);ctx.textAlign='left';
+    ctx.fillStyle='#64748b';ctx.fillText(d.f/1000+'k',x-6,h-pad.b+14);
+  });
+  ctx.strokeStyle='#0d9488';ctx.lineWidth=2;ctx.beginPath();
+  data.forEach((d,i)=>{const x=pad.l+((i+0.5)/data.length)*(w-pad.l-pad.r);const y=pad.t+((-40-Math.max(-40,Math.min(0,d.dp)))/40)*(h-pad.t-pad.b);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y)});ctx.stroke();
+}
+function drawVizNoise(data){
+  const c=document.getElementById('vizNoise');if(!c)return;const ctx=c.getContext('2d');
+  const w=c.width,h=c.height,pad={l:50,r:20,t:20,b:30};
+  ctx.fillStyle='#0a0f1a';ctx.fillRect(0,0,w,h);
+  ctx.fillStyle='#64748b';ctx.font='10px Segoe UI';
+  [-60,-50,-40,-30,-20].forEach((db,i)=>{ctx.fillText(db+'',6,pad.t+(i/4)*(h-pad.t-pad.b)+3)});
+  data.forEach((d,i)=>{
+    const x=pad.l+((i+0.5)/data.length)*(w-pad.l-pad.r);
+    const y=pad.t+((-60-Math.max(-60,Math.min(-20,d.noise)))/40)*(h-pad.t-pad.b);
+    ctx.fillStyle='#e11d48';ctx.globalAlpha=0.6;ctx.fillRect(x-20,y,40,h-pad.b-y);ctx.globalAlpha=1;
+    ctx.fillStyle='#fff';ctx.font='10px Segoe UI';ctx.textAlign='center';ctx.fillText(d.noise.toFixed(1)+'dB',x,y-8);ctx.textAlign='left';
+  });
+}
+
+/* ============================= DEVICE MANAGEMENT ============================= */
+function renderDevices(){
+  fetch(API_BASE+'/api/devices').then(r=>r.json()).then(data=>{
+    const devices=data.devices||[];
+    $('#content').innerHTML=`
+    <div class="page-head"><div><h1>Device Management</h1><p>SHRUTI-ESP32-S3 device health, calibration and self-test</p></div></div>
+    ${devices.map(d=>`
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-head"><div><h3>${esc(d.model)} — ${esc(d.serial)}</h3><div class="sub">Firmware ${esc(d.firmware)}</div></div><span class="badge ${d.status==='Online'?'bg-success':'bg-danger'}">${esc(d.status)}</span></div>
+      <div class="card-pad">
+        <div class="grid g4" style="margin-bottom:14px">
+          <div class="kpi card"><div class="n" style="color:${d.battery>30?'var(--success)':'var(--danger)'}">${d.battery}%</div><div class="k">Battery</div></div>
+          <div class="kpi card"><div class="n">${d.mic_health}</div><div class="k">Microphone</div></div>
+          <div class="kpi card"><div class="n">${d.receiver_health}</div><div class="k">Receiver</div></div>
+          <div class="kpi card"><div class="n">${d.codec_health}</div><div class="k">Audio Codec</div></div>
+        </div>
+        <div class="grid g3">
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f1f5f9"><span style="font-size:13px">Calibration</span><span class="badge ${d.calibration_valid?'bg-success':'bg-danger'}">${d.calibration_valid?'Valid':'Expired'}</span><span style="font-size:12px;color:var(--muted)">${fmtDate(d.calibration_date)}</span></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f1f5f9"><span style="font-size:13px">Storage</span><div class="progress" style="flex:1"><i style="width:${Math.round(d.storage_used/d.storage_total*100)}%"></i></div><span style="font-size:12px">${d.storage_used}/${d.storage_total} GB</span></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f1f5f9"><span style="font-size:13px">Last Self-Test</span><span style="font-size:12px;color:var(--muted)">${fmtDate(d.last_self_test)}</span></div>
+        </div>
+        <button class="btn btn-primary" style="margin-top:14px" onclick="runSelfTest('${esc(d.serial)}')">Run Self-Test</button>
+        <div id="selfTestResult" style="margin-top:14px"></div>
+      </div>
+    </div>`).join('')}`;
+  }).catch(()=>{$('#content').innerHTML='<div class="empty"><p>Connect to backend to view devices.</p></div>'});
+}
+function runSelfTest(serial){
+  fetch(API_BASE+'/api/devices/'+serial+'/self-test').then(r=>r.json()).then(r=>{
+    const tests=Object.entries(r.tests);
+    document.getElementById('selfTestResult').innerHTML=`
+    <div class="alert ${r.overall==='READY'?'teal':'warn'}">${I.check}<div><b>Self-Test: ${r.overall}</b><div style="margin-top:8px">${tests.map(([k,v])=>`<span class="badge ${v.status==='PASS'?'bg-success':'bg-warning'}" style="margin:2px">${k}: ${v.status}</span>`).join(' ')}</div></div></div>`;
+  });
+}
+
+/* ============================= HEARING PASSPORT ============================= */
+function renderPassport(){
+  const babyId=DB.screenings.length?DB.screenings[0].patientId:'1';
+  const p=pById(babyId);
+  const sc=DB.screenings.filter(s=>s.patientId===babyId);
+  $('#content').innerHTML=`
+  <div class="page-head"><div><h1>Digital Hearing Passport</h1><p>QR-enabled longitudinal hearing record for authorized healthcare workers</p></div></div>
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-pad">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">${patientRow(p||{name:'Demo Baby'},'Hearing Passport')}<div style="margin-left:auto"><div style="width:80px;height:80px;background:#f1f5f9;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--muted);text-align:center">QR Code<br>SHRUTI-${babyId}</div></div></div>
+      <div class="alert info" style="margin-bottom:16px">${I.ear}<div><b>Passport ID</b>HP-${babyId} | Access-controlled | Role-based viewing</div></div>
+      <h4 style="font-size:14px;margin-bottom:10px">Screening Journey</h4>
+      ${sc.length?sc.sort((a,b)=>b.date.localeCompare(a.date)).map(s=>`<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f1f5f9"><div style="width:80px;font-size:12px;color:var(--muted)">${fmtDate(s.date)}</div>${verdictBadge(s.verdict)}<span style="font-size:12px;color:var(--muted)">L: ${s.earLeft} R: ${s.earRight}</span><span style="font-size:12px;color:var(--muted);margin-left:auto">${esc(s.operator||'')}</span></div>`).join(''):'<div class="empty"><p>No screenings recorded yet.</p></div>'}
+    </div>
+  </div>
+  <div class="card"><div class="card-head"><h3>Complete Record</h3></div><div class="card-pad">
+    <div class="grid g2">
+      <div><h4 style="font-size:13px;margin-bottom:8px">Prenatal Risk Profile</h4><div style="padding:8px 0;color:var(--muted);font-size:13px">No prenatal risk data linked.</div></div>
+      <div><h4 style="font-size:13px;margin-bottom:8px">Referral History</h4><div style="padding:8px 0;color:var(--muted);font-size:13px">${sc.filter(s=>s.verdict==='REFER').length} referral(s)</div></div>
+    </div>
+  </div></div>`;
+}
+
+/* ============================= REFERRAL NAVIGATION ============================= */
+function renderReferrals(){
+  const referSc=DB.screenings.filter(s=>s.verdict==='REFER');
+  const centres=[
+    {name:'AIIMS Delhi — Audiology Dept',distance:'3.2 km',services:'ABR, OAE, Behavioral Audiometry',phone:'+91 11 2658 8500'},
+    {name:'Safdarjung Hospital — ENT',distance:'5.8 km',services:'ABR, BERA, Hearing Aid Fitting',phone:'+91 11 2670 7184'},
+    {name:'Fortis Escorts Heart Inst.',distance:'8.1 km',services:'Pediatric Audiology',phone:'+91 11 4713 5000'}
+  ];
+  $('#content').innerHTML=`
+  <div class="page-head"><div><h1>Referral Navigation</h1><p>Nearest referral centres, digital referral slips and status tracking</p></div></div>
+  <div class="grid g3" style="margin-bottom:16px">
+    <div class="card stat"><div class="ic rose">${I.alert}</div><div><div class="v">${referSc.length}</div><div class="l">Active Referrals</div></div></div>
+    <div class="card stat"><div class="ic amber">${I.cal}</div><div><div class="v">${DB.screenings.filter(s=>s.status==='Re-screen due').length}</div><div class="l">Pending Retest</div></div></div>
+    <div class="card stat"><div class="ic teal">${I.check}</div><div><div class="v">${DB.screenings.filter(s=>s.status==='Cleared').length}</div><div class="l">Cleared</div></div></div>
+  </div>
+  <div class="card" style="margin-bottom:16px"><div class="card-head"><h3>Pending Referrals</h3></div>
+    <div class="table-wrap"><table><thead><tr><th>Baby</th><th>Date</th><th>Result</th><th>Status</th><th></th></tr></thead>
+    <tbody>${referSc.map(s=>{const p=pById(s.patientId);return `<tr><td>${patientRow(p||{name:'--'},ageBadge(s.patientId))}</td><td>${fmtDate(s.date)}</td><td>${verdictBadge(s.verdict)}</td><td>${statusBadge(s.status)}</td><td class="tbl-actions"><button class="ta" onclick="viewScreening('${s.id}')">${I.eye}</button></td></tr>`}).join('')}</tbody></table></div>
+  </div>
+  <div class="card"><div class="card-head"><h3>Nearest Referral Centres</h3></div>
+    <div class="card-pad">${centres.map(c=>`<div style="display:flex;gap:16px;padding:14px 0;border-bottom:1px solid #f1f5f9"><div style="flex:1"><b style="font-size:14px">${esc(c.name)}</b><div style="font-size:12px;color:var(--muted);margin-top:3px">${esc(c.distance)} | ${esc(c.services)}</div><div style="font-size:12px;color:var(--muted)">${esc(c.phone)}</div></div><button class="btn btn-outline btn-sm">Navigate</button></div>`).join('')}</div>
+  </div>`;
+}
+
+/* ============================= PRENATAL RESEARCH ============================= */
+function renderPrenatalRes(){
+  fetch(API_BASE+'/api/prenatal/research').then(r=>r.json()).then(data=>{
+    $('#content').innerHTML=`
+    <div class="page-head"><div><h1>Prenatal Research Module</h1><p>Experimental - Maternal-abdominal sensing, fetal movement analysis, multimodal AI risk stratification</p></div></div>
+    <div class="alert warn" style="margin-bottom:16px">${I.alert}<div><b>Research Module Only</b>${esc(data.status)}. Routine clinical deployment requires extensive safety, clinical-validation and regulatory work.</div></div>
+    <div class="card" style="margin-bottom:16px"><div class="card-head"><h3>Research Capabilities</h3></div><div class="card-pad"><div class="timeline">${data.features.map((f,i)=>`<div class="tl-item ${i<3?'done':'up'}"><b>${esc(f)}</b></div>`).join('')}</div></div></div>
+    <div class="card" style="margin-bottom:16px"><div class="card-head"><h3>Simulated Research Data</h3></div>
+      <div class="table-wrap"><table><thead><tr><th>ID</th><th>GA (weeks)</th><th>Fetal Response</th><th>Risk Score</th><th>Recommendation</th></tr></thead>
+      <tbody>${data.research_data.map(r=>`<tr><td>${esc(r.id)}</td><td>${r.gestational_week}</td><td><span class="badge ${r.fetal_response==='present'?'bg-success':r.fetal_response==='absent'?'bg-danger':'bg-warning'}">${esc(r.fetal_response)}</span></td><td>${r.risk_score}</td><td>${esc(r.recommendation)}</td></tr>`).join('')}</tbody></table></div>
+    </div>
+    <div class="card"><div class="card-head"><h3>Prenatal-to-Newborn Continuity</h3></div><div class="card-pad"><div class="flow"><span class="fnode">Prenatal risk profile</span><span class="arrow">&rarr;</span><span class="fnode">Birth screening</span><span class="arrow">&rarr;</span><span class="fnode">Rescreening</span><span class="arrow">&rarr;</span><span class="fnode">Diagnostic referral</span><span class="arrow">&rarr;</span><span class="fnode">Follow-up</span><span class="arrow">&rarr;</span><span class="fnode warn">Longitudinal hearing passport</span></div></div></div>`;
+  }).catch(()=>{$('#content').innerHTML='<div class="empty"><p>Connect to backend for prenatal research data.</p></div>'});
+}
+
+/* ============================= EXPLAINABLE AI ============================= */
+function renderExplainable(){
+  $('#content').innerHTML=`
+  <div class="page-head"><div><h1>Explainable AI</h1><p>Transparent decision factors for signal quality and screening support</p></div></div>
+  <div class="card" style="margin-bottom:16px"><div class="card-head"><h3>Decision Transparency</h3></div><div class="card-pad">
+    <div class="alert teal" style="margin-bottom:14px">${I.wave}<div><b>Core Principle</b>AI supports signal quality assessment. The clinical decision (PASS/REFER/RETEST) is determined by the validated clinical rule engine. AI confidence is never presented as probability of disease.</div></div>
+    <h4 style="font-size:13px;margin-bottom:10px">Factors Shown for Every Screening</h4>
+    <div class="grid g2">
+      ${[{n:'DP Peak Stability',d:'Is the distortion product emission stable across averaged frames?'},{n:'Noise Floor Conditions',d:'What is the background noise level at each test frequency?'},{n:'Probe Fit Status',d:'Acoustic seal quality from broadband probe-tone measurement'},{n:'Valid vs Rejected Frames',d:'How many frames passed artifact rejection criteria?'},{n:'Signal Quality Score',d:'Overall AI confidence in the recorded signal (0-100%)'},{n:'Model Version',d:'shruti-ai-v1.0 - tracked for validation and audit'}].map(f=>`<div style="padding:10px;border:1px solid var(--border);border-radius:10px"><b style="font-size:13px">${f.n}</b><div style="font-size:12px;color:var(--muted);margin-top:3px">${f.d}</div></div>`).join('')}
+    </div>
+  </div></div>
+  <div class="card"><div class="card-head"><h3>Audit Trail</h3></div><div class="card-pad">
+    <div class="alert info">${I.alert}<div><b>Every screening records:</b>Protocol version, software version, AI model version, exact criteria applied, operator ID, and timestamp. This supports clinical audit and quality improvement.</div></div>
+  </div></div>`;
+}
+
+/* ============================= PARENT MODULE ============================= */
+function renderParentInfo(){
+  fetch(API_BASE+'/api/parent/info/en').then(r=>r.json()).then(data=>{
+    $('#content').innerHTML=`
+    <div class="page-head"><div><h1>Parent-Facing Module</h1><p>Simple explanations of screening results in regional languages with voice guidance</p></div></div>
+    <div class="tabs" style="margin-bottom:16px"><button class="tab active" onclick="loadParentLang('en',this)">English</button><button class="tab" onclick="loadParentLang('hi',this)">Hindi</button></div>
+    <div class="grid g3" style="margin-bottom:16px">
+      <div class="card" style="border-left:4px solid var(--success)"><div class="card-pad"><h3 style="color:var(--success);font-size:14px;margin-bottom:8px">PASS</h3><p style="font-size:13px">${esc(data.pass_explain)}</p></div></div>
+      <div class="card" style="border-left:4px solid var(--danger)"><div class="card-pad"><h3 style="color:var(--danger);font-size:14px;margin-bottom:8px">REFER</h3><p style="font-size:13px">${esc(data.refer_explain)}</p></div></div>
+      <div class="card" style="border-left:4px solid var(--warning)"><div class="card-pad"><h3 style="color:var(--warning);font-size:14px;margin-bottom:8px">RETEST</h3><p style="font-size:13px">${esc(data.retest_explain)}</p></div></div>
+    </div>
+    <div class="card"><div class="card-head"><h3>Education</h3></div><div class="card-pad"><p style="font-size:13px">${esc(data.education)}</p></div></div>`;
+  }).catch(()=>{$('#content').innerHTML='<div class="empty"><p>Connect to backend for parent module.</p></div>'});
+}
+function loadParentLang(lang,btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');
+  fetch(API_BASE+'/api/parent/info/'+lang).then(r=>r.json()).then(data=>{
+    document.querySelectorAll('.card h3').forEach(h=>{
+      if(h.textContent==='PASS')h.nextElementSibling.textContent=data.pass_explain;
+      if(h.textContent==='REFER')h.nextElementSibling.textContent=data.refer_explain;
+      if(h.textContent==='RETEST')h.nextElementSibling.textContent=data.retest_explain;
+    });
+  });
+}
+
+/* ============================= ROUTER ============================= */
+function renderView(){
+  const map={dash:renderDash,patients:renderPatients,screening:renderScreening,prenatal:renderPrenatal,immunization:renderImmunization,appointments:renderAppointments,prescriptions:renderPrescriptions,labs:renderLabs,vitals:renderVitals,pharmacy:renderPharmacy,billing:renderBilling,staff:renderStaff,reports:renderReports,tools:renderTools,realtime:renderRealtime,simulator:renderSimulator,dpoae_viz:renderDPOAEViz,ai_engine:renderAIEngine,devices:renderDevices,passport:renderPassport,referrals:renderReferrals,prenatal_res:renderPrenatalRes,explainable:renderExplainable,parent_info:renderParentInfo};
+  if(map[current])map[current]();
+  updateNav();renderBell();
+}
+
+/* ============================= INIT ============================= */
+seed();
+const VIEW_KEYS={dash:1,patients:1,screening:1,prenatal:1,immunization:1,appointments:1,prescriptions:1,labs:1,vitals:1,pharmacy:1,billing:1,staff:1,reports:1,tools:1,realtime:1,simulator:1,dpoae_viz:1,ai_engine:1,devices:1,passport:1,referrals:1,prenatal_res:1,explainable:1,parent_info:1};
+const _h=(location.hash||'').replace('#','');
+if(VIEW_KEYS[_h])current=_h;
+window.addEventListener('hashchange',()=>{const h=(location.hash||'').replace('#','');if(VIEW_KEYS[h]){current=h;renderView()}});
+renderNav();
+renderView();
+connectWebSocket();
+</script>
+</body>
+</html>
