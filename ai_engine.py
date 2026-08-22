@@ -1,6 +1,4 @@
-"""
-SHRUTI AI Signal-Quality Engine
-Artifact classification, signal-quality estimation, confidence assessment.
+t classification, signal-quality estimation, confidence assessment.
 """
 import numpy as np
 from typing import Dict, List, Optional
