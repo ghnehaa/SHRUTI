@@ -1,4 +1,5 @@
-t classification, signal-quality estimation, confidence assessment.
+"""
+Signal classification, signal-quality estimation, confidence assessment.
 """
 import numpy as np
 from typing import Dict, List, Optional

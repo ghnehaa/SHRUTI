@@ -254,7 +254,7 @@ tbody tr:last-child td{border-bottom:none}
         </button>
         <div class="profile">
           <div class="avatar">DR</div>
-          <div><div class="nm">Dr. Riya Verma</div><div class="rl">Chief Medical Officer</div></div>
+          <div><div class="nm">Dr. Ananya Sharma</div><div class="rl">Chief Medical Officer</div></div>
         </div>
       </div>
     </header>
@@ -330,7 +330,7 @@ function seed(){
   if(localStorage.getItem(LSKEY)){load();return}
   const d=today();
   DB.staff=[
-    {id:'1',name:'Dr. Riya Verma',role:'Chief Medical Officer',dept:'Pediatrics',phone:'+91 98111 00001',email:'riya@shruti.care',shift:'Day',speciality:'Neonatology'},
+    {id:'1',name:'Dr. Ananya Sharma',role:'Chief Medical Officer',dept:'Pediatrics',phone:'+91 98111 00001',email:'ananya.sharma@shruti.care',shift:'Day',speciality:'Neonatology'},
     {id:'2',name:'Dr. Arjun Mehta',role:'Senior Consultant',dept:'OB-GYN',phone:'+91 98111 00002',email:'arjun@shruti.care',shift:'Day',speciality:'Maternal & Fetal Medicine'},
     {id:'3',name:'Dr. Kavya Nair',role:'Consultant',dept:'ENT / Audiology',phone:'+91 98111 00003',email:'kavya@shruti.care',shift:'Day',speciality:'Audiology'},
     {id:'4',name:'ANM Suman Devi',role:'ANM',dept:'Community Health',phone:'+91 98111 00004',email:'suman@shruti.care',shift:'Field',speciality:'Maternal & Child Health'},
@@ -382,16 +382,16 @@ function seed(){
     {id:'18',patientId:'8',vaccine:'Td 2 (Tetanus)',dose:2,date:'',dueDate:addDays(d,-60),status:'Overdue',site:''}
   ];
   DB.appointments=[
-    {id:'1',patientId:'1',doctor:'Dr. Riya Verma',dept:'Pediatrics',date:addDays(d,-10),time:'10:00',status:'Completed',reason:'Well-baby check'},
+    {id:'1',patientId:'1',doctor:'Dr. Ananya Sharma',dept:'Pediatrics',date:addDays(d,-10),time:'10:00',status:'Completed',reason:'Well-baby check'},
     {id:'2',patientId:'6',doctor:'Dr. Arjun Mehta',dept:'OB-GYN',date:d,time:'10:30',status:'Scheduled',reason:'ANC Visit 3'},
     {id:'3',patientId:'3',doctor:'Dr. Kavya Nair',dept:'ENT / Audiology',date:addDays(d,6),time:'11:00',status:'Scheduled',reason:'Hearing re-screen (REFER follow-up)'},
     {id:'4',patientId:'8',doctor:'Dr. Arjun Mehta',dept:'OB-GYN',date:d,time:'12:30',status:'Scheduled',reason:'High-risk review — BP'},
-    {id:'5',patientId:'2',doctor:'Dr. Riya Verma',dept:'Pediatrics',date:addDays(d,-3),time:'09:30',status:'Completed',reason:'Vaccination'},
+    {id:'5',patientId:'2',doctor:'Dr. Ananya Sharma',dept:'Pediatrics',date:addDays(d,-3),time:'09:30',status:'Completed',reason:'Vaccination'},
     {id:'6',patientId:'5',doctor:'Dr. Kavya Nair',dept:'ENT / Audiology',date:addDays(d,5),time:'14:00',status:'Scheduled',reason:'ABR referral follow-up'},
-    {id:'7',patientId:'4',doctor:'Dr. Riya Verma',dept:'Pediatrics',date:d,time:'15:00',status:'Scheduled',reason:'Hearing retest'}
+    {id:'7',patientId:'4',doctor:'Dr. Ananya Sharma',dept:'Pediatrics',date:d,time:'15:00',status:'Scheduled',reason:'Hearing retest'}
   ];
   DB.prescriptions=[
-    {id:'1',patientId:'2',doctor:'Dr. Riya Verma',date:addDays(d,-2),medicines:[{name:'Neonatal phototherapy — BiliBlanket',dose:'per protocol',freq:'Continuous',dur:'48–72 h'},{name:'Vitamin D3 400 IU',dose:'0.5 ml',freq:'Once daily',dur:'60 days'}],notes:'Jaundice follow-up at 1 week. Ensure hydration and breast-milk feeding every 2–3 hours.'},
+    {id:'1',patientId:'2',doctor:'Dr. Ananya Sharma',date:addDays(d,-2),medicines:[{name:'Neonatal phototherapy — BiliBlanket',dose:'per protocol',freq:'Continuous',dur:'48–72 h'},{name:'Vitamin D3 400 IU',dose:'0.5 ml',freq:'Once daily',dur:'60 days'}],notes:'Jaundice follow-up at 1 week. Ensure hydration and breast-milk feeding every 2–3 hours.'},
     {id:'2',patientId:'3',doctor:'Dr. Kavya Nair',date:addDays(d,-4),medicines:[{name:'Ear drops (Betamethasone)',dose:'2 drops',freq:'BD',dur:'5 days'}],notes:'Wax impaction; re-screen both ears after 5 days.'},
     {id:'3',patientId:'8',doctor:'Dr. Arjun Mehta',date:addDays(d,-60),medicines:[{name:'Labetalol 100 mg',dose:'1 tab',freq:'BD',dur:'Ongoing'},{name:'Calcium 500 mg + Vit D3',dose:'1 tab',freq:'OD',dur:'Pregnancy'}],notes:'Monitor BP daily. Report headache/visual disturbance urgently. High-risk register.'},
     {id:'4',patientId:'7',doctor:'Dr. Arjun Mehta',date:addDays(d,-45),medicines:[{name:'Ferrous Ascorbate 100 mg',dose:'1 tab',freq:'OD',dur:'90 days'},{name:'Folic acid 5 mg',dose:'1 tab',freq:'OD',dur:'90 days'}],notes:'Mild anaemia. Repeat Hb after 1 month.'}
@@ -540,7 +540,7 @@ function renderDash(){
   const rev=DB.billing.filter(b=>b.status==='Paid').reduce((s,b)=>s+ (+b.total||0),0);
   $('#content').innerHTML=`
   <div class="page-head">
-    <div><h1>Welcome back, Dr. Riya</h1><p>${new Date().toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'})} · Everything at a glance</p></div>
+    <div><h1>Welcome back, Dr. Ananya</h1><p>${new Date().toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'})} · Everything at a glance</p></div>
     <div class="head-actions">
       <button class="btn btn-rose" onclick="go('screening')">${I.ear} New Screening</button>
       <button class="btn btn-primary" onclick="openRegisterPatient()">${I.plus} Register Patient</button>
@@ -1192,7 +1192,7 @@ function openRx(){
   <div class="modal-body">
     <div class="form-grid">
       <div class="field full"><span>Patient</span>${selectPatients()}</div>
-      <div class="field"><span>Doctor</span><input id="r-doc" list="docList" required value="Dr. Riya Verma"></div>
+      <div class="field"><span>Doctor</span><input id="r-doc" list="docList" required value="Dr. Ananya Sharma"></div>
       <div class="field"><span>Date</span><input id="r-date" type="date" value="${today()}" max="${today()}"></div>
       <div class="field full"><span>Medicine 1</span><input id="r-m1" placeholder="Name" required></div>
       <div class="field"><span>Dose</span><input id="r-d1" placeholder="1 tab / 5 ml"></div>
