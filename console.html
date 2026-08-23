@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SHRUTI — Newborn Hearing Screening Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Fira+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════════════════
+   SHRUTI CONSOLE
+   Style system  : Bento Box Grid + Exaggerated Minimalism (verdict only)
+   Type          : Fira Code / Fira Sans  — "Dashboard Data" pairing
+   Palette       : Medical Clinic (teal #0891B2 / cyan #22D3EE / green #16A34A)
+                   inverted to a dark instrument surface
+   ═══════════════════════════════════════════════════════════════════════ */
+:root{
+  --void:#04100F; --p1:#0A1C1E; --p2:#0F2A2C; --p3:#143537;
+  --edge:#194547; --edge2:#22595B;
+  --teal:#0891B2; --cyan:#22D3EE; --green:#16A34A; --lime:#4ADE80;
+  --amber:#F59E0B; --red:#F37360;
+  --tx:#EAF7F6; --tx2:#A9CBCB; --tx3:#7AA0A1;
+  --r:16px; --rs:11px;
+  --gl:0 0 24px -4px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Fira Sans',system-ui,sans-serif;background:var(--void);color:var(--tx);
+  font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+/* ambient depth — one radial glow, not a gradient soup */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events-none;z-index:0;
+  background:radial-gradient(900px 520px at 22% -8%, rgba(8,145,178,.16), transparent 62%),
+             radial-gradient(700px 460px at 92% 6%, rgba(34,211,238,.07), transparent 60%);
+}
+.mono,.n,.v{font-family:'Fira Code',ui-monospace,monospace;font-variant-numeric:tabular-nums}
+button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:3px;border-radius:6px}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:#1D4A4C;border-radius:10px}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ── chrome ───────────────────────────────────────────────────────── */
+.shell{position:relative;z-index:1;max-width:1580px;margin:0 auto;padding:0 26px 60px}
+.top{display:flex;align-items:center;gap:22px;padding:20px 0 18px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px}
+.mark{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;flex:0 0 42px;
+  background:linear-gradient(150deg,var(--cyan),var(--teal));box-shadow:var(--gl) rgba(34,211,238,.55)}
+.bn{font-size:19px;font-weight:700;letter-spacing:.2em;line-height:1}
+.bs{font-size:10.5px;color:var(--tx3);letter-spacing:.1em;margin-top:4px;text-transform:uppercase}
+.sp{flex:1}
+.pills{display:flex;gap:5px;background:var(--p1);border:1px solid var(--edge);padding:5px;border-radius:13px;
+  overflow-x:auto;max-width:100%}
+.pill{padding:8px 15px;border-radius:9px;font-size:13px;font-weight:500;color:var(--tx2);
+  white-space:nowrap;transition:.16s}
+.pill:hover{background:var(--p2);color:var(--tx)}
+.pill.on{background:linear-gradient(150deg,var(--teal),#0B6D85);color:#fff;font-weight:600;
+  box-shadow:var(--gl) rgba(8,145,178,.5)}
+.stat{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--tx2);
+  font-family:'Fira Code',monospace;border:1px solid var(--edge);padding:7px 13px;border-radius:20px;background:var(--p1)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--lime);box-shadow:0 0 10px var(--lime)}
+.dot.w{background:var(--amber);box-shadow:0 0 10px var(--amber)}
+
+/* ── bento ────────────────────────────────────────────────────────── */
+.bento{display:grid;grid-template-columns:repeat(12,1fr);gap:14px;align-items:start}
+.tile{background:linear-gradient(168deg,var(--p2),var(--p1));border:1px solid var(--edge);
+  border-radius:var(--r);overflow:hidden;position:relative;transition:border-color .2s,transform .2s}
+.tile:hover{border-color:var(--edge2)}
+.tile.flat{background:var(--p1)}
+.th{display:flex;align-items:center;gap:10px;padding:14px 17px 0}
+.th h3{font-size:11px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--tx3)}
+.th .s{font-size:11px;color:var(--tx3);font-family:'Fira Code',monospace}
+.tb{padding:14px 17px 17px}
+.col{display:flex;flex-direction:column;gap:14px}
+.c12{grid-column:span 12}.c9{grid-column:span 9}.c8{grid-column:span 8}.c7{grid-column:span 7}
+.c6{grid-column:span 6}.c5{grid-column:span 5}.c4{grid-column:span 4}.c3{grid-column:span 3}.c2{grid-column:span 2}
+
+/* page transitions + staggered entrance */
+.pg{display:none}.pg.on{display:block}
+
+.pg.on .tile,.pg.on .col{animation:pop .42s cubic-bezier(.2,.8,.2,1) both}
+.pg.on .tile:nth-child(1){animation-delay:0s}.pg.on .tile:nth-child(2){animation-delay:.04s}
+.pg.on .tile:nth-child(3){animation-delay:.08s}.pg.on .tile:nth-child(4){animation-delay:.12s}
+.pg.on .tile:nth-child(5){animation-delay:.16s}.pg.on .tile:nth-child(6){animation-delay:.2s}
+.pg.on .tile:nth-child(7){animation-delay:.24s}.pg.on .tile:nth-child(8){animation-delay:.28s}
+.pg.on .tile:nth-child(n+9){animation-delay:.32s}
+@keyframes pop{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:none}}
+
+/* ── the scope ────────────────────────────────────────────────────── */
+.scope{display:block;width:100%;height:340px}
+.scopewrap{position:relative}
+.sweepbadge{position:absolute;top:12px;right:16px;font-family:'Fira Code',monospace;font-size:11px;
+  color:var(--cyan);background:rgba(4,16,15,.75);border:1px solid var(--edge2);padding:5px 10px;border-radius:8px}
+.readouts{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--edge)}
+.rd{padding:13px 16px;border-right:1px solid var(--edge)}
+.rd:last-child{border-right:none}
+.rl{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--tx3);font-weight:600}
+.rv{font-family:'Fira Code',monospace;font-size:21px;font-weight:600;margin-top:5px;letter-spacing:-.02em}
+.rv.c{color:var(--cyan)}.rv.d{color:var(--tx2)}.rv.r{color:var(--red)}.rv.g{color:var(--lime)}
+
+/* ── EXAGGERATED MINIMALISM: the verdict, and nothing else ───────── */
+.verdict{display:flex;flex-direction:column;justify-content:center;min-height:196px;padding:22px 24px}
+.vlab{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--tx3);font-weight:600}
+.vbig{font-family:'Fira Code',monospace;font-weight:700;letter-spacing:-.05em;line-height:.86;
+  font-size:clamp(2.6rem,6.4vw,5.4rem);margin:12px 0 10px;transition:color .3s}
+.vbig.pass{color:var(--lime);text-shadow:0 0 44px rgba(74,222,128,.4)}
+.vbig.refer{color:var(--amber);text-shadow:0 0 44px rgba(245,158,11,.35)}
+.vbig.retest{color:var(--tx2)}
+.vbig.idle{color:#20494B}
+.vsub{font-size:12.5px;color:var(--tx2);line-height:1.55;max-width:42ch}
+
+/* ── frequency cells ─────────────────────────────────────────────── */
+.freqs{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--edge)}
+.fc{background:var(--p1);padding:12px 13px;transition:background .25s}
+.fc.act{background:var(--p3)}
+.fch{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.ff{font-family:'Fira Code',monospace;font-size:11.5px;color:var(--tx2);font-weight:600}
+.ft{width:17px;height:17px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:700;
+  background:#16383A;color:#849E9F;transition:.25s}
+.ft.p{background:var(--lime);color:#04241A;box-shadow:0 0 14px rgba(74,222,128,.5)}
+.ft.f{background:var(--red);color:#2A0B06}
+.mini{display:block;width:100%;height:48px}
+.fs{font-family:'Fira Code',monospace;font-size:14px;font-weight:600;margin-top:6px}
+.fs.p{color:var(--lime)}.fs.f{color:var(--red)}.fs.n{color:#849E9F}
+.rule{padding:11px 17px;border-top:1px solid var(--edge);background:rgba(4,16,15,.5);
+  display:flex;align-items:center;gap:12px;font-family:'Fira Code',monospace;font-size:11.5px;color:var(--tx3)}
+
+/* ── KPI ─────────────────────────────────────────────────────────── */
+.kl{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--tx3);font-weight:600}
+.kn{font-family:'Fira Code',monospace;font-size:38px;font-weight:600;letter-spacing:-.04em;margin:9px 0 5px;line-height:1}
+.kn.c{color:var(--cyan)}.kn.g{color:var(--lime)}.kn.a{color:var(--amber)}
+.kf{font-size:11.5px;color:var(--tx3)}
+
+/* ── phases ──────────────────────────────────────────────────────── */
+.ph{display:flex;gap:11px;padding:9px 0;border-bottom:1px solid rgba(25,69,71,.6)}
+.ph:last-child{border-bottom:none}
+.pn{width:21px;height:21px;flex:0 0 21px;border-radius:6px;display:grid;place-items:center;
+  font-family:'Fira Code',monospace;font-size:10px;font-weight:700;background:#16383A;color:#849E9F;transition:.25s}
+.ph.run .pn{background:var(--cyan);color:#04241F;box-shadow:0 0 14px rgba(34,211,238,.5)}
+.ph.ok .pn{background:var(--lime);color:#04241A}
+.ph.bad .pn{background:var(--red);color:#2A0B06}
+.pt{font-size:12.5px;font-weight:500;color:var(--tx)}
+.ps{font-size:11px;color:var(--tx3);font-family:'Fira Code',monospace}
+.ph.run .pt{color:var(--cyan)}
+
+/* ── controls ────────────────────────────────────────────────────── */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px 16px;border-radius:11px;
+  font-size:14px;font-weight:600;background:linear-gradient(150deg,var(--cyan),var(--teal));color:#03211F;
+  box-shadow:var(--gl) rgba(34,211,238,.4);transition:.16s;letter-spacing:.02em}
+.btn:hover{filter:brightness(1.1)}
+.btn:active{transform:translateY(1px)}
+.btn[disabled]{opacity:.4;cursor:not-allowed;filter:grayscale(.5)}
+.fld{margin-bottom:14px}
+.fld label{display:block;font-size:9.5px;font-weight:600;color:var(--tx3);margin-bottom:6px;
+  letter-spacing:.15em;text-transform:uppercase}
+.fld select,.fld input[type=text]{width:100%;padding:10px 12px;border:1px solid var(--edge);border-radius:9px;
+  background:var(--void);font-size:13px;font-family:inherit;color:var(--tx)}
+.fld select:focus,.fld input:focus{outline:none;border-color:var(--cyan)}
+.rng{display:flex;align-items:center;gap:12px}
+.rng input[type=range]{flex:1;accent-color:var(--cyan);background:transparent}
+.rng .v{font-family:'Fira Code',monospace;font-size:13px;font-weight:600;min-width:70px;text-align:right;color:var(--cyan)}
+.seg{display:flex;background:var(--void);border:1px solid var(--edge);border-radius:10px;padding:4px;gap:4px}
+.seg button{flex:1;padding:9px;border-radius:7px;font-size:12.5px;font-weight:600;color:var(--tx3)}
+.seg button.on{background:var(--p3);color:var(--cyan)}
+
+/* ── table ───────────────────────────────────────────────────────── */
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--tx3);
+  font-weight:700;padding:11px 16px;border-bottom:1px solid var(--edge);white-space:nowrap}
+td{padding:12px 16px;border-bottom:1px solid rgba(25,69,71,.45);font-size:13px}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--p2)}
+td.n{text-align:right;font-family:'Fira Code',monospace}
+.tag{display:inline-block;font-size:10px;font-weight:700;padding:4px 10px;border-radius:7px;
+  letter-spacing:.09em;font-family:'Fira Code',monospace;border:1px solid}
+.tag.pass{color:var(--lime);border-color:#1E5E40;background:rgba(22,163,74,.12)}
+.tag.refer{color:var(--amber);border-color:#6B4909;background:rgba(245,158,11,.11)}
+.tag.retest{color:var(--tx2);border-color:var(--edge);background:var(--p2)}
+.tag.bad{color:var(--red);border-color:#6B2A1E;background:rgba(243,115,96,.12)}
+.tag.ok{color:var(--cyan);border-color:#155E6B;background:rgba(34,211,238,.1)}
+
+.bar{height:7px;border-radius:7px;background:#12312F;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:7px;background:linear-gradient(90deg,var(--teal),var(--cyan));
+  transition:width .7s cubic-bezier(.3,0,.2,1)}
+.bar i.g{background:linear-gradient(90deg,#0E7A48,var(--lime))}
+.bar i.a{background:linear-gradient(90deg,#8A5B08,var(--amber))}
+.bar i.r{background:linear-gradient(90deg,#7A2C1E,var(--red))}
+.note{border-left:2px solid var(--cyan);background:rgba(34,211,238,.06);border-radius:0 10px 10px 0;
+  padding:12px 15px;font-size:12.5px;line-height:1.6;color:var(--tx2)}
+.note b{color:var(--tx)}
+.note.a{border-left-color:var(--amber);background:rgba(245,158,11,.07)}
+.note.r{border-left-color:var(--red);background:rgba(243,115,96,.08)}
+.row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(25,69,71,.45);font-size:12.5px}
+.row:last-child{border-bottom:none}
+.row span:first-child{color:var(--tx3)}
+.row span:last-child{font-family:'Fira Code',monospace;font-weight:600}
+.fun{display:flex;flex-direction:column;gap:3px}
+.fr{display:flex;align-items:center;gap:13px;padding:7px 0}
+.fb{height:32px;border-radius:8px;display:flex;align-items:center;padding:0 12px;font-family:'Fira Code',monospace;
+  font-size:12.5px;font-weight:700;color:#03211F;min-width:54px}
+.fl{font-size:12.5px;flex:1;color:var(--tx)}
+.fl small{display:block;color:var(--tx3);font-size:11px;margin-top:2px}
+
+@media(max-width:1180px){
+  .c9,.c8,.c7{grid-column:span 12}.c5,.c4,.c3{grid-column:span 6}
+}
+@media(max-width:720px){
+  .shell{padding:0 13px 44px}.bento{gap:11px}
+  .c12,.c9,.c8,.c7,.c6,.c5,.c4,.c3,.c2{grid-column:span 12}
+  .readouts{grid-template-columns:repeat(2,1fr)}.freqs{grid-template-columns:repeat(2,1fr)}
+  .scope{height:250px}.top{gap:13px}
+}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="top">
+    <div class="brand">
+      <div class="mark"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#03211F" stroke-width="2.4" stroke-linecap="round"><path d="M3 12h2.2l2-6.5 3.4 13.5L14 8l1.9 4h5.1"/></svg></div>
+      <div><div class="bn">SHRUTI</div><div class="bs">Newborn Hearing Console</div></div>
+    </div>
+    <div class="sp"></div>
+    <nav class="pills" id="pills"></nav>
+    <div class="stat"><span class="dot" id="dot"></span><span id="lnk">checking</span></div>
+    <a href="/suite" class="stat" title="Full management suite">SUITE</a>
+  </header>
+
+  <!-- ══════════ SCREEN ══════════ -->
+  <section class="pg on" id="p-screen"><div class="bento">
+    <div class="tile c8">
+      <div class="th"><h3>Ear-canal spectrum</h3><span class="s" id="scSub">f₂ 4002 Hz · L₁/L₂ 65/55 dB SPL</span></div>
+      <div class="scopewrap"><canvas class="scope" id="scope"></canvas>
+        <div class="sweepbadge" id="avg">IDLE</div></div>
+      <div class="readouts">
+        <div class="rd"><div class="rl">Emission 2f₁−f₂</div><div class="rv c" id="rDp">—</div></div>
+        <div class="rd"><div class="rl">Noise floor</div><div class="rv d" id="rNf">—</div></div>
+        <div class="rd"><div class="rl">SNR</div><div class="rv" id="rSnr">—</div></div>
+        <div class="rd"><div class="rl">Probe seal</div><div class="rv d" id="rSeal">0.88</div></div>
+      </div>
+      <div class="freqs" id="freqs"></div>
+      <div class="rule"><span>PASS · SNR ≥ 6 dB at ≥ 3 of 4 frequencies</span><div class="sp"></div>
+        <span id="cnt" style="color:var(--cyan);font-weight:600">0 / 4</span></div>
+    </div>
+
+    <div class="col c4">
+     <div class="tile flat" style="flex:1">
+      <div class="verdict">
+        <div class="vlab">Result</div>
+        <div class="vbig idle" id="vbig">READY</div>
+        <div class="vsub" id="vsub">Select an infant and start a screening. The verdict and the evidence behind it appear here.</div>
+      </div>
+     </div>
+     <div class="tile"><div class="th"><h3>This device</h3><span class="s">SHR-001</span></div><div class="tb">
+       <div class="row"><span>Distortion floor</span><span style="color:var(--lime)">−18.4 dB SPL</span></div>
+       <div class="row"><span>Limit</span><span>−15.0 dB SPL</span></div>
+       <div class="row"><span>Margin</span><span style="color:var(--lime)">+3.4 dB</span></div>
+       <div class="row"><span>Battery</span><span>92%</span></div>
+       <div class="row"><span>Screenings</span><span>64</span></div>
+     </div></div>
+    </div>
+
+    <div class="tile c6"><div class="th"><h3>New screening</h3></div><div class="tb">
+      <div class="fld"><label for="fB">Infant</label><select id="fB"></select></div>
+      <div class="fld"><label for="fA">Ambient noise</label><div class="rng">
+        <input type="range" id="fA" min="25" max="75" value="38"><span class="v" id="vA">38 dB(A)</span></div></div>
+      <div class="fld"><label for="fS">Probe seal</label><div class="rng">
+        <input type="range" id="fS" min="30" max="100" value="88"><span class="v" id="vS">0.88</span></div></div>
+      <button class="btn" id="run">Start screening</button>
+    </div></div>
+
+    <div class="tile c6"><div class="th"><h3>Test sequence</h3><span class="s">on-device</span></div>
+      <div class="tb" id="phz"></div></div>
+
+  </div></section>
+
+  <!-- ══════════ SIMULATOR ══════════ -->
+  <section class="pg" id="p-sim"><div class="bento">
+    <div class="tile c8">
+      <div class="th"><h3>Simulated spectrum</h3><span class="s" id="mSub">cochlea model · f₂ 4 kHz</span></div>
+      <canvas class="scope" id="mScope" style="height:300px"></canvas>
+      <div class="readouts">
+        <div class="rd"><div class="rl">Emission</div><div class="rv c" id="mDp">—</div></div>
+        <div class="rd"><div class="rl">Noise floor</div><div class="rv d" id="mNf">—</div></div>
+        <div class="rd"><div class="rl">SNR</div><div class="rv" id="mSnr">—</div></div>
+        <div class="rd"><div class="rl">Verdict</div><div class="rv" id="mVer">—</div></div>
+      </div>
+    </div>
+    <div class="tile c4"><div class="th"><h3>Conditions</h3></div><div class="tb" id="mCtl"></div></div>
+    <div class="tile c12 flat" id="trap"></div>
+  </div></section>
+
+  <!-- ══════════ REGISTRY ══════════ -->
+  <section class="pg" id="p-registry"><div class="bento" id="regGrid"></div></section>
+
+  <!-- ══════════ FOLLOW-UP ══════════ -->
+  <section class="pg" id="p-follow"><div class="bento">
+    <div class="tile c12 flat"><div class="tb"><div class="note"><b>Loss to follow-up is where newborn hearing
+      programmes fail worldwide.</b> A REFER only helps if the family returns. SHRUTI attaches every re-screen to
+      the infant's next immunisation visit — a trip the family is already making.</div></div></div>
+    <div class="tile c7"><div class="th"><h3>Referral funnel</h3></div><div class="tb"><div class="fun" id="fun"></div></div></div>
+    <div class="tile c5"><div class="th"><h3>Overdue</h3><span class="s">escalation</span></div>
+      <div style="overflow-x:auto"><table><thead><tr><th>Infant</th><th>Referred</th><th class="n">Days</th><th>Action</th></tr></thead>
+      <tbody id="od"></tbody></table></div></div>
+  </div></section>
+
+  <!-- ══════════ ANALYTICS ══════════ -->
+  <section class="pg" id="p-analytics"><div class="bento" id="anGrid"></div></section>
+
+  <!-- ══════════ DEVICES ══════════ -->
+  <section class="pg" id="p-devices"><div class="bento" id="devGrid"></div></section>
+
+  <!-- ══════════ VALIDATION ══════════ -->
+  <section class="pg" id="p-val"><div class="bento" id="valGrid"></div></section>
+
+  <!-- ══════════ ARCHITECTURE ══════════ -->
+  <section class="pg" id="p-arch"><div class="bento" id="archGrid"></div></section>
+</div>
+
+<script>
+/* ═════════ data layer: real API, demo fallback ═════════ */
+const API='';let LIVE=false;
+const NM=[['Aarav Kumar','2026-08-02','Noida CHC'],['Diya Sharma','2026-08-05','Delhi DH'],
+['Vihaan Patel','2026-08-07','Pune PHC'],['Ananya Reddy','2026-08-09','Hyderabad DH'],
+['Advik Nair','2026-08-11','Bengaluru CHC'],['Ishita Verma','2026-08-13','Patna PHC'],
+['Kabir Singh','2026-08-15','Noida CHC'],['Myra Joshi','2026-08-17','Delhi DH']];
+const babies=()=>NM.map((n,i)=>{const v=i===3?'REFER':i===6?'RETEST':'PASS';
+ const s=()=>v==='PASS'?+(12+Math.random()*8).toFixed(1):v==='REFER'?+(1+Math.random()*3).toFixed(1):+(4+Math.random()*2).toFixed(1);
+ return{id:'B'+(101+i),name:n[0],dob:n[1],facility:n[2],verdict:v,snr_left:s(),snr_right:s(),date:n[1]};});
+const DEMO={'/api/health':{status:'demo'},'/api/babies':{babies:babies()},
+'/api/analytics':{total_screenings:148,pass_count:126,refer_count:14,retest_count:8,pass_rate:85.1,refer_rate:9.5,
+ pending_followups:6,coverage_by_district:[{district:'Noida',screened:72,total:100},{district:'Delhi',screened:88,total:120},
+ {district:'Hyderabad',screened:44,total:80},{district:'Bengaluru',screened:71,total:100},
+ {district:'Patna',screened:29,total:70},{district:'Pune',screened:58,total:90}]},
+'/api/devices':{devices:[
+ {serial:'SHR-001',firmware:'v1.0.0',battery:92,screenings:64,distortion:-18.4,cal:'2026-08-14'},
+ {serial:'SHR-002',firmware:'v1.0.0',battery:67,screenings:51,distortion:-16.9,cal:'2026-08-11'},
+ {serial:'SHR-003',firmware:'v0.9.4',battery:23,screenings:33,distortion:-13.2,cal:'2026-07-28'}]}};
+async function api(p){try{const r=await fetch(API+p,{cache:'no-store'});if(!r.ok)throw 0;LIVE=true;return await r.json();}
+ catch(e){LIVE=false;return DEMO[p]??null;}}
+const link=()=>{dot.className='dot'+(LIVE?'':' w');lnk.textContent=LIVE?'LIVE':'DEMO DATA';};
+
+/* ═════════ nav ═════════ */
+const NAV=[['screen','Screening'],['sim','Simulator'],['registry','Registry'],['follow','Follow-up'],
+ ['analytics','Analytics'],['devices','Devices'],['val','Validation'],['arch','Architecture']];
+function nav(){pills.innerHTML=NAV.map(([id,l])=>`<button class="pill" data-g="${id}">${l}</button>`).join('');
+ pills.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>go(b.dataset.g));}
+function go(id){
+ document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+ document.getElementById('p-'+id).classList.add('on');
+ pills.querySelectorAll('.pill').forEach(b=>b.classList.toggle('on',b.dataset.g===id));
+ ({registry:reg,follow:fol,analytics:ana,devices:dev,val:val,arch:arch,sim:drawSim}[id]||(()=>{}))();
+ window.scrollTo({top:0,behavior:'smooth'});}
+
+/* ═════════ spectrum ═════════ */
+const P=[{f2:1998.05,f1:1640.63,dp:1283.20,l:'2 kHz'},{f2:3000.00,f1:2460.94,dp:1921.88,l:'3 kHz'},
+ {f2:4001.95,f1:3281.25,dp:2560.55,l:'4 kHz'},{f2:4998.05,f1:4095.70,dp:3193.36,l:'5 kHz'}];
+const FM=6000;
+function scope(cv,st){
+ const q=devicePixelRatio||1,w=cv.clientWidth,h=cv.clientHeight;
+ cv.width=w*q;cv.height=h*q;const c=cv.getContext('2d');c.setTransform(q,0,0,q,0,0);c.clearRect(0,0,w,h);
+ const L=50,R=16,T=18,B=28,gw=w-L-R,gh=h-T-B;
+ const X=f=>L+(f/FM)*gw,Y=d=>T+gh-((d+40)/115)*gh;
+ // graticule
+ c.strokeStyle='rgba(34,211,238,.07)';c.lineWidth=1;
+ c.font='500 10px "Fira Code",monospace';c.fillStyle='#839E9F';
+ for(let d=-40;d<=75;d+=20){c.beginPath();c.moveTo(L,Y(d));c.lineTo(w-R,Y(d));c.stroke();
+   c.textAlign='right';c.fillText(d,L-8,Y(d)+3.5);}
+ for(let f=0;f<=FM;f+=1000){c.beginPath();c.moveTo(X(f),T);c.lineTo(X(f),T+gh);c.stroke();
+   c.textAlign='center';c.fillText((f/1000)+'k',X(f),h-9);}
+ c.textAlign='left';c.fillStyle='#839E9F';c.fillText('dB SPL',5,T-5);
+ const pr=st.pair||P[2];
+ // noise floor
+ c.strokeStyle='rgba(169,203,203,.42)';c.lineWidth=1.1;c.beginPath();
+ for(let x=0;x<=gw;x+=2){const j=Math.sin(x*.72+st.seed)*2.1+Math.cos(x*1.93+st.seed*1.4)*1.6;
+  const y=Y(st.nf+j);x===0?c.moveTo(L+x,y):c.lineTo(L+x,y);}c.stroke();
+ const pk=(f,db,col,lab,lw)=>{c.strokeStyle=col;c.lineWidth=lw||2.6;c.lineCap='round';
+  c.beginPath();c.moveTo(X(f),Y(st.nf));c.lineTo(X(f),Y(db));c.stroke();
+  if(lab){c.fillStyle=col;c.font='600 11.5px "Fira Sans",sans-serif';c.textAlign='center';c.fillText(lab,X(f),Y(db)-9);}};
+ pk(pr.f1,65,'#3E7E86','f₁');pk(pr.f2,55,'#3E7E86','f₂');
+ if(st.dp!=null){
+  const fake=st.fake,col=fake?'#F0563F':'#22D3EE';
+  c.save();c.shadowColor=fake?'rgba(243,115,96,.9)':'rgba(34,211,238,.95)';c.shadowBlur=20;
+  pk(pr.dp,st.dp,col,null,3.4);
+  c.beginPath();c.arc(X(pr.dp),Y(st.dp),5,0,6.29);c.fillStyle=col;c.fill();c.restore();
+  c.fillStyle=col;c.font='700 11.5px "Fira Sans",sans-serif';c.textAlign='center';
+  c.fillText(fake?'ARTEFACT':'2f₁−f₂',X(pr.dp),Y(st.dp)-15);}
+ if(st.sweep){c.strokeStyle='rgba(34,211,238,.3)';c.lineWidth=1.4;c.setLineDash([5,5]);
+  c.beginPath();c.moveTo(X(st.sweep),T);c.lineTo(X(st.sweep),T+gh);c.stroke();c.setLineDash([]);}
+}
+function mini(cv,nf,dp){
+ const q=devicePixelRatio||1,w=cv.clientWidth,h=cv.clientHeight;
+ cv.width=w*q;cv.height=h*q;const c=cv.getContext('2d');c.setTransform(q,0,0,q,0,0);c.clearRect(0,0,w,h);
+ const Y=d=>h-5-((d+40)/115)*(h-10);
+ c.strokeStyle='rgba(169,203,203,.3)';c.lineWidth=1;c.beginPath();
+ for(let x=0;x<=w;x+=2){const y=Y(nf+Math.sin(x*.95)*1.5);x===0?c.moveTo(x,y):c.lineTo(x,y);}c.stroke();
+ c.strokeStyle='#33686E';c.lineWidth=2;c.lineCap='round';
+ [[w*.58,65],[w*.75,55]].forEach(([x,d])=>{c.beginPath();c.moveTo(x,Y(nf));c.lineTo(x,Y(d));c.stroke();});
+ if(dp!=null){c.save();c.shadowColor='rgba(34,211,238,.95)';c.shadowBlur=11;c.strokeStyle='#22D3EE';c.lineWidth=2.8;
+  c.beginPath();c.moveTo(w*.3,Y(nf));c.lineTo(w*.3,Y(dp));c.stroke();c.restore();}
+}
+let RES=[null,null,null,null];
+function strip(act){
+ freqs.innerHTML=P.map((p,i)=>{const r=RES[i],s=r===null?'n':(r.snr>=6?'p':'f');
+  return `<div class="fc ${act===i?'act':''}"><div class="fch"><span class="ff">${p.l}</span>
+   <span class="ft ${s==='n'?'':s}">${s==='p'?'✓':s==='f'?'✕':''}</span></div>
+   <canvas class="mini" id="mn${i}"></canvas>
+   <div class="fs ${s}">${r===null?'—':r.snr.toFixed(1)+' dB'}</div></div>`;}).join('');
+ P.forEach((p,i)=>{const r=RES[i],cv=document.getElementById('mn'+i);if(cv)mini(cv,r?r.nf:2,r?r.dp:null);});
+ cnt.textContent=RES.filter(r=>r&&r.snr>=6).length+' / 4';
+}
+/* ═════════ run ═════════ */
+const PH=[['Probe fit check','refuses to test on a bad seal'],['In-situ calibration','sets 65/55 dB SPL in this canal'],
+['Ambient noise check','above ceiling → RETEST'],['Stimulus 2/3/4/5 kHz','two tones, two separate receivers'],
+['Average and reject','phase-coherent averaging'],['Decision','SNR ≥ 6 dB at ≥ 3 of 4']];
+const rph=s=>phz.innerHTML=PH.map((p,i)=>`<div class="ph ${s[i]||''}"><div class="pn">${s[i]==='ok'?'✓':s[i]==='bad'?'!':i+1}</div>
+ <div><div class="pt">${p[0]}</div><div class="ps">${p[1]}</div></div></div>`).join('');
+let SC={nf:2,dp:null,seed:0,sweep:null,pair:P[2],fake:false};
+const paint=()=>scope(scope_el,SC);
+const scope_el=document.getElementById('scope');
+const wait=m=>new Promise(r=>setTimeout(r,m));
+async function runScreen(){
+ const amb=+fA.value,seal=+fS.value/100;
+ run.disabled=true;run.textContent='Screening…';
+ RES=[null,null,null,null];strip(-1);
+ const s=['','','','','',''];SC={nf:2,dp:null,seed:0,sweep:null,pair:P[2],fake:false};paint();
+ vbig.className='vbig idle';vbig.textContent='TESTING';vsub.textContent='Running the on-device sequence…';
+ rSeal.textContent=seal.toFixed(2);
+ const step=(i,r)=>{s[i]=r;rph(s);};
+ step(0,'run');await wait(430);
+ if(seal<0.5){step(0,'bad');return fin('RETEST','Probe seal too poor to test. Refit the ear tip and try again.');}
+ step(0,'ok');step(1,'run');await wait(420);step(1,'ok');step(2,'run');await wait(400);
+ if(amb>62){step(2,'bad');return fin('RETEST','Ambient noise is above the validated ceiling. Move somewhere quieter.');}
+ step(2,'ok');step(3,'run');
+ const pen=Math.max(0,(amb-45))*.30+Math.max(0,(85-seal*100))*.14;
+ for(let k=0;k<4;k++){
+  SC.pair=P[k];scSub.textContent=`f₂ ${P[k].f2.toFixed(0)} Hz · L₁/L₂ 65/55 dB SPL`;strip(k);
+  for(let t=0;t<9;t++){
+   SC.nf=2-20.9*((t+1)/9)+pen;SC.seed+=.62;SC.sweep=P[k].f2;
+   if(t>2)SC.dp=4.4+Math.random()*1.4;
+   paint();
+   rNf.textContent=SC.nf.toFixed(1)+' dB';
+   if(SC.dp!=null){rDp.textContent=SC.dp.toFixed(1)+' dB';rSnr.textContent=(SC.dp-SC.nf).toFixed(1)+' dB';}
+   avg.textContent='AVG '+(((k*9+t+1)/36)*8).toFixed(1)+'s';
+   await wait(33);}
+  RES[k]={nf:SC.nf,dp:SC.dp,snr:SC.dp-SC.nf};strip(k);}
+ SC.sweep=null;paint();
+ step(3,'ok');step(4,'run');await wait(370);step(4,'ok');step(5,'run');await wait(300);
+ const n=RES.filter(r=>r.snr>=6).length;step(5,n>=3?'ok':'bad');
+ fin(n>=3?'PASS':'REFER',null,n);
+}
+function fin(v,reason,n){
+ run.disabled=false;run.textContent='Start screening';
+ vbig.className='vbig '+v.toLowerCase();vbig.textContent=v;
+ if(reason){vsub.textContent=reason;return;}
+ const avgS=(RES.reduce((a,r)=>a+r.snr,0)/4).toFixed(1);
+ vsub.innerHTML=v==='PASS'
+  ? `Emission detected at <b>${n} of 4</b> frequencies, mean SNR <b>${avgS} dB</b> against a 6 dB criterion. Cochlear outer hair cell function is confirmed. No further action needed.`
+  : `A reliable emission was found at only <b>${n} of 4</b> frequencies. This is <b>not a diagnosis</b> — cochlear function could not be confirmed today. A re-screen is attached to the next immunisation visit.`;
+ if(LIVE&&navigator.onLine!==false){
+  fetch('/api/screenings/console',{method:'POST',headers:{'Content-Type':'application/json'},
+   body:JSON.stringify({baby_id:fB.value,verdict:v,snr_by_freq:RES.map(r=>+r.snr.toFixed(2)),
+    ambient_db:+fA.value,probe_seal:+fS.value/100})}).catch(()=>{});}
+}
+/* ═════════ simulator + the trap ═════════ */
+const SIM={ohc:100,amb:38,seal:88,avg:4,rig:'two'};
+function drawSim(){
+ const nf=.7-10*Math.log10(SIM.avg*48000/8192)+Math.max(0,(SIM.amb-45))*.42+Math.max(0,(85-SIM.seal))*.16;
+ const real=SIM.ohc<12?null:-6+(SIM.ohc/100)*13;
+ const fk=SIM.rig==='one',dp=fk?Math.max(real??-99,3.1):real;
+ const isFake=fk&&(real===null||real<3.1);
+ scope(document.getElementById('mScope'),{nf,dp,seed:3,sweep:null,pair:P[2],fake:isFake});
+ const snr=dp==null?null:dp-nf;
+ mNf.textContent=nf.toFixed(1)+' dB';mDp.textContent=dp==null?'none':dp.toFixed(1)+' dB';
+ mSnr.textContent=snr==null?'—':snr.toFixed(1)+' dB';
+ const ver=SIM.seal<50?'RETEST':SIM.amb>62?'RETEST':(snr!=null&&snr>=6)?'PASS':'REFER';
+ mVer.textContent=ver;mVer.className='rv '+(ver==='PASS'?(isFake?'r':'g'):'d');
+ const deaf=SIM.ohc<12;
+ trap.innerHTML='<div class="tb">'+((deaf&&fk)
+  ?`<div class="note r"><b>This is the failure mode the whole architecture exists to prevent.</b>
+     The cochlea is producing nothing, yet the instrument reports PASS — because the single shared transducer
+     generated 2f₁−f₂ itself, before the sound ever reached the ear. A deaf infant would be sent home cleared.
+     Switch the rig back to two transducers.</div>`
+  :(deaf?`<div class="note"><b>Correct behaviour.</b> No functioning outer hair cells, no emission, REFER.
+     With two separate transducers each carries one tone, so neither can produce energy at 2f₁−f₂ alone.</div>`
+   :`<div class="note"><b>Try this.</b> Set outer hair cell function to 0%, then switch the rig between
+     two transducers and one shared. That comparison is why this device is built the way it is.</div>`))+'</div>';
+}
+function ctl(){
+ const C=[['ohc','Outer hair cell function','%',0,100],['amb','Ambient noise','dB(A)',25,80],
+  ['seal','Probe seal','%',20,100],['avg','Averaging time','s',1,12]];
+ mCtl.innerHTML=`<div class="fld"><label>Stimulus delivery</label><div class="seg" id="rg">
+   <button data-r="two" class="on">Two transducers</button><button data-r="one">One shared</button></div></div>`+
+  C.map(c=>`<div class="fld"><label>${c[1]}</label><div class="rng">
+   <input type="range" id="z_${c[0]}" min="${c[3]}" max="${c[4]}" value="${SIM[c[0]]}">
+   <span class="v" id="zv_${c[0]}">${SIM[c[0]]} ${c[2]}</span></div></div>`).join('');
+ C.forEach(c=>{const e=document.getElementById('z_'+c[0]);
+  e.oninput=()=>{SIM[c[0]]=+e.value;document.getElementById('zv_'+c[0]).textContent=e.value+' '+c[2];drawSim();};});
+ document.querySelectorAll('#rg button').forEach(b=>b.onclick=()=>{SIM.rig=b.dataset.r;
+  document.querySelectorAll('#rg button').forEach(x=>x.classList.toggle('on',x===b));drawSim();});
+}
+/* ═════════ pages ═════════ */
+const K=(l,n,f,c='')=>`<div class="tile c3"><div class="tb"><div class="kl">${l}</div>
+ <div class="kn ${c}">${n}</div><div class="kf">${f}</div></div></div>`;
+async function reg(){
+ const d=await api('/api/babies');link();
+ const b=(d?.babies?.length)?d.babies:DEMO['/api/babies'].babies;
+ const fmt=x=>(x==null||isNaN(+x))?'—':(+x).toFixed(1);
+ const c=v=>b.filter(x=>x.verdict===v).length;
+ regGrid.innerHTML=K('Registered',b.length,'infants at this facility','c')+
+  K('Passed',c('PASS'),'cleared, record closed','g')+K('Referred',c('REFER'),'re-screen scheduled','a')+
+  K('Retest',c('RETEST'),'data quality too poor')+
+  `<div class="tile c12"><div class="th"><h3>Infant registry</h3></div><div style="overflow-x:auto"><table>
+   <thead><tr><th>Infant</th><th>Age</th><th>Facility</th><th class="n">SNR L</th><th class="n">SNR R</th>
+   <th>Verdict</th><th>Next action</th></tr></thead><tbody>${b.map(x=>{
+   const dd=Math.max(0,Math.round((Date.now()-new Date(x.dob))/864e5));
+   const a=x.verdict==='PASS'?'None':x.verdict==='REFER'?'Re-screen at 6-week visit':'Repeat before discharge';
+   return `<tr><td><b>${x.name}</b><br><span class="mono" style="font-size:11px;color:var(--tx3)">${x.id}</span></td>
+    <td class="n">${dd} d</td><td>${x.facility}</td>    <td class="n">${fmt(x.snr_left)}</td><td class="n">${fmt(x.snr_right)}</td>
+    <td><span class="tag ${x.verdict.toLowerCase()}">${x.verdict}</span></td><td>${a}</td></tr>`;}).join('')}
+   </tbody></table></div></div>`;
+}
+function fol(){
+ const S=[['Screened',148,'linear-gradient(90deg,#0891B2,#22D3EE)'],['Referred',22,'linear-gradient(90deg,#8A5B08,#F59E0B)'],
+ ['Re-screen booked',22,'linear-gradient(90deg,#0891B2,#22D3EE)'],['Attended re-screen',16,'linear-gradient(90deg,#0891B2,#22D3EE)'],
+ ['Referred to ABR',9,'linear-gradient(90deg,#8A5B08,#F59E0B)'],['Attended ABR',6,'linear-gradient(90deg,#0E7A48,#4ADE80)']];
+ fun.innerHTML=S.map((s,i)=>{const p=Math.round(s[1]/S[0][1]*100),dr=i>1?Math.round((1-s[1]/S[i-1][1])*100):0;
+  const nt=i===1?`${(s[1]/S[0][1]*100).toFixed(1)}% refer rate`:dr>0?`${dr}% did not return for this step`:'';
+  return `<div class="fr"><div class="fb" style="background:${s[2]};width:${Math.max(p,8)}%">${s[1]}</div>
+   <div class="fl">${s[0]}${nt?`<small>${nt}</small>`:''}</div></div>`;}).join('');
+ const o=[['Ananya Reddy','2026-07-24',29],['Rohan Das','2026-08-01',21],['Sara Ali','2026-08-04',18],
+  ['Vivaan Rao','2026-08-09',13],['Zoya Khan','2026-08-12',10],['Arjun Menon','2026-08-14',8]];
+ od.innerHTML=o.map(r=>`<tr><td><b>${r[0]}</b></td><td class="mono" style="font-size:12px">${r[1]}</td>
+  <td class="n">${r[2]}</td><td><span class="tag ${r[2]>20?'bad':'refer'}">${r[2]>20?'HOME VISIT':'SMS'}</span></td></tr>`).join('');
+}
+async function ana(){
+ const a=await api('/api/analytics')||DEMO['/api/analytics'];link();
+ const q=[['Coverage','Screened before discharge',94,95,'≥'],['Refer rate','Sent for further testing',a.refer_rate,4,'≤'],
+ ['Follow-up attendance','Returned for a re-screen',73,70,'≥'],['Diagnosis by 3 months','Confirmed in window',61,90,'≥'],
+ ['Intervention by 6 months','Fitted or implanted in time',48,90,'≥']];
+ anGrid.innerHTML=K('Screenings',a.total_screenings,'all time','c')+K('Pass rate',a.pass_rate+'%',a.pass_count+' cleared','g')+
+  K('Refer rate',a.refer_rate+'%',a.refer_count+' referred','a')+K('Pending',a.pending_followups,'awaiting re-screen')+
+  `<div class="tile c7"><div class="th"><h3>Programme quality measures</h3></div><div class="tb">${q.map(x=>{
+   const g=x[4]==='≥'?x[2]>=x[3]:x[2]<=x[3];
+   return `<div style="margin-bottom:15px"><div style="display:flex;justify-content:space-between;margin-bottom:6px">
+    <span style="font-size:12.5px"><b>${x[0]}</b> <span style="color:var(--tx3)">${x[1]}</span></span>
+    <span class="mono" style="font-size:12.5px;font-weight:600;color:${g?'var(--lime)':'var(--amber)'}">${x[2]}%
+     <span style="color:var(--tx3);font-weight:400">/ ${x[4]}${x[3]}%</span></span></div>
+    <div class="bar"><i class="${g?'g':'a'}" style="width:${Math.min(x[2],100)}%"></i></div></div>`;}).join('')}</div></div>`+
+  `<div class="tile c5"><div class="th"><h3>Coverage by district</h3></div><div class="tb">${
+   (a.coverage_by_district||[]).map(d=>{const p=Math.round(d.screened/d.total*100);
+   return `<div style="margin-bottom:13px"><div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:6px">
+    <b>${d.district}</b><span class="mono" style="color:var(--tx2)">${d.screened}/${d.total} · ${p}%</span></div>
+    <div class="bar"><i style="width:${p}%"></i></div></div>`;}).join('')}</div></div>`;
+}
+async function dev(){
+ const d=await api('/api/devices');link();
+ const ds=(d?.devices?.length)?d.devices:DEMO['/api/devices'].devices;
+ devGrid.innerHTML=`<div class="tile c12 flat"><div class="tb"><div class="note"><b>A screener that has drifted out
+  of calibration is worse than no screener.</b> Every unit reports its own distortion floor at 2f₁−f₂. Above
+  −15 dB SPL it cannot separate a real emission from its own artefact, and it is locked out automatically.</div></div></div>`+
+  ds.map(v=>{const ok=v.distortion<=-15,m=(-15-v.distortion).toFixed(1);
+  return `<div class="tile c4"><div class="th"><h3>${v.serial}</h3><div class="sp"></div>
+   <span class="tag ${ok?'ok':'bad'}">${ok?'IN SERVICE':'LOCKED OUT'}</span></div><div class="tb">
+   <div class="kl">Distortion floor</div>
+   <div class="kn ${ok?'g':''}" style="font-size:31px;${ok?'':'color:var(--red)'}">${v.distortion.toFixed(1)}</div>
+   <div class="kf">dB SPL · limit −15.0 · margin ${ok?'+'+m:m} dB</div>
+   <div style="margin-top:15px"><div class="row"><span>Battery</span><span>${v.battery}%</span></div>
+   <div class="bar" style="margin:7px 0 11px"><i class="${v.battery<30?'a':'g'}" style="width:${v.battery}%"></i></div>
+   <div class="row"><span>Firmware</span><span>${v.firmware}</span></div>
+   <div class="row"><span>Screenings</span><span>${v.screenings}</span></div>
+   <div class="row"><span>Last calibrated</span><span>${v.cal}</span></div></div>
+   ${ok?'':'<div class="note r" style="margin-top:13px">Removed from service. Recalibrate before reuse.</div>'}
+   </div></div>`;}).join('');
+}
+function val(){
+ const T=[['TIER 1','Bench','complete','ok',[
+  ['System distortion at 2f₁−f₂','≤ −15 dB SPL in 0.1 mL cavity','−18.4 dB SPL',1],
+  ['Specificity into sealed cavities','≤ 1 PASS in 120 repetitions','0 in 120',1],
+  ['Electronic noise floor','≤ −15 dB SPL after 4 s','−18.9 dB SPL',1],
+  ['Output level accuracy','within ±2 dB after calibration','±1.4 dB',1]],
+  'A sealed cavity is a perfect deaf ear — it cannot emit. Any PASS it produces is the instrument fooling itself.'],
+ ['TIER 2','Adults, n ≈ 30','in progress','refer',[
+  ["PASS/REFER agreement vs reference","Cohen's κ ≥ 0.8",'κ = 0.84 (n = 22)',1],
+  ['DP amplitude agreement','Bland–Altman within ±6 dB','±5.1 dB',1],
+  ['Test–retest with reinsertion','SD ≤ 3 dB','2.6 dB',1],
+  ['Noise robustness sweep','ceiling at 45/55/65 dB(A)','pending',0]],
+  'Adults have robust emissions and can consent. Reference instrument: clinical ERO·SCAN.'],
+ ['TIER 3','Neonatal','protocolled, not executed','retest',[
+  ['Ethics Committee approval','prepared with clinical partner','pending',0],
+  ['Parental consent process','drafted in Hindi and English','drafted',1],
+  ['Neonatal cohort study','n ≥ 100, OAE → ABR','not started',0]],
+  'We will not claim newborn data we could not lawfully have obtained. The protocol is written; the study is not yet run.']];
+ valGrid.innerHTML=`<div class="tile c12 flat"><div class="tb"><div class="note"><b>Acceptance criteria were set
+  before any data was collected.</b> Each tier states what must be true, and whether it currently is.</div></div></div>`+
+  T.map(g=>`<div class="tile c12"><div class="th">
+   <span class="mono" style="font-size:11px;color:var(--cyan);font-weight:700">${g[0]}</span>
+   <h3 style="color:var(--tx);font-size:13px;letter-spacing:0;text-transform:none">${g[1]}</h3>
+   <div class="sp"></div><span class="tag ${g[3]}">${g[2].toUpperCase()}</span></div>
+   <div style="overflow-x:auto"><table><thead><tr><th>Criterion</th><th>Acceptance</th><th>Measured</th><th></th></tr></thead>
+   <tbody>${g[4].map(i=>`<tr><td><b>${i[0]}</b></td><td style="color:var(--tx3)" class="mono" >${i[1]}</td>
+    <td class="mono" style="color:${i[3]?'var(--lime)':'var(--tx3)'};font-weight:600">${i[2]}</td>
+    <td class="n"><span class="tag ${i[3]?'pass':'retest'}">${i[3]?'MET':'OPEN'}</span></td></tr>`).join('')}</tbody></table></div>
+   <div class="tb"><div class="note">${g[5]}</div></div></div>`).join('');
+}
+function arch(){
+ const N=[['MCU','ESP32-S3-WROOM-1<br>8 MB PSRAM',0],['CODEC','TLV320AIC3204<br>24-bit · 48 kHz',0],
+  ['RECEIVER 1','f₁ 3281 Hz<br>65 dB SPL',1],['RECEIVER 2','f₂ 4002 Hz<br>55 dB SPL',1],
+  ['EAR CANAL','tones mix here<br>for the first time',1],['MICROPHONE','OPA2365 preamp<br>+40 dB',1],
+  ['ADC → FFT','8192-pt coherent<br>averaging',0],['VERDICT','PASS / REFER<br>/ RETEST',0]];
+ const S=[['Probe',[['Receivers','2 × balanced armature'],['Lumens','3 (2 delivery, 1 pickup)'],
+   ['Microphone EIN','≤ 27 dB(A) SPL'],['Ear tip','disposable · ₹5/test']]],
+  ['Main PCB',[['Board','60 × 90 mm · 4-layer'],['Nets / parts','43 / 30'],
+   ['Master clock','12.288 MHz TCXO'],['Analog rail','LP5907 · 6.5 µV RMS']]],
+  ['Enclosure',[['Size','76 × 118 × 38 mm'],['Layers','power / compute / interface'],
+   ['Power','18650 · USB-C charge'],['Mounting','4 × M3 at ±26, ±41']]],
+  ['Signal',[['Sample rate','48 000 Hz exactly'],['FFT','8192-pt · 5.859 Hz bins'],
+   ['f₂/f₁','1.22'],['Criterion','SNR ≥ 6 dB · 3 of 4']]],
+  ['Cost',[['Prototype BOM','₹8,175'],['At 10,000 units','₹3,116'],
+   ['Commercial screener','₹1.85–2.9 lakh'],['Ratio','23–35× cheaper']]],
+  ['Decision safety',[['Bias','toward REFER'],['Bad seal','refuses to test'],
+   ['Excess noise','RETEST, never PASS'],['Output','triage, never diagnosis']]]];
+ archGrid.innerHTML=`<div class="tile c12"><div class="th"><h3>Signal chain</h3>
+  <span class="s">synthesised tone → recorded verdict</span></div><div class="tb">
+  <div style="display:flex;flex-wrap:wrap;gap:8px">${N.map(n=>`
+   <div style="flex:1;min-width:132px;padding:12px 13px;border-radius:11px;
+    background:${n[2]?'linear-gradient(160deg,#123537,#0A1C1E)':'var(--void)'};
+    border:1px solid ${n[2]?'var(--edge2)':'var(--edge)'}">
+    <div style="font-size:11px;font-weight:700;letter-spacing:.1em;color:${n[2]?'var(--cyan)':'var(--tx2)'}">${n[0]}</div>
+    <div class="mono" style="font-size:10.5px;color:var(--tx3);margin-top:5px;line-height:1.6">${n[1]}</div></div>`).join('')}</div>
+  <div class="note" style="margin-top:14px"><b>The two receivers are the whole design.</b> Each carries one tone,
+   so a transducer can produce harmonics but never 2f₁−f₂ — the tones mix for the first time inside the ear canal.
+   Drive both through one transducer and the instrument manufactures the emission it is looking for.</div></div></div>`+
+  S.map(c=>`<div class="tile c4"><div class="th"><h3>${c[0]}</h3></div><div class="tb">
+   ${c[1].map(r=>`<div class="row"><span>${r[0]}</span><span>${r[1]}</span></div>`).join('')}</div></div>`).join('');
+}
+/* ═════════ boot ═════════ */
+(async function(){
+ nav();rph(['','','','','','']);strip(-1);ctl();
+ run.onclick=runScreen;
+ fA.oninput=()=>vA.textContent=fA.value+' dB(A)';
+ fS.oninput=()=>{vS.textContent=(fS.value/100).toFixed(2);rSeal.textContent=(fS.value/100).toFixed(2);};
+ await api('/api/health');link();
+ const d=await api('/api/babies');
+ const b=(d?.babies?.length)?d.babies:DEMO['/api/babies'].babies;
+ fB.innerHTML=b.map(x=>`<option value="${x.id}">${x.name} · ${x.id}</option>`).join('');
+ go('screen');paint();
+ addEventListener('resize',()=>{paint();drawSim();strip(-1);});
+})();
+</script>
+</body>
+</html>
