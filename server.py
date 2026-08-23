@@ -25,7 +25,7 @@ from synthetic_data import (
     generate_large_test_dataset, generate_simulator_state, TEST_FREQUENCIES
 )
 
-app = FastAPI(title="SHRUTI Care", version="1.0.0-hackathon")
+app = FastAPI(title="DR NEHA Care", version="1.0.0-hackathon")
 
 app.add_middleware(
     CORSMiddleware,
@@ -77,7 +77,7 @@ class SimulatorParams(BaseModel):
 
 class DeviceRegistration(BaseModel):
     serial: str
-    model: str = "SHRUTI-ESP32-S3"
+    model: str = "DR NEHA-ESP32-S3"
     firmware: str = "v1.0.0"
 
 
@@ -85,7 +85,7 @@ def _read_page(name: str) -> str:
     path = Path(__file__).parent / name
     if path.exists():
         return path.read_text(encoding="utf-8")
-    return "<h1>SHRUTI Care Server Running</h1>"
+    return "<h1>DR NEHA Care Server Running</h1>"
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -144,7 +144,7 @@ async def register_baby(reg: BabyRegistration):
         "facility": reg.facility,
         "mother_id": reg.mother_id,
         "registered_date": datetime.now().strftime("%Y-%m-%d"),
-        "qr_code": f"SHRUTI-{baby_id}",
+        "qr_code": f"DR NEHA-{baby_id}",
         "screenings": [],
         "prenatal_risk_profile": None,
         "hearing_passport": {
@@ -410,7 +410,7 @@ async def list_devices():
         devices = [
             {
                 "serial": "SHR-001",
-                "model": "SHRUTI-ESP32-S3",
+                "model": "DR NEHA-ESP32-S3",
                 "firmware": "v1.0.0",
                 "status": "Online",
                 "battery": 87,
@@ -453,7 +453,7 @@ async def device_self_test(serial: str):
     import numpy as np
     device = device_registry.get(serial, {
         "serial": serial,
-        "model": "SHRUTI-ESP32-S3",
+        "model": "DR NEHA-ESP32-S3",
         "status": "Online",
         "battery": random.randint(60, 100),
         "mic_health": "OK",
@@ -596,7 +596,7 @@ async def websocket_endpoint(websocket: WebSocket):
         await websocket.send_json({
             "type": "connected",
             "client_id": client_id,
-            "message": "SHRUTI Care WebSocket connected",
+            "message": "DR NEHA Care WebSocket connected",
             "server_version": "1.0.0-hackathon"
         })
 
@@ -697,5 +697,5 @@ async def handle_ws_screening(websocket: WebSocket, data: dict):
 
 if __name__ == "__main__":
     import uvicorn
-    print("SHRUTI Care Server starting on http://localhost:8000")
+    print("DR NEHA Care Server starting on http://localhost:8000")
     uvicorn.run(app, host="127.0.0.1", port=8000)

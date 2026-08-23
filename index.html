@@ -3,65 +3,65 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SHRUTI Care — Medical Management Suite</title>
+<title>DR NEHA Care — Medical Management Suite</title>
 <style>
 :root{
-  --primary:#0d9488; --primary-d:#0f766e; --primary-l:#ccfbf1;
-  --accent:#2563eb; --accent-l:#dbeafe;
-  --rose:#e11d48; --rose-l:#ffe4e6;
-  --violet:#7c3aed; --violet-l:#ede9fe;
-  --bg:#f4f7f9; --card:#ffffff; --text:#0f172a; --muted:#64748b;
-  --border:#e2e8f0; --success:#16a34a; --success-l:#dcfce7;
-  --warning:#d97706; --warning-l:#fef3c7; --danger:#dc2626; --danger-l:#fee2e2;
-  --shadow:0 1px 2px rgba(15,23,42,.05),0 4px 14px rgba(15,23,42,.05);
+  --primary:#0891B2; --primary-d:#0B6D85; --primary-l:rgba(8,145,178,.16);
+  --accent:#22D3EE; --accent-l:rgba(34,211,238,.12);
+  --rose:#F37360; --rose-l:rgba(243,115,96,.14);
+  --violet:#A78BFA; --violet-l:rgba(167,139,250,.15);
+  --bg:#04100F; --card:#0A1C1E; --text:#EAF7F6; --muted:#7AA0A1;
+  --border:#194547; --success:#4ADE80; --success-l:rgba(74,222,128,.13);
+  --warning:#F59E0B; --warning-l:rgba(245,158,11,.13); --danger:#F37360; --danger-l:rgba(243,115,96,.16);
+  --shadow:0 10px 30px -10px rgba(0,0,0,.55);
   --radius:14px;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{font-family:'Segoe UI','Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5}
 ::-webkit-scrollbar{width:8px;height:8px}
-::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:8px}
+::-webkit-scrollbar-thumb{background:#1D4A4C;border-radius:8px}
 ::-webkit-scrollbar-track{background:transparent}
 a{text-decoration:none;color:inherit}
 button{font-family:inherit;cursor:pointer;border:none;background:none}
 input,select,textarea{font-family:inherit;font-size:13px;color:var(--text)}
 
 .app{display:flex;min-height:100vh}
-.sidebar{width:264px;background:#fff;border-right:1px solid var(--border);position:fixed;inset:0 auto 0 0;display:flex;flex-direction:column;z-index:50;transition:transform .25s}
+.sidebar{width:264px;background:var(--card);border-right:1px solid var(--border);position:fixed;inset:0 auto 0 0;display:flex;flex-direction:column;z-index:50;transition:transform .25s}
 .brand{display:flex;align-items:center;gap:12px;padding:20px 20px 16px}
 .brand-logo{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 6px 16px rgba(13,148,136,.35)}
 .brand b{font-size:17px;letter-spacing:.3px}
 .brand small{display:block;color:var(--muted);font-size:11px;font-weight:400}
 .nav{flex:1;overflow-y:auto;padding:8px 12px}
-.nav-group{color:#94a3b8;font-size:10.5px;text-transform:uppercase;letter-spacing:1px;padding:14px 12px 6px;font-weight:700}
-.nav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;color:#475569;font-weight:500;margin-bottom:2px;transition:.15s}
-.nav-item:hover{background:#f1f5f9;color:var(--text)}
-.nav-item.active{background:linear-gradient(135deg,var(--primary-l),#f0fdfa);color:var(--primary-d);font-weight:600}
+.nav-group{color:#7AA0A1;font-size:10.5px;text-transform:uppercase;letter-spacing:1px;padding:14px 12px 6px;font-weight:700}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;color:#8FB3B3;font-weight:500;margin-bottom:2px;transition:.15s}
+.nav-item:hover{background:#132E30;color:var(--text)}
+.nav-item.active{background:linear-gradient(135deg,var(--primary-l),#0F2A2C);color:var(--primary-d);font-weight:600}
 .nav-item svg{flex-shrink:0}
 .nav-item .pill{margin-left:auto;background:var(--rose);color:#fff;font-size:10px;font-weight:700;border-radius:20px;padding:2px 7px}
 .sidebar-foot{padding:14px 20px;border-top:1px solid var(--border);font-size:11px;color:var(--muted)}
 
 .main{flex:1;margin-left:264px;min-width:0}
-.topbar{background:#fff;border-bottom:1px solid var(--border);padding:0 28px;height:64px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:40}
+.topbar{background:var(--card);border-bottom:1px solid var(--border);padding:0 28px;height:64px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:40}
 .topbar .menu-btn{display:none}
 .search{flex:1;max-width:480px;position:relative}
-.search input{width:100%;background:#f1f5f9;border:1px solid transparent;border-radius:10px;padding:9px 14px 9px 38px;outline:none;transition:.15s}
-.search input:focus{background:#fff;border-color:var(--primary)}
-.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#94a3b8}
+.search input{width:100%;background:#132E30;border:1px solid transparent;border-radius:10px;padding:9px 14px 9px 38px;outline:none;transition:.15s}
+.search input:focus{background:var(--card);border-color:var(--primary)}
+.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#7AA0A1}
 .top-actions{margin-left:auto;display:flex;align-items:center;gap:10px}
-.icon-btn{width:40px;height:40px;border-radius:10px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;color:#475569;position:relative;transition:.15s}
-.icon-btn:hover{background:#e2e8f0}
+.icon-btn{width:40px;height:40px;border-radius:10px;background:#132E30;display:flex;align-items:center;justify-content:center;color:#8FB3B3;position:relative;transition:.15s}
+.icon-btn:hover{background:#194547}
 .icon-btn .dot{position:absolute;top:8px;right:9px;width:8px;height:8px;background:var(--rose);border-radius:50%;border:2px solid #fff}
-.bell-pop{position:absolute;right:0;top:50px;background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:0 10px 40px rgba(15,23,42,.15);width:340px;display:none;overflow:hidden}
+.bell-pop{position:absolute;right:0;top:50px;background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 10px 40px rgba(15,23,42,.15);width:340px;display:none;overflow:hidden}
 .bell-pop.open{display:block}
 .bell-pop h4{padding:14px 16px;border-bottom:1px solid var(--border);font-size:13px}
-.bell-pop .item{padding:11px 16px;border-bottom:1px solid #f1f5f9;font-size:12.5px;display:flex;gap:10px}
+.bell-pop .item{padding:11px 16px;border-bottom:1px solid rgba(25,69,71,.45);font-size:12.5px;display:flex;gap:10px}
 .bell-pop .item:last-child{border:none}
 .bell-pop .item b{display:block;font-size:12.5px}
 .bell-pop .item span{color:var(--muted);font-size:11.5px}
 .bell-pop .item .dotc{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0}
 .profile{display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:10px;cursor:pointer}
-.profile:hover{background:#f1f5f9}
+.profile:hover{background:#132E30}
 .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
 .profile .nm{font-weight:600;font-size:13px;line-height:1.2}
 .profile .rl{font-size:11px;color:var(--muted)}
@@ -74,7 +74,7 @@ input,select,textarea{font-family:inherit;font-size:13px;color:var(--text)}
 
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
 .card-pad{padding:20px}
-.card-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #f1f5f9;gap:12px;flex-wrap:wrap}
+.card-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid rgba(25,69,71,.45);gap:12px;flex-wrap:wrap}
 .card-head h3{font-size:15px;font-weight:600}
 .card-head .sub{color:var(--muted);font-size:12px}
 .grid{display:grid;gap:16px}
@@ -103,22 +103,22 @@ input,select,textarea{font-family:inherit;font-size:13px;color:var(--text)}
 .btn-accent:hover{background:#1d4ed8}
 .btn-rose{background:var(--rose);color:#fff}
 .btn-rose:hover{background:#be123c}
-.btn-outline{background:#fff;border-color:var(--border);color:#334155}
-.btn-outline:hover{background:#f8fafc;border-color:#cbd5e1}
+.btn-outline{background:var(--card);border-color:var(--border);color:#A9CBCB}
+.btn-outline:hover{background:#10282A;border-color:#1D4A4C}
 .btn-ghost{color:var(--muted)}
-.btn-ghost:hover{background:#f1f5f9;color:var(--text)}
+.btn-ghost:hover{background:#132E30;color:var(--text)}
 .btn-sm{padding:6px 11px;font-size:12px;border-radius:8px}
 .btn-block{width:100%;justify-content:center}
 
 .table-wrap{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:13px}
-thead th{text-align:left;color:#64748b;font-size:11px;text-transform:uppercase;letter-spacing:.6px;font-weight:700;padding:12px 16px;border-bottom:1px solid var(--border);white-space:nowrap;background:#fafcfd}
-tbody td{padding:12px 16px;border-bottom:1px solid #f1f5f9;vertical-align:middle}
-tbody tr:hover{background:#f8fafc}
+thead th{text-align:left;color:#7AA0A1;font-size:11px;text-transform:uppercase;letter-spacing:.6px;font-weight:700;padding:12px 16px;border-bottom:1px solid var(--border);white-space:nowrap;background:#0D2426}
+tbody td{padding:12px 16px;border-bottom:1px solid rgba(25,69,71,.45);vertical-align:middle}
+tbody tr:hover{background:#10282A}
 tbody tr:last-child td{border-bottom:none}
 .tbl-actions{display:flex;gap:6px;justify-content:flex-end}
-.ta{width:34px;height:32px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;color:#64748b;background:#f1f5f9}
-.ta:hover{background:#e2e8f0;color:var(--text)}
+.ta{width:34px;height:32px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;color:#7AA0A1;background:#132E30}
+.ta:hover{background:#194547;color:var(--text)}
 .ta.danger:hover{background:var(--danger-l);color:var(--danger)}
 
 .badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
@@ -128,7 +128,7 @@ tbody tr:last-child td{border-bottom:none}
 .bg-danger{background:var(--danger-l);color:var(--danger)}
 .bg-info{background:var(--accent-l);color:var(--accent)}
 .bg-teal{background:var(--primary-l);color:var(--primary-d)}
-.bg-neutral{background:#f1f5f9;color:#64748b}
+.bg-neutral{background:#132E30;color:#7AA0A1}
 .bg-violet{background:var(--violet-l);color:var(--violet)}
 
 .patient-cell{display:flex;align-items:center;gap:11px}
@@ -138,7 +138,7 @@ tbody tr:last-child td{border-bottom:none}
 
 .modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,.45);backdrop-filter:blur(2px);z-index:100;display:none;align-items:flex-start;justify-content:center;padding:40px 16px;overflow-y:auto}
 .modal-overlay.open{display:flex}
-.modal{background:#fff;border-radius:16px;box-shadow:0 20px 60px rgba(15,23,42,.25);width:100%;max-width:640px;animation:pop .2s}
+.modal{background:var(--card);border-radius:16px;box-shadow:0 20px 60px rgba(15,23,42,.25);width:100%;max-width:640px;animation:pop .2s}
 .modal.lg{max-width:860px}
 .modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border)}
 .modal-head h3{font-size:16px}
@@ -149,11 +149,11 @@ tbody tr:last-child td{border-bottom:none}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media(max-width:720px){.form-grid{grid-template-columns:1fr}}
 .field{display:flex;flex-direction:column;gap:6px}
-.field span{font-size:12px;font-weight:600;color:#334155}
+.field span{font-size:12px;font-weight:600;color:#A9CBCB}
 .field .hint{font-size:11px;color:var(--muted);font-weight:400}
-.field input,.field select,.field textarea{border:1px solid var(--border);border-radius:10px;padding:9px 12px;outline:none;transition:.15s;background:#fff}
+.field input,.field select,.field textarea{border:1px solid var(--border);border-radius:10px;padding:9px 12px;outline:none;transition:.15s;background:var(--card)}
 .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(13,148,136,.12)}
-.field input.ro{background:#f8fafc;color:#64748b}
+.field input.ro{background:#10282A;color:#7AA0A1}
 .field.full{grid-column:1/-1}
 
 .toast-wrap{position:fixed;bottom:24px;right:24px;z-index:200;display:flex;flex-direction:column;gap:10px}
@@ -167,17 +167,17 @@ tbody tr:last-child td{border-bottom:none}
 .legend span{display:inline-flex;align-items:center;gap:6px}
 .legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
 
-.tabs{display:flex;gap:4px;background:#f1f5f9;padding:4px;border-radius:10px;width:fit-content;margin-bottom:18px}
+.tabs{display:flex;gap:4px;background:#132E30;padding:4px;border-radius:10px;width:fit-content;margin-bottom:18px}
 .tab{padding:7px 15px;border-radius:8px;font-weight:600;font-size:12.5px;color:var(--muted)}
-.tab.active{background:#fff;color:var(--primary-d);box-shadow:0 1px 4px rgba(15,23,42,.1)}
+.tab.active{background:var(--card);color:var(--primary-d);box-shadow:0 1px 4px rgba(15,23,42,.1)}
 
-.progress{height:8px;background:#f1f5f9;border-radius:8px;overflow:hidden}
+.progress{height:8px;background:#132E30;border-radius:8px;overflow:hidden}
 .progress i{display:block;height:100%;background:linear-gradient(90deg,var(--primary),#14b8a6);border-radius:8px}
 
 .timeline{position:relative;padding-left:24px}
-.timeline::before{content:'';position:absolute;left:7px;top:6px;bottom:6px;width:2px;background:#e2e8f0}
+.timeline::before{content:'';position:absolute;left:7px;top:6px;bottom:6px;width:2px;background:#194547}
 .tl-item{position:relative;padding:0 0 18px 14px}
-.tl-item::before{content:'';position:absolute;left:-22px;top:5px;width:12px;height:12px;border-radius:50%;background:#fff;border:3px solid var(--primary)}
+.tl-item::before{content:'';position:absolute;left:-22px;top:5px;width:12px;height:12px;border-radius:50%;background:var(--card);border:3px solid var(--primary)}
 .tl-item.done::before{border-color:var(--success)}
 .tl-item.up::before{border-color:var(--warning)}
 .tl-item b{font-size:13px}
@@ -188,27 +188,31 @@ tbody tr:last-child td{border-bottom:none}
 .empty p{font-size:13.5px}
 
 .alert{display:flex;gap:12px;padding:13px 16px;border-radius:12px;font-size:13px;align-items:flex-start}
-.alert.info{background:var(--accent-l);color:#1e3a8a}
-.alert.warn{background:var(--warning-l);color:#78350f}
-.alert.rose{background:var(--rose-l);color:#881337}
-.alert.teal{background:var(--primary-l);color:#134e4a}
+.alert.info{background:var(--accent-l);color:#67E8F9}
+.alert.warn{background:var(--warning-l);color:#FCD34D}
+.alert.rose{background:var(--rose-l);color:#F37360}
+.alert.teal{background:var(--primary-l);color:#5EEAD4}
 .alert b{display:block}
 
 .risk-tag{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px}
 .kpi{text-align:center;padding:16px}
 .kpi .n{font-size:26px;font-weight:700}
 .kpi .k{font-size:11.5px;color:var(--muted);margin-top:2px}
-.flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;font-weight:600;color:#475569}
+.flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;font-weight:600;color:#8FB3B3}
 .flow .fnode{background:var(--primary-l);color:var(--primary-d);padding:7px 12px;border-radius:9px}
 .flow .fnode.warn{background:var(--warning-l);color:var(--warning)}
-.flow .arrow{color:#94a3b8}
+.flow .arrow{color:#7AA0A1}
 .otp-progress{display:flex;gap:6px}
-.otp-seg{height:7px;flex:1;border-radius:6px;background:#e2e8f0}
+.otp-seg{height:7px;flex:1;border-radius:6px;background:#194547}
 .otp-seg.on{background:var(--primary)}
 .otp-seg.warn{background:var(--warning)}
 .otp-seg.bad{background:var(--danger)}
 .print-hide{display:contents}
 @media print{.sidebar,.topbar,.head-actions,.tbl-actions{display:none!important}.main{margin:0}.content{padding:0}}
+.nav-item.active{color:#67E8F9}
+.bg-teal{color:#67E8F9}
+.flow .fnode{color:#67E8F9}
+.tab.active{color:#22D3EE}
 @media(max-width:900px){
   .sidebar{transform:translateX(-100%)}
   .sidebar.open{transform:none;box-shadow:0 0 0 100vmax rgba(15,23,42,.4)}
@@ -226,7 +230,7 @@ tbody tr:last-child td{border-bottom:none}
       <div class="brand-logo">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
       </div>
-      <div><b>SHRUTI Care</b><small>Medical Management Suite</small></div>
+      <div><b>DR NEHA Care</b><small>Medical Management Suite</small></div>
     </div>
     <nav class="nav" id="nav"></nav>
     <div class="sidebar-foot">SIH 2026 · MedTech/HealthTech<br>v2.0 — AI-Assisted Screening<br><span id="wsStatus" style="color:var(--warning)">Connecting...</span></div>
@@ -425,7 +429,7 @@ function seed(){
     {id:'8',name:'Ear Tips (disposable, ₹5)',cat:'Consumable',stock:340,price:5,expiry:'2028-01-31',reorder:200}
   ];
   DB.billing=[
-    {id:'1',patientId:'5',date:addDays(d,-3),items:[{d:'Newborn hearing screening (SHRUTI)',a:1,p:50}],total:50,status:'Paid'},
+    {id:'1',patientId:'5',date:addDays(d,-3),items:[{d:'Newborn hearing screening (DR NEHA)',a:1,p:50}],total:50,status:'Paid'},
     {id:'2',patientId:'6',date:addDays(d,-7),items:[{d:'ANC visit + consultation',a:1,p:150},{d:'IFA tablets (30)',a:1,p:60}],total:210,status:'Paid'},
     {id:'3',patientId:'8',date:addDays(d,-1),items:[{d:'High-risk review + BP monitor',a:1,p:200},{d:'Urine protein test',a:1,p:80}],total:280,status:'Pending'},
     {id:'4',patientId:'2',date:addDays(d,-2),items:[{d:'Bilirubin test',a:1,p:120},{d:'Phototherapy kit',a:1,p:300}],total:420,status:'Paid'}
@@ -568,19 +572,19 @@ function renderDash(){
   <div class="grid g2">
     <div class="card">
       <div class="card-head"><div><h3>Today's Schedule</h3><div class="sub">${todayAppts.length} appointment(s)</div></div><button class="btn btn-outline btn-sm" onclick="go('appointments')">View all</button></div>
-      ${todayAppts.length?`<div class="card-pad" style="padding-top:8px">${todayAppts.map(a=>{const p=pById(a.patientId);return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f1f5f9"><div style="background:var(--accent-l);color:var(--accent);border-radius:10px;padding:6px 10px;font-size:12px;font-weight:700;min-width:52px;text-align:center">${a.time}</div>${patientRow(p||{name:'—'},a.doctor)}<div style="margin-left:auto" class="badge bg-neutral">${a.dept}</div></div>`}).join('')}</div>`:`<div class="empty"><p>No appointments scheduled today.</p></div>`}
+      ${todayAppts.length?`<div class="card-pad" style="padding-top:8px">${todayAppts.map(a=>{const p=pById(a.patientId);return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(25,69,71,.45)"><div style="background:var(--accent-l);color:var(--accent);border-radius:10px;padding:6px 10px;font-size:12px;font-weight:700;min-width:52px;text-align:center">${a.time}</div>${patientRow(p||{name:'—'},a.doctor)}<div style="margin-left:auto" class="badge bg-neutral">${a.dept}</div></div>`}).join('')}</div>`:`<div class="empty"><p>No appointments scheduled today.</p></div>`}
     </div>
     <div class="card">
       <div class="card-head"><div><h3>Upcoming</h3><div class="sub">Next in pipeline</div></div></div>
       <div class="card-pad" style="padding-top:8px">
-        ${upcomingAppts.map(a=>{const p=pById(a.patientId);return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f1f5f9">${patientRow(p||{name:'—'},a.reason)}<div style="margin-left:auto;text-align:right"><b style="font-size:12.5px">${fmtDate(a.date)}</b><div class="badge bg-info">${a.time}</div></div></div>`}).join('')}
+        ${upcomingAppts.map(a=>{const p=pById(a.patientId);return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(25,69,71,.45)">${patientRow(p||{name:'—'},a.reason)}<div style="margin-left:auto;text-align:right"><b style="font-size:12.5px">${fmtDate(a.date)}</b><div class="badge bg-info">${a.time}</div></div></div>`}).join('')}
       </div>
     </div>
   </div>
 
   <div class="grid g2" style="margin-top:16px">
     <div class="card">
-      <div class="card-head"><div><h3>Recent Screenings</h3><div class="sub">SHRUTI DPOAE results</div></div><button class="btn btn-outline btn-sm" onclick="go('screening')">All</button></div>
+      <div class="card-head"><div><h3>Recent Screenings</h3><div class="sub">DR NEHA DPOAE results</div></div><button class="btn btn-outline btn-sm" onclick="go('screening')">All</button></div>
       <div class="table-wrap"><table><thead><tr><th>Newborn</th><th>Date</th><th>L / R</th><th>Verdict</th><th></th></tr></thead>
       <tbody>${sc.slice(0,5).map(s=>{const p=pById(s.patientId);return `<tr><td>${patientRow(p||{name:'—'},ageBadge(s.patientId))}</td><td>${fmtDate(s.date)}</td><td><span class="badge ${s.earLeft==='PASS'?'bg-success':'bg-danger'}">${s.earLeft}</span> <span class="badge ${s.earRight==='PASS'?'bg-success':'bg-danger'}">${s.earRight}</span></td><td>${verdictBadge(s.verdict)}</td><td class="tbl-actions"><button class="ta" onclick="viewScreening('${s.id}')">${I.eye}</button></td></tr>`}).join('')}</tbody></table></div>
     </div>
@@ -620,7 +624,7 @@ function lineChart(id,labels,series,colors,names){
   const y=(v)=>h-pad.b-((v-min)/(max-min))*(h-pad.t-pad.b);
   const x=(i)=>pad.l+(i/(Math.max(1,labels.length-1)))*(w-pad.l-pad.r);
   ctx.font='10px Segoe UI';
-  ctx.strokeStyle='#e2e8f0';ctx.fillStyle='#94a3b8';
+  ctx.strokeStyle='#194547';ctx.fillStyle='#7AA0A1';
   for(let g=0;g<=4;g++){const v=min+(max-min)*g/4;ctx.beginPath();ctx.moveTo(pad.l,y(v));ctx.lineTo(w-pad.r,y(v));ctx.stroke();ctx.fillText(Math.round(v),6,y(v)+3)}
   labels.forEach((l,i)=>{ctx.fillText(l,x(i)-6,h-pad.b+14)});
   series.forEach((s,si)=>{
@@ -636,17 +640,17 @@ function groupedBar(id,labels,series){
   const pad={l:36,r:10,t:14,b:26};
   const max=Math.max(3,...series.flatMap(s=>s.v))*1.15;
   const bw=Math.min(26,(w-pad.l-pad.r)/labels.length/1.7);
-  ctx.font='10px Segoe UI';ctx.strokeStyle='#e2e8f0';ctx.fillStyle='#94a3b8';
+  ctx.font='10px Segoe UI';ctx.strokeStyle='#194547';ctx.fillStyle='#7AA0A1';
   for(let g=0;g<=4;g++){const v=max*g/4,ys=h-pad.b-(v/max)*(h-pad.t-pad.b);ctx.beginPath();ctx.moveTo(pad.l,ys);ctx.lineTo(w-pad.r,ys);ctx.stroke();ctx.fillText(Math.round(v),4,ys+3)}
   labels.forEach((l,i)=>{
-    ctx.fillStyle='#94a3b8';ctx.fillText(l,pad.l+(i+.5)*((w-pad.l-pad.r)/labels.length)-(bw*series.length/2),h-pad.b+14);
+    ctx.fillStyle='#7AA0A1';ctx.fillText(l,pad.l+(i+.5)*((w-pad.l-pad.r)/labels.length)-(bw*series.length/2),h-pad.b+14);
     series.forEach((s,si)=>{
       const x0=pad.l+(i+.5)*((w-pad.l-pad.r)/labels.length)-bw*series.length/2+si*bw;
       const hh=(s.v[i]/max)*(h-pad.t-pad.b);
       ctx.fillStyle=s.c;ctx.globalAlpha=.9;
       ctx.fillRect(x0+1,h-pad.b-hh,bw-2,hh);
       ctx.globalAlpha=1;
-      ctx.fillStyle='#334155';ctx.fillText(s.v[i]||'',x0+bw/2-4,h-pad.b-hh-3);
+      ctx.fillStyle='#A9CBCB';ctx.fillText(s.v[i]||'',x0+bw/2-4,h-pad.b-hh-3);
     });
   });
 }
@@ -661,9 +665,9 @@ function donut(id,data){
     ctx.fillStyle=d.c;ctx.fill();
     a=a2;
   });
-  ctx.fillStyle='#0f172a';ctx.font='700 15px Segoe UI';ctx.textAlign='center';
+  ctx.fillStyle='#EAF7F6';ctx.font='700 15px Segoe UI';ctx.textAlign='center';
   ctx.fillText(total,cx,cy+4);
-  ctx.font='10px Segoe UI';ctx.fillStyle='#94a3b8';ctx.fillText('total',cx,cy+16);
+  ctx.font='10px Segoe UI';ctx.fillStyle='#7AA0A1';ctx.fillText('total',cx,cy+16);
   ctx.textAlign='left';
 }
 
@@ -778,15 +782,15 @@ function viewPatient(id){
     <div class="alert info" style="margin-bottom:16px">${I.bell}<div><b>Contact</b>${esc(p.phone||'—')} · ${esc(p.address||'—')}<br>${p.allergies&&p.allergies!=='None'?`<span style="color:var(--danger)">Allergy: ${esc(p.allergies)}</span>`:'No known allergies'}</div></div>
     ${pg?`<div class="alert teal" style="margin-bottom:16px">${I.baby}<div><b>Pregnancy in progress</b>GA ${gaOfPreg(pg)} · EDD ${fmtDate(pg.edd)} · Risk ${pg.risk}</div></div>`:''}
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
-      <div><h4 style="font-size:13px;margin-bottom:8px">Hearing Screening (${sc.length})</h4>${sc.length?sc.slice(0,4).map(s=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f1f5f9"><span>${fmtDate(s.date)}</span>${verdictBadge(s.verdict)}</div>`).join(''):'<p class="k" style="color:var(--muted)">No screening yet.</p>'}</div>
-      <div><h4 style="font-size:13px;margin-bottom:8px">Immunization (${im.length})</h4>${im.slice(0,4).map(v=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f1f5f9"><span>${esc(v.vaccine)}</span>${statusBadge(v.status)}</div>`).join('')}</div>
+      <div><h4 style="font-size:13px;margin-bottom:8px">Hearing Screening (${sc.length})</h4>${sc.length?sc.slice(0,4).map(s=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(25,69,71,.45)"><span>${fmtDate(s.date)}</span>${verdictBadge(s.verdict)}</div>`).join(''):'<p class="k" style="color:var(--muted)">No screening yet.</p>'}</div>
+      <div><h4 style="font-size:13px;margin-bottom:8px">Immunization (${im.length})</h4>${im.slice(0,4).map(v=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(25,69,71,.45)"><span>${esc(v.vaccine)}</span>${statusBadge(v.status)}</div>`).join('')}</div>
     </div>
-    ${labs.length?`<h4 style="font-size:13px;margin:14px 0 8px">Lab Results</h4>${labs.map(l=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f1f5f9"><span>${esc(l.test)} (${fmtDate(l.date)})</span><span><b>${esc(l.result)} ${l.unit}</b> <span class="k" style="color:var(--muted)">(${esc(l.range)})</span></span></div>`).join('')}`:''}
-    ${rx.length?`<h4 style="font-size:13px;margin:14px 0 8px">Prescriptions</h4>${rx.map(r=>`<div style="padding:6px 0;border-bottom:1px solid #f1f5f9"><b>${fmtDate(r.date)}</b> — ${r.medicines.map(m=>m.name).join(', ')}</div>`).join('')}`:''}
+    ${labs.length?`<h4 style="font-size:13px;margin:14px 0 8px">Lab Results</h4>${labs.map(l=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(25,69,71,.45)"><span>${esc(l.test)} (${fmtDate(l.date)})</span><span><b>${esc(l.result)} ${l.unit}</b> <span class="k" style="color:var(--muted)">(${esc(l.range)})</span></span></div>`).join('')}`:''}
+    ${rx.length?`<h4 style="font-size:13px;margin:14px 0 8px">Prescriptions</h4>${rx.map(r=>`<div style="padding:6px 0;border-bottom:1px solid rgba(25,69,71,.45)"><b>${fmtDate(r.date)}</b> — ${r.medicines.map(m=>m.name).join(', ')}</div>`).join('')}`:''}
   </div>`);
 }
 
-/* ============================= SCREENING (SHRUTI) ============================= */
+/* ============================= SCREENING (DR NEHA) ============================= */
 function renderScreening(){
   const pass=DB.screenings.filter(s=>s.verdict==='PASS').length;
   const refer=DB.screenings.filter(s=>s.verdict==='REFER').length;
@@ -795,7 +799,7 @@ function renderScreening(){
   const list=[...DB.screenings].sort((a,b)=>b.date.localeCompare(a.date));
   $('#content').innerHTML=`
   <div class="page-head">
-    <div><h1>Newborn Hearing Screening</h1><p>SHRUTI · DPOAE screener · PASS / REFER protocol under NPPCD & RBSK</p></div>
+    <div><h1>Newborn Hearing Screening</h1><p>DR NEHA · DPOAE screener · PASS / REFER protocol under NPPCD & RBSK</p></div>
     <div class="head-actions">
       <button class="btn btn-outline" onclick="screeningStats()">${I.chart} Protocol</button>
       <button class="btn btn-rose" onclick="openScreening()">${I.plus} New Screening</button>
@@ -900,7 +904,7 @@ function viewScreening(id){
 }
 function screeningStats(){
   openModal(`
-  <div class="modal-head"><h3>SHRUTI Screening Protocol</h3><button class="ta" onclick="closeModal()">${I.x}</button></div>
+  <div class="modal-head"><h3>DR NEHA Screening Protocol</h3><button class="ta" onclick="closeModal()">${I.x}</button></div>
   <div class="modal-body">
     <div class="timeline">
       <div class="tl-item done"><b>1 · Probe-fit check</b><p>Broadband chirp — bad seal → refuse to test</p></div>
@@ -969,7 +973,7 @@ function renderPrenatal(){
     <div class="card">
       <div class="card-head"><div><h3>High-Risk Watchlist</h3><div class="sub">${hr.length} patient(s)</div></div></div>
       <div class="card-pad" style="padding-top:8px">
-        ${hr.length?hr.map(pg=>{const m=pById(pg.patientId);return `<div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #f1f5f9">${patientRow(m||{name:'—'},`GA ${gaOfPreg(pg)}`)}<div style="margin-left:auto;text-align:right"><span class="badge bg-danger">${esc(pg.complication||'High risk')}</span><div style="font-size:11px;color:var(--muted);margin-top:3px">BP ${pg.bp||'—'}</div></div></div>`}).join(''):'<div class="empty"><p>No high-risk pregnancies.</p></div>'}
+        ${hr.length?hr.map(pg=>{const m=pById(pg.patientId);return `<div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid rgba(25,69,71,.45)">${patientRow(m||{name:'—'},`GA ${gaOfPreg(pg)}`)}<div style="margin-left:auto;text-align:right"><span class="badge bg-danger">${esc(pg.complication||'High risk')}</span><div style="font-size:11px;color:var(--muted);margin-top:3px">BP ${pg.bp||'—'}</div></div></div>`}).join(''):'<div class="empty"><p>No high-risk pregnancies.</p></div>'}
       </div>
     </div>
   </div>`;
@@ -1034,7 +1038,7 @@ function viewPregnancy(pid){
     </div>
     ${pg.complication?`<div class="alert rose" style="margin-bottom:16px">${I.alert}<div><b>Complication</b>${esc(pg.complication)}</div></div>`:''}
     <h4 style="font-size:13px;margin-bottom:8px">Recommended plan this visit</h4>
-    ${rds.map(r=>`<div style="display:flex;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid #f1f5f9">${I.check}<span style="color:var(--success)"></span><span>${r}</span></div>`).join('')}
+    ${rds.map(r=>`<div style="display:flex;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid rgba(25,69,71,.45)">${I.check}<span style="color:var(--success)"></span><span>${r}</span></div>`).join('')}
     <div class="alert info" style="margin-top:14px">${I.bell}<div><b>Reminder</b>Link newborn to hearing screening at delivery point — and auto-attach any REFER to the 6/10/14-week immunisation visits.</div></div>
   </div>`);
 }
@@ -1179,7 +1183,7 @@ function renderPrescriptions(){
     ${list.map(r=>{const p=pById(r.patientId);return `<div class="card">
       <div class="card-head"><div><h3>${esc(p?p.name:'—')}</h3><div class="sub">${fmtDate(r.date)} · ${esc(r.doctor)}</div></div><div style="display:flex;gap:6px"><button class="ta" onclick="printRx('${r.id}')">${I.print}</button><button class="ta danger" onclick="delRx('${r.id}')">${I.trash}</button></div></div>
       <div class="card-pad" style="padding-top:14px">
-        ${r.medicines.map(m=>`<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #f1f5f9;font-size:13px"><div style="width:20px;color:var(--primary);font-weight:700">Rx</div><div style="flex:1"><b>${esc(m.name)}</b><div style="color:var(--muted);font-size:12px">${esc(m.dose)} · ${esc(m.freq)} · ${esc(m.dur)}</div></div></div>`).join('')}
+        ${r.medicines.map(m=>`<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid rgba(25,69,71,.45);font-size:13px"><div style="width:20px;color:var(--primary);font-weight:700">Rx</div><div style="flex:1"><b>${esc(m.name)}</b><div style="color:var(--muted);font-size:12px">${esc(m.dose)} · ${esc(m.freq)} · ${esc(m.dur)}</div></div></div>`).join('')}
         ${r.notes?`<div class="alert info" style="margin-top:12px">${I.alert}<div>${esc(r.notes)}</div></div>`:''}
       </div></div>`}).join('')}
     ${list.length?'':'<div class="empty"><p>No prescriptions yet.</p></div>'}
@@ -1220,12 +1224,12 @@ function saveRx(e){
 function printRx(id){
   const r=DB.prescriptions.find(x=>x.id===id),p=pById(r.patientId);
   const w=window.open('','_blank');
-  w.document.write(`<html><head><title>Prescription</title><style>body{font-family:Segoe UI,sans-serif;padding:40px;color:#0f172a}hr{border:none;border-top:1px solid #e2e8f0;margin:14px 0}.med{padding:8px 0;border-bottom:1px solid #f1f5f9}table{width:100%;font-size:14px}</style></head><body>
-    <div style="display:flex;justify-content:space-between;align-items:center"><h1 style="color:#0d9488;margin:0">SHRUTI Care</h1><div style="text-align:right;color:#64748b;font-size:13px">${esc(r.doctor)}<br>${fmtDate(r.date)}</div></div><hr>
+  w.document.write(`<html><head><title>Prescription</title><style>body{font-family:Segoe UI,sans-serif;padding:40px;color:#0f172a}hr{border:none;border-top:1px solid #e2e8f0;margin:14px 0}.med{padding:8px 0;border-bottom:1px solid rgba(25,69,71,.45)}table{width:100%;font-size:14px}</style></head><body>
+    <div style="display:flex;justify-content:space-between;align-items:center"><h1 style="color:#0d9488;margin:0">DR NEHA Care</h1><div style="text-align:right;color:#64748b;font-size:13px">${esc(r.doctor)}<br>${fmtDate(r.date)}</div></div><hr>
     <p><b>Patient:</b> ${esc(p?p.name:'—')} · ${esc(p?p.phone:'')} ${p&&p.dob?'· '+ageFromDob(p.dob):''}</p>
     ${r.medicines.map(m=>`<div class="med"><b>${esc(m.name)}</b><div>Dose: ${esc(m.dose)} &nbsp; Freq: ${esc(m.freq)} &nbsp; Duration: ${esc(m.dur)}</div></div>`).join('')}
     ${r.notes?`<p style="margin-top:16px">${esc(r.notes)}</p>`:''}
-    <p style="margin-top:30px;color:#64748b;font-size:12px">Generated by SHRUTI Care · This is a triage/screening support record — not legal medical advice.</p>
+    <p style="margin-top:30px;color:#64748b;font-size:12px">Generated by DR NEHA Care · This is a triage/screening support record — not legal medical advice.</p>
   </body></html>`);w.document.close();w.print();
 }
 function delRx(id){DB.prescriptions=DB.prescriptions.filter(r=>r.id!==id);save();renderPrescriptions()}
@@ -1298,7 +1302,7 @@ function renderVitals(){
     <div class="head-actions"><button class="btn btn-primary" onclick="openVitals()">${I.plus} Record Vitals</button></div>
   </div>
   <div class="card" style="margin-bottom:16px;padding:16px 20px">
-    <label style="font-size:12px;font-weight:600;color:#334155;margin-right:10px">Patient:</label>
+    <label style="font-size:12px;font-weight:600;color:#A9CBCB;margin-right:10px">Patient:</label>
     <select onchange="lastVitalsPid=this.value;renderVitals()" style="border:1px solid var(--border);border-radius:10px;padding:8px 12px;max-width:320px">
       ${patientsWith.map(pid=>{const p=pById(pid);return `<option value="${pid}" ${pid===selPid?'selected':''}>${esc(p?p.name:'—')}</option>`}).join('')}
     </select>
@@ -1479,11 +1483,11 @@ function printInvoice(id){
   const b=DB.billing.find(x=>x.id===id),p=pById(b.patientId);
   const w=window.open('','_blank');
   w.document.write(`<html><head><title>Invoice #${b.id}</title><style>body{font-family:Segoe UI,sans-serif;padding:40px;color:#0f172a}table{width:100%;border-collapse:collapse;font-size:14px;margin-top:20px}th,td{padding:10px;border-bottom:1px solid #e2e8f0;text-align:left}hr{border:none;border-top:1px solid #e2e8f0;margin:14px 0}</style></head><body>
-  <div style="display:flex;justify-content:space-between"><h1 style="color:#0d9488;margin:0">SHRUTI Care</h1><div style="text-align:right"><b>INVOICE #${b.id}</b><br>${fmtDate(b.date)}</div></div><hr>
+  <div style="display:flex;justify-content:space-between"><h1 style="color:#0d9488;margin:0">DR NEHA Care</h1><div style="text-align:right"><b>INVOICE #${b.id}</b><br>${fmtDate(b.date)}</div></div><hr>
   <p><b>Patient:</b> ${esc(p?p.name:'—')} · ${esc(p?p.phone:'')}</p>
   <table><thead><tr><th>Item</th><th>Qty</th><th>Price</th><th>Amount</th></tr></thead><tbody>${b.items.map(i=>`<tr><td>${esc(i.d)}</td><td>${i.a}</td><td>${money(i.p)}</td><td>${money(i.a*i.p)}</td></tr>`).join('')}</tbody></table>
   <div style="text-align:right;margin-top:16px;font-size:16px"><b>Total: ${money(b.total)}</b><br><span style="color:${b.status==='Paid'?'#16a34a':'#d97706'}">${b.status}</span></div>
-  <p style="margin-top:30px;color:#64748b;font-size:12px">Thank you. Generated by SHRUTI Care.</p></body></html>`);
+  <p style="margin-top:30px;color:#64748b;font-size:12px">Thank you. Generated by DR NEHA Care.</p></body></html>`);
   w.document.close();w.print();
 }
 function delBill(id){DB.billing=DB.billing.filter(b=>b.id!==id);save();renderBilling()}
@@ -1572,7 +1576,7 @@ function renderReports(){
     </div>
   </div>
   <div class="card">
-    <div class="card-head"><div><h3>Referral Funnel — the SHRUTI multiplier</h3></div></div>
+    <div class="card-head"><div><h3>Referral Funnel — the DR NEHA multiplier</h3></div></div>
     <div class="card-pad"><div class="flow">
       <span class="fnode">${DB.screenings.length} screened at birth</span><span class="arrow">→</span>
       <span class="fnode warn">${DB.screenings.filter(s=>s.verdict!=='PASS').length} not-PASS</span><span class="arrow">→</span>
@@ -1589,7 +1593,7 @@ function renderReports(){
     <div class="card">
       <div class="card-head"><div><h3>Programme KPIs</h3></div></div>
       <div class="card-pad">
-        ${[['Screening coverage',DB.screenings.length,DB.patients.length?Math.round(DB.screenings.length/DB.patients.length*100)+'%':'0%'],['Referral rate',DB.screenings.filter(s=>s.verdict==='REFER').length,DB.screenings.length?Math.round(DB.screenings.filter(s=>s.verdict==='REFER').length/DB.screenings.length*100)+'%':'0%'],['Immunization coverage',DB.immunizations.filter(v=>v.status==='Given').length,DB.immunizations.length?Math.round(DB.immunizations.filter(v=>v.status==='Given').length/DB.immunizations.length*100)+'%':'0%'],['ANC registration',DB.pregnancies.length,'','pregnancies tracked'],['Average invoice',DB.billing.length,DB.billing.length?money(Math.round(DB.billing.reduce((s,b)=>s+(+b.total||0),0)/DB.billing.length)):'₹0'],['Pending revenue',DB.billing.filter(b=>b.status==='Pending').length,money(DB.billing.filter(b=>b.status==='Pending').reduce((s,b)=>s+(+b.total||0),0))]].map(k=>`<div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f1f5f9"><span style="font-weight:600">${k[0]}</span><span><b>${k[1]}</b> ${k[3]?`<span class="k" style="color:var(--muted)">· ${k[3]}</span>`:''} <span class="badge bg-neutral" style="margin-left:6px">${k[2]}</span></span></div>`).join('')}
+        ${[['Screening coverage',DB.screenings.length,DB.patients.length?Math.round(DB.screenings.length/DB.patients.length*100)+'%':'0%'],['Referral rate',DB.screenings.filter(s=>s.verdict==='REFER').length,DB.screenings.length?Math.round(DB.screenings.filter(s=>s.verdict==='REFER').length/DB.screenings.length*100)+'%':'0%'],['Immunization coverage',DB.immunizations.filter(v=>v.status==='Given').length,DB.immunizations.length?Math.round(DB.immunizations.filter(v=>v.status==='Given').length/DB.immunizations.length*100)+'%':'0%'],['ANC registration',DB.pregnancies.length,'','pregnancies tracked'],['Average invoice',DB.billing.length,DB.billing.length?money(Math.round(DB.billing.reduce((s,b)=>s+(+b.total||0),0)/DB.billing.length)):'₹0'],['Pending revenue',DB.billing.filter(b=>b.status==='Pending').length,money(DB.billing.filter(b=>b.status==='Pending').reduce((s,b)=>s+(+b.total||0),0))]].map(k=>`<div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(25,69,71,.45)"><span style="font-weight:600">${k[0]}</span><span><b>${k[1]}</b> ${k[3]?`<span class="k" style="color:var(--muted)">· ${k[3]}</span>`:''} <span class="badge bg-neutral" style="margin-left:6px">${k[2]}</span></span></div>`).join('')}
       </div>
     </div>
   </div>`;
@@ -1602,17 +1606,17 @@ function barPlain(id,labels,vals){
   const p=prepCanvas(id);if(!p)return;const{ctx,w,h}=p;
   const pad={l:34,r:10,t:14,b:26};
   const max=Math.max(3,...vals)*1.15;
-  ctx.font='10px Segoe UI';ctx.strokeStyle='#e2e8f0';ctx.fillStyle='#94a3b8';
+  ctx.font='10px Segoe UI';ctx.strokeStyle='#194547';ctx.fillStyle='#7AA0A1';
   for(let g=0;g<=4;g++){const v=max*g/4,ys=h-pad.b-(v/max)*(h-pad.t-pad.b);ctx.beginPath();ctx.moveTo(pad.l,ys);ctx.lineTo(w-pad.r,ys);ctx.stroke();ctx.fillText(Math.round(v),4,ys+3)}
   const bw=Math.min(40,(w-pad.l-pad.r)/Math.max(1,labels.length)/1.5);
   labels.forEach((l,i)=>{
     const x0=pad.l+(i+.5)*((w-pad.l-pad.r)/Math.max(1,labels.length));
-    ctx.fillStyle='#94a3b8';ctx.fillText(l.slice(0,10),x0-bw/2,h-pad.b+14);
+    ctx.fillStyle='#7AA0A1';ctx.fillText(l.slice(0,10),x0-bw/2,h-pad.b+14);
     const hh=(vals[i]/max)*(h-pad.t-pad.b);
     const g=ctx.createLinearGradient(0,h-pad.b-hh,0,h-pad.b);
     g.addColorStop(0,'#0d9488');g.addColorStop(1,'#5eead4');
     ctx.fillStyle=g;ctx.beginPath();ctx.roundRect(x0-bw/2,h-pad.b-hh,bw,hh,[4,4,0,0]);ctx.fill();
-    ctx.fillStyle='#334155';ctx.fillText(vals[i],x0-4,h-pad.b-hh-3);
+    ctx.fillStyle='#A9CBCB';ctx.fillText(vals[i],x0-4,h-pad.b-hh-3);
   });
 }
 function exportCSV(){
@@ -1846,7 +1850,7 @@ function drawLiveFFT(fftData){
   const w=c.width,h=c.height,pad={l:50,r:20,t:20,b:30};
   ctx.strokeStyle='#1e293b';ctx.lineWidth=0.5;
   for(let i=0;i<=5;i++){const y=pad.t+(i/5)*(h-pad.t-pad.b);ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke()}
-  ctx.strokeStyle='#94a3b8';ctx.font='10px Segoe UI';ctx.fillStyle='#64748b';
+  ctx.strokeStyle='#94a3b8';ctx.font='10px Segoe UI';ctx.fillStyle='#7AA0A1';
   const maxF=fftData[fftData.length-1].f||8000;
   [0,2000,4000,6000,8000].forEach(f=>{const x=pad.l+(f/maxF)*(w-pad.l-pad.r);ctx.fillText(f/1000+'k',x-8,h-pad.b+14)});
   [-80,-60,-40,-20,0].forEach((db,i)=>{const y=pad.t+(i/4)*(h-pad.t-pad.b);ctx.fillText(db+'',6,y+3)});
@@ -1868,7 +1872,7 @@ function drawLiveDPGram(){
   const w=c.width,h=c.height,pad={l:50,r:20,t:20,b:30};
   ctx.strokeStyle='#1e293b';ctx.lineWidth=0.5;
   for(let i=0;i<=5;i++){const y=pad.t+(i/5)*(h-pad.t-pad.b);ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke()}
-  ctx.fillStyle='#64748b';ctx.font='10px Segoe UI';
+  ctx.fillStyle='#7AA0A1';ctx.font='10px Segoe UI';
   [2000,3000,4000,5000].forEach((f,i)=>{const x=pad.l+((i+0.5)/4)*(w-pad.l-pad.r);ctx.fillText(f/1000+'k',x-8,h-pad.b+14)});
   [-40,-30,-20,-10,0].forEach((db,i)=>{const y=pad.t+(i/4)*(h-pad.t-pad.b);ctx.fillText(db+'',6,y+3)});
   rtFFT.forEach((entry,i)=>{
@@ -1932,7 +1936,7 @@ function updateSimulator(){
     let html='';
     st.per_frequency.forEach(f=>{
       const col=f.pass?'var(--success)':'var(--danger)';
-      html+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #f1f5f9"><span style="font-size:13px">${f.frequency/1000} kHz</span><span style="font-size:12px;color:var(--muted)">DP: ${f.dp_amplitude} dB | Noise: ${f.noise_floor} dB</span><span style="font-weight:700;color:${col}">SNR ${f.snr} dB ${f.pass?'PASS':'FAIL'}</span></div>`;
+      html+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(25,69,71,.45)"><span style="font-size:13px">${f.frequency/1000} kHz</span><span style="font-size:12px;color:var(--muted)">DP: ${f.dp_amplitude} dB | Noise: ${f.noise_floor} dB</span><span style="font-weight:700;color:${col}">SNR ${f.snr} dB ${f.pass?'PASS':'FAIL'}</span></div>`;
     });
     document.getElementById('sim-freqs').innerHTML=html;
     drawSimDPGram(st.per_frequency);
@@ -1953,7 +1957,7 @@ function drawSimDPGram(freqs){
   ctx.fillStyle='#0a0f1a';ctx.fillRect(0,0,w,h);
   ctx.strokeStyle='#1e293b';ctx.lineWidth=0.5;
   for(let i=0;i<=5;i++){const y=pad.t+(i/5)*(h-pad.t-pad.b);ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke()}
-  ctx.fillStyle='#64748b';ctx.font='10px Segoe UI';
+  ctx.fillStyle='#7AA0A1';ctx.font='10px Segoe UI';
   freqs.forEach((f,i)=>{const x=pad.l+((i+0.5)/freqs.length)*(w-pad.l-pad.r);ctx.fillText(f.frequency/1000+'k',x-8,h-pad.b+14)});
   [-40,-30,-20,-10,0].forEach((db,i)=>{const y=pad.t+(i/4)*(h-pad.t-pad.b);ctx.fillText(db+'',6,y+3)});
   freqs.forEach((f,i)=>{
@@ -1979,7 +1983,7 @@ function renderAIEngine(){
   <div class="grid g2" style="margin-bottom:16px">
     <div class="card"><div class="card-head"><h3>AI Quality Factors</h3></div>
       <div class="card-pad">
-        ${['Signal Level','Clipping','Crying Detection','Movement','Electrical Interference','Probe Fit','Ambient Noise','Spectral Quality','Temporal Stability'].map(f=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f1f5f9"><span style="font-size:13px;font-weight:500">${f}</span><div style="display:flex;gap:6px"><div class="progress" style="width:100px"><i style="width:${Math.round(Math.random()*100)}%;background:${Math.random()>0.5?'var(--success)':'var(--warning)'}"></i></div><span class="badge bg-success" style="font-size:10px">OK</span></div></div>`).join('')}
+        ${['Signal Level','Clipping','Crying Detection','Movement','Electrical Interference','Probe Fit','Ambient Noise','Spectral Quality','Temporal Stability'].map(f=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(25,69,71,.45)"><span style="font-size:13px;font-weight:500">${f}</span><div style="display:flex;gap:6px"><div class="progress" style="width:100px"><i style="width:${Math.round(Math.random()*100)}%;background:${Math.random()>0.5?'var(--success)':'var(--warning)'}"></i></div><span class="badge bg-success" style="font-size:10px">OK</span></div></div>`).join('')}
       </div>
     </div>
     <div class="card"><div class="card-head"><h3>Detection Capabilities</h3></div>
@@ -2022,14 +2026,14 @@ function drawVizDPFreq(data){
   ctx.fillStyle='#0a0f1a';ctx.fillRect(0,0,w,h);
   ctx.strokeStyle='#1e293b';ctx.lineWidth=0.5;
   for(let i=0;i<=5;i++){const y=pad.t+(i/5)*(h-pad.t-pad.b);ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke()}
-  ctx.fillStyle='#64748b';ctx.font='10px Segoe UI';
+  ctx.fillStyle='#7AA0A1';ctx.font='10px Segoe UI';
   [-40,-30,-20,-10,0].forEach((db,i)=>{ctx.fillText(db+'',6,pad.t+(i/4)*(h-pad.t-pad.b)+3)});
   data.forEach((d,i)=>{
     const x=pad.l+((i+0.5)/data.length)*(w-pad.l-pad.r);
     const y=pad.t+((-40-Math.max(-40,Math.min(0,d.dp)))/40)*(h-pad.t-pad.b);
     ctx.fillStyle='#0d9488';ctx.beginPath();ctx.arc(x,y,6,0,7);ctx.fill();
     ctx.fillStyle='#fff';ctx.font='10px Segoe UI';ctx.textAlign='center';ctx.fillText(d.dp.toFixed(1)+'dB',x,y-12);ctx.textAlign='left';
-    ctx.fillStyle='#64748b';ctx.fillText(d.f/1000+'k',x-6,h-pad.b+14);
+    ctx.fillStyle='#7AA0A1';ctx.fillText(d.f/1000+'k',x-6,h-pad.b+14);
   });
   ctx.strokeStyle='#0d9488';ctx.lineWidth=2;ctx.beginPath();
   data.forEach((d,i)=>{const x=pad.l+((i+0.5)/data.length)*(w-pad.l-pad.r);const y=pad.t+((-40-Math.max(-40,Math.min(0,d.dp)))/40)*(h-pad.t-pad.b);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y)});ctx.stroke();
@@ -2038,7 +2042,7 @@ function drawVizNoise(data){
   const c=document.getElementById('vizNoise');if(!c)return;const ctx=c.getContext('2d');
   const w=c.width,h=c.height,pad={l:50,r:20,t:20,b:30};
   ctx.fillStyle='#0a0f1a';ctx.fillRect(0,0,w,h);
-  ctx.fillStyle='#64748b';ctx.font='10px Segoe UI';
+  ctx.fillStyle='#7AA0A1';ctx.font='10px Segoe UI';
   [-60,-50,-40,-30,-20].forEach((db,i)=>{ctx.fillText(db+'',6,pad.t+(i/4)*(h-pad.t-pad.b)+3)});
   data.forEach((d,i)=>{
     const x=pad.l+((i+0.5)/data.length)*(w-pad.l-pad.r);
@@ -2053,7 +2057,7 @@ function renderDevices(){
   fetch(API_BASE+'/api/devices').then(r=>r.json()).then(data=>{
     const devices=data.devices||[];
     $('#content').innerHTML=`
-    <div class="page-head"><div><h1>Device Management</h1><p>SHRUTI-ESP32-S3 device health, calibration and self-test</p></div></div>
+    <div class="page-head"><div><h1>Device Management</h1><p>DR NEHA-ESP32-S3 device health, calibration and self-test</p></div></div>
     ${devices.map(d=>`
     <div class="card" style="margin-bottom:16px">
       <div class="card-head"><div><h3>${esc(d.model)} — ${esc(d.serial)}</h3><div class="sub">Firmware ${esc(d.firmware)}</div></div><span class="badge ${d.status==='Online'?'bg-success':'bg-danger'}">${esc(d.status)}</span></div>
@@ -2065,9 +2069,9 @@ function renderDevices(){
           <div class="kpi card"><div class="n">${d.codec_health}</div><div class="k">Audio Codec</div></div>
         </div>
         <div class="grid g3">
-          <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f1f5f9"><span style="font-size:13px">Calibration</span><span class="badge ${d.calibration_valid?'bg-success':'bg-danger'}">${d.calibration_valid?'Valid':'Expired'}</span><span style="font-size:12px;color:var(--muted)">${fmtDate(d.calibration_date)}</span></div>
-          <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f1f5f9"><span style="font-size:13px">Storage</span><div class="progress" style="flex:1"><i style="width:${Math.round(d.storage_used/d.storage_total*100)}%"></i></div><span style="font-size:12px">${d.storage_used}/${d.storage_total} GB</span></div>
-          <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f1f5f9"><span style="font-size:13px">Last Self-Test</span><span style="font-size:12px;color:var(--muted)">${fmtDate(d.last_self_test)}</span></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(25,69,71,.45)"><span style="font-size:13px">Calibration</span><span class="badge ${d.calibration_valid?'bg-success':'bg-danger'}">${d.calibration_valid?'Valid':'Expired'}</span><span style="font-size:12px;color:var(--muted)">${fmtDate(d.calibration_date)}</span></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(25,69,71,.45)"><span style="font-size:13px">Storage</span><div class="progress" style="flex:1"><i style="width:${Math.round(d.storage_used/d.storage_total*100)}%"></i></div><span style="font-size:12px">${d.storage_used}/${d.storage_total} GB</span></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(25,69,71,.45)"><span style="font-size:13px">Last Self-Test</span><span style="font-size:12px;color:var(--muted)">${fmtDate(d.last_self_test)}</span></div>
         </div>
         <button class="btn btn-primary" style="margin-top:14px" onclick="runSelfTest('${esc(d.serial)}')">Run Self-Test</button>
         <div id="selfTestResult" style="margin-top:14px"></div>
@@ -2092,10 +2096,10 @@ function renderPassport(){
   <div class="page-head"><div><h1>Digital Hearing Passport</h1><p>QR-enabled longitudinal hearing record for authorized healthcare workers</p></div></div>
   <div class="card" style="margin-bottom:16px">
     <div class="card-pad">
-      <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">${patientRow(p||{name:'Demo Baby'},'Hearing Passport')}<div style="margin-left:auto"><div style="width:80px;height:80px;background:#f1f5f9;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--muted);text-align:center">QR Code<br>SHRUTI-${babyId}</div></div></div>
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">${patientRow(p||{name:'Demo Baby'},'Hearing Passport')}<div style="margin-left:auto"><div style="width:80px;height:80px;background:#132E30;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--muted);text-align:center">QR Code<br>DR NEHA-${babyId}</div></div></div>
       <div class="alert info" style="margin-bottom:16px">${I.ear}<div><b>Passport ID</b>HP-${babyId} | Access-controlled | Role-based viewing</div></div>
       <h4 style="font-size:14px;margin-bottom:10px">Screening Journey</h4>
-      ${sc.length?sc.sort((a,b)=>b.date.localeCompare(a.date)).map(s=>`<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f1f5f9"><div style="width:80px;font-size:12px;color:var(--muted)">${fmtDate(s.date)}</div>${verdictBadge(s.verdict)}<span style="font-size:12px;color:var(--muted)">L: ${s.earLeft} R: ${s.earRight}</span><span style="font-size:12px;color:var(--muted);margin-left:auto">${esc(s.operator||'')}</span></div>`).join(''):'<div class="empty"><p>No screenings recorded yet.</p></div>'}
+      ${sc.length?sc.sort((a,b)=>b.date.localeCompare(a.date)).map(s=>`<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(25,69,71,.45)"><div style="width:80px;font-size:12px;color:var(--muted)">${fmtDate(s.date)}</div>${verdictBadge(s.verdict)}<span style="font-size:12px;color:var(--muted)">L: ${s.earLeft} R: ${s.earRight}</span><span style="font-size:12px;color:var(--muted);margin-left:auto">${esc(s.operator||'')}</span></div>`).join(''):'<div class="empty"><p>No screenings recorded yet.</p></div>'}
     </div>
   </div>
   <div class="card"><div class="card-head"><h3>Complete Record</h3></div><div class="card-pad">
@@ -2126,7 +2130,7 @@ function renderReferrals(){
     <tbody>${referSc.map(s=>{const p=pById(s.patientId);return `<tr><td>${patientRow(p||{name:'--'},ageBadge(s.patientId))}</td><td>${fmtDate(s.date)}</td><td>${verdictBadge(s.verdict)}</td><td>${statusBadge(s.status)}</td><td class="tbl-actions"><button class="ta" onclick="viewScreening('${s.id}')">${I.eye}</button></td></tr>`}).join('')}</tbody></table></div>
   </div>
   <div class="card"><div class="card-head"><h3>Nearest Referral Centres</h3></div>
-    <div class="card-pad">${centres.map(c=>`<div style="display:flex;gap:16px;padding:14px 0;border-bottom:1px solid #f1f5f9"><div style="flex:1"><b style="font-size:14px">${esc(c.name)}</b><div style="font-size:12px;color:var(--muted);margin-top:3px">${esc(c.distance)} | ${esc(c.services)}</div><div style="font-size:12px;color:var(--muted)">${esc(c.phone)}</div></div><button class="btn btn-outline btn-sm">Navigate</button></div>`).join('')}</div>
+    <div class="card-pad">${centres.map(c=>`<div style="display:flex;gap:16px;padding:14px 0;border-bottom:1px solid rgba(25,69,71,.45)"><div style="flex:1"><b style="font-size:14px">${esc(c.name)}</b><div style="font-size:12px;color:var(--muted);margin-top:3px">${esc(c.distance)} | ${esc(c.services)}</div><div style="font-size:12px;color:var(--muted)">${esc(c.phone)}</div></div><button class="btn btn-outline btn-sm">Navigate</button></div>`).join('')}</div>
   </div>`;
 }
 
